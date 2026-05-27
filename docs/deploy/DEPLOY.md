@@ -12,16 +12,19 @@
 ## Steps
 
 1. Push `main` → Vercel production deploy
-2. `prisma migrate deploy` in CI or Vercel build
+2. Build сам запускает `prisma migrate deploy` (см. `package.json`)
 3. BotFather: Mini App URL → `https://<vercel-domain>`
-4. Smoke: open Mini App in Telegram, `/api/auth/me` returns user
+4. Один раз: `npm run db:seed` с production `DATABASE_URL` (если каталог пустой)
+5. Smoke: Mini App → `/profile` User ID, `/exercises` список
+
+Подробнее Neon + типичные ошибки: [VERCEL-NEON.md](./VERCEL-NEON.md)
 
 ## Env vars (Vercel)
 
-| Name | Required |
-|------|----------|
-| `DATABASE_URL` | yes |
-| `BOT_TOKEN` | yes |
+| Name | Required | Note |
+|------|----------|------|
+| `DATABASE_URL` | yes | Neon **pooled** URL, `?sslmode=require` |
+| `BOT_TOKEN` | yes | реальный токен бота |
 
 ## Rollback
 
