@@ -38,7 +38,7 @@ docs/
 
 ## Источники правды
 
-- Продукт и архитектура: plan в `.cursor/plans/` (gym tracker telegram mini app)
+- Продукт и архитектура: [docs/PLAN.md](docs/PLAN.md) (копия плана в репозитории)
 - Тикет: `docs/tasks/T-XXX.md` — единственный scope для разработчика
 - Acceptance criteria и Manual QA — только из тикета
 
