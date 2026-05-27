@@ -2,6 +2,7 @@
 
 import {
   init,
+  isUnknownEnvError,
   miniApp,
   themeParams,
 } from "@telegram-apps/sdk-react";
@@ -13,6 +14,37 @@ type TelegramProviderProps = {
   children: ReactNode;
 };
 
+function mountTelegramUi() {
+  if (miniApp.mountSync.isAvailable()) {
+    miniApp.mountSync();
+  }
+  if (themeParams.mountSync.isAvailable()) {
+    themeParams.mountSync();
+  }
+  if (themeParams.bindCssVars.isAvailable()) {
+    themeParams.bindCssVars();
+  }
+}
+
+function initializeSdk(): VoidFunction | undefined {
+  setupTelegramMockEnv();
+
+  try {
+    const cleanup = init({ acceptCustomStyles: true });
+    mountTelegramUi();
+    return cleanup;
+  } catch (error) {
+    if (!isUnknownEnvError(error)) {
+      throw error;
+    }
+
+    setupTelegramMockEnv(true);
+    const cleanup = init({ acceptCustomStyles: true });
+    mountTelegramUi();
+    return cleanup;
+  }
+}
+
 export function TelegramProvider({ children }: TelegramProviderProps) {
   const [ready, setReady] = useState(false);
 
@@ -20,18 +52,7 @@ export function TelegramProvider({ children }: TelegramProviderProps) {
     let cleanup: VoidFunction | undefined;
 
     try {
-      setupTelegramMockEnv();
-      cleanup = init({ acceptCustomStyles: true });
-
-      if (miniApp.mountSync.isAvailable()) {
-        miniApp.mountSync();
-      }
-      if (themeParams.mountSync.isAvailable()) {
-        themeParams.mountSync();
-      }
-      if (themeParams.bindCssVars.isAvailable()) {
-        themeParams.bindCssVars();
-      }
+      cleanup = initializeSdk();
     } catch (error) {
       console.error("Telegram SDK init failed:", error);
     } finally {

@@ -5,4 +5,43 @@ alwaysApply: false
 
 # Reviewer
 
-Verify AC, run lint/tsc. Write `docs/reviews/T-XXX-review.md`. On PASS set `docs/human-review/T-XXX.md` to **PENDING**. Do not edit app code.
+Проверяешь **один** тикет `docs/tasks/T-XXX.md`. **Не правишь** `app/`, `lib/`, `prisma/`, `components/`.
+
+## Обязательные quality gates (выполни сам, в терминале)
+
+Любой ненулевой exit code → **CHANGES_REQUESTED**, даже если разработчик написал «lint OK».
+
+```bash
+npx prisma generate
+npm run typecheck
+npm run lint
+npm run build
+```
+
+- `prisma generate` — **всегда**, если тикет трогает `prisma/` или импортирует `@prisma/client` / `Prisma.*`
+- Команды запускай из корня репозитория; в отчёт вставь факт успеха/ошибки
+
+## Диагностика IDE (обязательно)
+
+После gates вызови **ReadLints** по **всем** файлам из «Files touched» тикета (и по новым API/UI, если список неполный).
+
+- Любая ошибка TS/ESLint в этих файлах → **CHANGES_REQUESTED**
+- Типичный ложный PASS: `tsc` OK, но ReadLints — `Module '@prisma/client' has no exported member` → не был `prisma generate` или линты не проверены
+
+## Acceptance criteria + Manual QA
+
+Каждый пункт AC — явно ✅/❌. Manual QA из тикета — пройден или описано, что не проверено.
+
+## Вердикт
+
+| Verdict | Когда |
+|---------|--------|
+| **PASS** | Gates зелёные, ReadLints чист, AC выполнены |
+| **CHANGES_REQUESTED** | Ошибки типов/линта/сборки, красный ReadLints, AC не выполнены |
+
+Макс. 2 итерации. После второго CHANGES_REQUESTED — `blocked` в отчёте.
+
+## Артефакты
+
+1. `docs/reviews/T-XXX-review.md` — таблица gates + AC + CHANGES_REQUESTED
+2. При **PASS** — `docs/human-review/T-XXX.md` со статусом **PENDING**

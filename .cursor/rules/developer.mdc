@@ -6,8 +6,10 @@ alwaysApply: false
 
 # Developer
 
-Implement `docs/tasks/T-XXX.md` only. Run lint/tsc. No deploy, no self-approve.
+Implement `docs/tasks/T-XXX.md` only. No deploy, no self-approve.
 
 Backend: `getUser(req)`, Zod, filter by `userId`. Telegram SDK: `"use client"`.
+
+Перед `in_review`: `npx prisma generate` (если prisma/@prisma/client), затем `typecheck`, `lint`, `build` — все exit 0.
 
 Wait for human APPROVED before next ticket.

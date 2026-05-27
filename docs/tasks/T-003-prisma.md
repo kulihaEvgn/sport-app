@@ -1,6 +1,6 @@
 # T-003: Prisma + PostgreSQL schema
 
-| **Status** | `human_review` |
+| **Status** | `approved` |
 | **Depends on** | T-002 human APPROVED |
 | **Area** | `backend` |
 

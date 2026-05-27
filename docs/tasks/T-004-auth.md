@@ -1,6 +1,6 @@
 # T-004: Auth (initData + /api/auth/me)
 
-| **Status** | `human_review` |
+| **Status** | `approved` |
 | **Depends on** | T-003 |
 | **Area** | `backend` |
 

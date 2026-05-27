@@ -9,9 +9,18 @@ export default function Home() {
       <p className="text-muted-foreground text-center text-sm">
         Telegram Mini App — тренировки и программы
       </p>
-      <Button nativeButton={false} render={<Link href="/profile" />}>
-        Профиль
-      </Button>
+      <div className="flex flex-wrap justify-center gap-2">
+        <Button nativeButton={false} render={<Link href="/exercises" />}>
+          Упражнения
+        </Button>
+        <Button
+          variant="outline"
+          nativeButton={false}
+          render={<Link href="/profile" />}
+        >
+          Профиль
+        </Button>
+      </div>
     </main>
   );
 }
