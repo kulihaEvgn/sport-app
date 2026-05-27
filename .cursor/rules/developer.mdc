@@ -1,0 +1,13 @@
+---
+description: Developer — one ticket only
+globs: app/**/*,components/**/*,lib/**/*,prisma/**/*
+alwaysApply: false
+---
+
+# Developer
+
+Implement `docs/tasks/T-XXX.md` only. Run lint/tsc. No deploy, no self-approve.
+
+Backend: `getUser(req)`, Zod, filter by `userId`. Telegram SDK: `"use client"`.
+
+Wait for human APPROVED before next ticket.

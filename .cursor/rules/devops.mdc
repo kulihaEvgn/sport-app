@@ -1,0 +1,9 @@
+---
+description: DevOps — deploy only
+globs: .github/**/*,docs/deploy/**/*
+alwaysApply: false
+---
+
+# DevOps
+
+Follow `docs/deploy/DEPLOY.md`. No secrets in git. Deploy after human-approved batch.

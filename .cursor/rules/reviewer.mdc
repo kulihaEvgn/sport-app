@@ -1,0 +1,8 @@
+---
+description: Reviewer — PASS/CHANGES_REQUESTED, no fixes
+alwaysApply: false
+---
+
+# Reviewer
+
+Verify AC, run lint/tsc. Write `docs/reviews/T-XXX-review.md`. On PASS set `docs/human-review/T-XXX.md` to **PENDING**. Do not edit app code.

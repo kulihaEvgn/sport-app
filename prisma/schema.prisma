@@ -1,0 +1,79 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum MuscleGroup {
+  CHEST
+  BACK
+  LEGS
+  SHOULDERS
+  ARMS
+  CORE
+  FULL_BODY
+  GLUTES
+}
+
+model User {
+  id         String   @id @default(cuid())
+  telegramId BigInt   @unique
+  username   String?
+  firstName  String?
+  lastName   String?
+  photoUrl   String?
+  createdAt  DateTime @default(now())
+
+  exercises Exercise[]
+  programs  Program[]
+}
+
+model Exercise {
+  id          String      @id @default(cuid())
+  userId      String?
+  user        User?       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name        String
+  muscleGroup MuscleGroup
+  difficulty  Int
+  videoUrl    String?
+  imageUrl    String?
+  createdAt   DateTime    @default(now())
+
+  programItems ProgramExercise[]
+
+  @@index([userId, muscleGroup])
+}
+
+model Program {
+  id           String    @id @default(cuid())
+  userId       String
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name         String
+  description  String?
+  shareCode    String    @unique
+  lastOpenedAt DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  items ProgramExercise[]
+
+  @@index([userId, lastOpenedAt])
+}
+
+model ProgramExercise {
+  id             String   @id @default(cuid())
+  programId      String
+  program        Program  @relation(fields: [programId], references: [id], onDelete: Cascade)
+  exerciseId     String
+  exercise       Exercise @relation(fields: [exerciseId], references: [id], onDelete: Restrict)
+  order          Int
+  previousWeight Decimal? @db.Decimal(6, 2)
+  currentWeight  Decimal? @db.Decimal(6, 2)
+  effectiveReps  String?
+  notes          String?
+
+  @@index([programId, order])
+}
