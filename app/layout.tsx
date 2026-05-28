@@ -1,37 +1,38 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import type { Metadata } from 'next'
+import { IBM_Plex_Sans, JetBrains_Mono } from 'next/font/google'
+import { ProvidersShell } from '@/components/providers-shell'
+import './globals.css'
 
-import { ProvidersShell } from "@/components/providers-shell";
+const ibmPlexSans = IBM_Plex_Sans({
+  weight: ['400', '500', '600', '700'],
+  subsets: ['latin', 'cyrillic'],
+  variable: '--font-ibm',
+})
 
-import "./globals.css";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+const jetBrainsMono = JetBrains_Mono({
+  weight: ['500', '700'],
+  subsets: ['latin', 'cyrillic'],
+  variable: '--font-mono',
+})
 
 export const metadata: Metadata = {
-  title: "Sport App",
-  description: "Telegram Mini App для тренировок",
-};
+  title: 'GymApp',
+  description: 'Telegram Mini App для трекинга тренировок',
+}
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <ProvidersShell>{children}</ProvidersShell>
+    <html lang="ru" className={`${ibmPlexSans.variable} ${jetBrainsMono.variable} dark`}>
+      <body>
+        <ProvidersShell>
+          <div
+            className="fixed inset-0 flex flex-col overflow-hidden"
+            style={{ background: '#0f0f0f', color: '#f9fafb', fontFamily: 'var(--font-ibm), sans-serif' }}
+          >
+            {children}
+          </div>
+        </ProvidersShell>
       </body>
     </html>
-  );
+  )
 }

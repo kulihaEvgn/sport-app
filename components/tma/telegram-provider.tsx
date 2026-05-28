@@ -15,13 +15,16 @@ type TelegramProviderProps = {
 };
 
 function mountTelegramUi() {
-  if (miniApp.mountSync.isAvailable()) {
+  if (miniApp.mountSync.isAvailable() && !miniApp.isMounted()) {
     miniApp.mountSync();
   }
-  if (themeParams.mountSync.isAvailable()) {
+  if (themeParams.mountSync.isAvailable() && !themeParams.isMounted()) {
     themeParams.mountSync();
   }
-  if (themeParams.bindCssVars.isAvailable()) {
+  if (
+    themeParams.bindCssVars.isAvailable() &&
+    !themeParams.isCssVarsBound()
+  ) {
     themeParams.bindCssVars();
   }
 }

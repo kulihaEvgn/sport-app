@@ -8,7 +8,8 @@ import { useEffect } from "react";
 export function useTelegramBackButton() {
   const router = useRouter();
   const pathname = usePathname();
-  const isRoot = pathname === "/";
+  const ROOT_TABS = new Set(['/', '/workout', '/progress', '/profile', '/library/exercises', '/library/programs'])
+  const isRoot = ROOT_TABS.has(pathname)
 
   useEffect(() => {
     if (isRoot) {

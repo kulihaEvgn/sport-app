@@ -1,0 +1,51 @@
+'use client'
+
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { BookOpen, Dumbbell } from 'lucide-react'
+
+const TABS = [
+  { href: '/library/exercises', label: 'Упражнения', Icon: Dumbbell },
+  { href: '/library/programs',  label: 'Программы',  Icon: BookOpen  },
+]
+
+export default function LibraryLayout({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname()
+  const isTabRoot = pathname === '/library/exercises' || pathname === '/library/programs'
+
+  return (
+    <div className="flex flex-col min-h-full">
+      {isTabRoot && (
+        <div className="px-4 pt-5 pb-0">
+          <h1 className="text-[22px] font-bold" style={{ color: '#f9fafb' }}>Библиотека</h1>
+          <div
+            className="flex gap-1 mt-3 p-1 rounded-2xl"
+            style={{ background: '#1a1a2e', border: '1px solid #2d2d4e' }}
+          >
+            {TABS.map(({ href, label, Icon }) => {
+              const active = pathname === href
+              return (
+                <Link
+                  key={href}
+                  href={href}
+                  className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-[13px] font-semibold transition-all duration-150 no-underline"
+                  style={{
+                    background: active ? '#16213e' : 'transparent',
+                    border: active ? '1px solid #2d2d4e' : '1px solid transparent',
+                    color: active ? '#f9fafb' : '#6b7280',
+                  }}
+                >
+                  <Icon size={15} color={active ? '#4ade80' : '#6b7280'} />
+                  {label}
+                </Link>
+              )
+            })}
+          </div>
+        </div>
+      )}
+      <div className={isTabRoot ? 'flex-1 mt-2' : 'flex-1'}>
+        {children}
+      </div>
+    </div>
+  )
+}
