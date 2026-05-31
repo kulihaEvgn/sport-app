@@ -6,7 +6,7 @@ import {
   useMotionValue, useTransform,
   type PanInfo,
 } from 'framer-motion'
-import { X, LayoutList, CreditCard, Timer, Check, ChevronRight, ChevronLeft } from 'lucide-react'
+import { X, LayoutList, CreditCard, Check, ChevronRight, ChevronLeft } from 'lucide-react'
 import { useWorkoutStore } from '@/store/workout-store'
 import { useLastExerciseSets } from '@/hooks/use-history'
 import { MUSCLE_GROUP_COLORS, MUSCLE_GROUP_LABELS } from '@/lib/muscle-groups'
@@ -534,8 +534,8 @@ interface Props {
 export default function ActiveWorkout({ onFinish, onDiscard }: Props) {
   const {
     template, activeWorkout,
-    viewMode, restEndsAt, workoutStartedAt,
-    logSet, startRest, stopRest,
+    viewMode, workoutStartedAt,
+    logSet,
     finishWorkout, discardWorkout, setViewMode,
   } = useWorkoutStore()
 
@@ -544,7 +544,6 @@ export default function ActiveWorkout({ onFinish, onDiscard }: Props) {
   const [tinderIdx, setTinderIdx]       = useState(0)
   const [showDiscard, setShowDiscard]   = useState(false)
   const [elapsed, setElapsed]           = useState(0)
-  const [restLeft, setRestLeft]         = useState(0)
 
   const userId    = activeWorkout?.userId ?? ''
   const exercises = template?.exercises ?? []
@@ -556,19 +555,6 @@ export default function ActiveWorkout({ onFinish, onDiscard }: Props) {
     }, 1000)
     return () => clearInterval(id)
   }, [workoutStartedAt])
-
-  // Rest countdown
-  useEffect(() => {
-    if (!restEndsAt) { setRestLeft(0); return }
-    const tick = () => {
-      const remaining = Math.ceil((restEndsAt.getTime() - Date.now()) / 1000)
-      if (remaining <= 0) { setRestLeft(0); stopRest() }
-      else setRestLeft(remaining)
-    }
-    tick()
-    const id = setInterval(tick, 500)
-    return () => clearInterval(id)
-  }, [restEndsAt, stopRest])
 
   if (!template) return null
 
@@ -591,7 +577,6 @@ export default function ActiveWorkout({ onFinish, onDiscard }: Props) {
       })
     }
     setCompletedIds(prev => new Set([...prev, te.id]))
-    startRest(te.restSeconds)
   }
 
   async function handleFinish() {
@@ -646,34 +631,6 @@ export default function ActiveWorkout({ onFinish, onDiscard }: Props) {
           transition={{ duration: 0.5 }}
         />
       </div>
-
-      {/* Rest timer */}
-      <AnimatePresence>
-        {restLeft > 0 && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="mx-4 mt-3 rounded-2xl px-4 py-3 flex items-center justify-between flex-shrink-0 overflow-hidden"
-            style={{ background: 'rgba(34,211,238,0.07)', border: '1px solid rgba(34,211,238,0.25)' }}
-          >
-            <div className="flex items-center gap-2">
-              <Timer size={15} color="#22d3ee" />
-              <span className="text-[13px] font-medium" style={{ color: '#22d3ee' }}>Отдых</span>
-            </div>
-            <span className="text-[20px] font-bold" style={{ color: '#22d3ee', fontFamily: 'var(--font-mono)' }}>
-              {formatTime(restLeft)}
-            </span>
-            <button
-              onClick={stopRest}
-              className="text-[12px] font-semibold px-3 py-1 rounded-xl"
-              style={{ background: 'rgba(34,211,238,0.12)', color: '#22d3ee', border: 'none', cursor: 'pointer' }}
-            >
-              Пропустить
-            </button>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       {/* Views */}
       {viewMode === 'list' ? (
