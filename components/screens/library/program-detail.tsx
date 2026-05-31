@@ -204,7 +204,7 @@ export default function ProgramDetail({ program, onBack, onSetActive, onEdit, on
       </div>
 
       {/* Add day bottom sheet */}
-      <BottomSheet open={showAddDay} onClose={() => setShowAddDay(false)} maxHeight="50vh">
+      <BottomSheet open={showAddDay} onClose={() => setShowAddDay(false)}>
         <div className="px-4 pt-4 pb-8 flex flex-col gap-3">
             <h3 className="text-[16px] font-bold" style={{ color: '#f9fafb' }}>Новый день</h3>
             <input
