@@ -1,13 +1,17 @@
 'use client'
 
-import { ArrowLeft, CheckCircle2, Play } from 'lucide-react'
+import { useState } from 'react'
+import { ArrowLeft, CheckCircle2, Play, Pencil, Plus, Trash2, ChevronRight } from 'lucide-react'
 import type { Program, WorkoutTemplate } from '@/types'
 import { MUSCLE_GROUP_COLORS, MUSCLE_GROUP_LABELS } from '@/lib/muscle-groups'
+import { useAddTemplate, useRemoveTemplate } from '@/hooks/use-programs'
 
 interface Props {
   program: Program
   onBack: () => void
   onSetActive: (id: string) => void
+  onEdit: () => void
+  onEditDay: (templateId: string) => void
 }
 
 function getMuscleGroups(template: WorkoutTemplate) {
@@ -15,11 +19,33 @@ function getMuscleGroups(template: WorkoutTemplate) {
   return groups.slice(0, 3)
 }
 
-export default function ProgramDetail({ program, onBack, onSetActive }: Props) {
+export default function ProgramDetail({ program, onBack, onSetActive, onEdit, onEditDay }: Props) {
+  const [showAddDay, setShowAddDay]     = useState(false)
+  const [newDayName, setNewDayName]     = useState('')
+  const [confirmDelete, setConfirmDelete] = useState<string | null>(null)
+
+  const { mutateAsync: addTemplate, isPending: addingDay }     = useAddTemplate()
+  const { mutateAsync: removeTemplate, isPending: removingDay } = useRemoveTemplate()
+
+  async function handleAddDay() {
+    if (!newDayName.trim()) return
+    await addTemplate({ programId: program.id, input: { name: newDayName.trim() } })
+    setNewDayName('')
+    setShowAddDay(false)
+  }
+
+  async function handleDeleteDay(templateId: string) {
+    await removeTemplate({ programId: program.id, templateId })
+    setConfirmDelete(null)
+  }
+
   return (
     <div className="flex flex-col min-h-full">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 pt-4 pb-3" style={{ borderBottom: '1px solid #2d2d4e' }}>
+      <div
+        className="flex items-center justify-between px-4 pt-4 pb-3"
+        style={{ borderBottom: '1px solid #2d2d4e' }}
+      >
         <button
           onClick={onBack}
           className="flex items-center gap-2 text-[14px] font-medium"
@@ -28,22 +54,35 @@ export default function ProgramDetail({ program, onBack, onSetActive }: Props) {
           <ArrowLeft size={18} color="#4ade80" />
           Назад
         </button>
-        {!program.isActive && (
+        <div className="flex items-center gap-2">
+          {program.isActive ? (
+            <div className="flex items-center gap-1 text-[12px] font-semibold" style={{ color: '#4ade80' }}>
+              <CheckCircle2 size={14} />
+              Активна
+            </div>
+          ) : (
+            <button
+              onClick={() => onSetActive(program.id)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[12px] font-semibold"
+              style={{
+                background: 'rgba(74,222,128,0.12)',
+                border: '1px solid rgba(74,222,128,0.4)',
+                color: '#4ade80',
+                cursor: 'pointer',
+              }}
+            >
+              <Play size={12} fill="#4ade80" />
+              Активировать
+            </button>
+          )}
           <button
-            onClick={() => onSetActive(program.id)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[12px] font-semibold"
-            style={{ background: 'rgba(74,222,128,0.12)', border: '1px solid rgba(74,222,128,0.4)', color: '#4ade80', cursor: 'pointer' }}
+            onClick={onEdit}
+            className="w-8 h-8 flex items-center justify-center rounded-full"
+            style={{ background: '#1a1a2e', border: '1px solid #2d2d4e', cursor: 'pointer' }}
           >
-            <Play size={12} fill="#4ade80" />
-            Активировать
+            <Pencil size={14} color="#6b7280" />
           </button>
-        )}
-        {program.isActive && (
-          <div className="flex items-center gap-1 text-[12px] font-semibold" style={{ color: '#4ade80' }}>
-            <CheckCircle2 size={14} />
-            Активна
-          </div>
-        )}
+        </div>
       </div>
 
       <div className="px-4 py-5 flex flex-col gap-5">
@@ -67,9 +106,28 @@ export default function ProgramDetail({ program, onBack, onSetActive }: Props) {
 
         {/* Days list */}
         <div className="flex flex-col gap-2">
-          <span className="text-[11px] font-bold tracking-widest uppercase" style={{ color: '#6b7280', fontFamily: 'var(--font-mono)' }}>
-            ПРОГРАММА
-          </span>
+          <div className="flex items-center justify-between">
+            <span
+              className="text-[11px] font-bold tracking-widest uppercase"
+              style={{ color: '#6b7280', fontFamily: 'var(--font-mono)' }}
+            >
+              ПРОГРАММА
+            </span>
+            <button
+              onClick={() => setShowAddDay(true)}
+              className="flex items-center gap-1 px-2 py-1 rounded-lg text-[11px] font-semibold"
+              style={{
+                background: 'rgba(74,222,128,0.1)',
+                border: '1px solid rgba(74,222,128,0.3)',
+                color: '#4ade80',
+                cursor: 'pointer',
+              }}
+            >
+              <Plus size={12} />
+              Добавить день
+            </button>
+          </div>
+
           {program.templates.map(template => {
             const muscleGroups = getMuscleGroups(template)
             return (
@@ -84,7 +142,11 @@ export default function ProgramDetail({ program, onBack, onSetActive }: Props) {
                 >
                   {template.order + 1}
                 </div>
-                <div className="flex-1 min-w-0">
+                <button
+                  onClick={() => onEditDay(template.id)}
+                  className="flex-1 min-w-0 text-left"
+                  style={{ background: 'none', border: 'none', cursor: 'pointer' }}
+                >
                   <div className="flex items-center gap-2">
                     <span className="text-[14px] font-semibold" style={{ color: '#f9fafb' }}>
                       {template.name}
@@ -94,25 +156,122 @@ export default function ProgramDetail({ program, onBack, onSetActive }: Props) {
                     </span>
                   </div>
                   <div className="flex gap-1 mt-1">
-                    {muscleGroups.map(mg => (
-                      <span
-                        key={mg}
-                        className="text-[10px] font-medium px-1.5 py-0.5 rounded-md"
-                        style={{
-                          background: `${MUSCLE_GROUP_COLORS[mg]}20`,
-                          color: MUSCLE_GROUP_COLORS[mg],
-                        }}
-                      >
-                        {MUSCLE_GROUP_LABELS[mg]}
-                      </span>
-                    ))}
+                    {muscleGroups.length > 0
+                      ? muscleGroups.map(mg => (
+                          <span
+                            key={mg}
+                            className="text-[10px] font-medium px-1.5 py-0.5 rounded-md"
+                            style={{ background: `${MUSCLE_GROUP_COLORS[mg]}20`, color: MUSCLE_GROUP_COLORS[mg] }}
+                          >
+                            {MUSCLE_GROUP_LABELS[mg]}
+                          </span>
+                        ))
+                      : <span className="text-[11px]" style={{ color: '#6b7280' }}>Нет упражнений</span>
+                    }
                   </div>
+                </button>
+                <div className="flex items-center gap-1 flex-shrink-0">
+                  <button
+                    onClick={() => onEditDay(template.id)}
+                    className="w-8 h-8 flex items-center justify-center rounded-lg"
+                    style={{ background: '#16213e', border: '1px solid #2d2d4e', cursor: 'pointer' }}
+                  >
+                    <ChevronRight size={14} color="#6b7280" />
+                  </button>
+                  <button
+                    onClick={() => setConfirmDelete(template.id)}
+                    className="w-8 h-8 flex items-center justify-center rounded-lg"
+                    style={{ background: '#16213e', border: '1px solid #2d2d4e', cursor: 'pointer' }}
+                  >
+                    <Trash2 size={14} color="#f87171" />
+                  </button>
                 </div>
               </div>
             )
           })}
+
+          {program.templates.length === 0 && (
+            <div
+              className="rounded-2xl py-10 flex flex-col items-center gap-2"
+              style={{ background: '#1a1a2e', border: '1px solid #2d2d4e' }}
+            >
+              <p className="text-[13px]" style={{ color: '#6b7280' }}>Добавьте дни тренировок</p>
+            </div>
+          )}
         </div>
       </div>
+
+      {/* Add day bottom sheet */}
+      {showAddDay && (
+        <div
+          className="fixed inset-0 z-50 flex items-end"
+          style={{ background: 'rgba(0,0,0,0.6)' }}
+          onClick={() => setShowAddDay(false)}
+        >
+          <div
+            className="w-full px-4 pb-8 pt-4 rounded-t-3xl flex flex-col gap-3"
+            style={{ background: '#1a1a2e', border: '1px solid #2d2d4e' }}
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="w-10 h-1 rounded-full mx-auto mb-2" style={{ background: '#2d2d4e' }} />
+            <h3 className="text-[16px] font-bold" style={{ color: '#f9fafb' }}>Новый день</h3>
+            <input
+              value={newDayName}
+              onChange={e => setNewDayName(e.target.value)}
+              placeholder="День А / Верх / Ноги"
+              className="px-3 py-3 rounded-xl text-[14px] outline-none"
+              style={{ background: '#16213e', border: '1px solid #2d2d4e', color: '#f9fafb' }}
+              autoFocus
+            />
+            <button
+              onClick={handleAddDay}
+              disabled={!newDayName.trim() || addingDay}
+              className="w-full h-12 rounded-2xl font-bold text-[15px]"
+              style={{
+                background: newDayName.trim() ? '#4ade80' : '#2d2d4e',
+                color: newDayName.trim() ? '#0f172a' : '#6b7280',
+                border: 'none',
+                cursor: newDayName.trim() ? 'pointer' : 'not-allowed',
+              }}
+            >
+              Добавить
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Delete day confirm */}
+      {confirmDelete && (
+        <div
+          className="fixed inset-0 z-50 flex items-end"
+          style={{ background: 'rgba(0,0,0,0.6)' }}
+          onClick={() => setConfirmDelete(null)}
+        >
+          <div
+            className="w-full px-4 pb-8 pt-5 flex flex-col gap-3 rounded-t-3xl"
+            style={{ background: '#1a1a2e', border: '1px solid #2d2d4e' }}
+            onClick={e => e.stopPropagation()}
+          >
+            <p className="text-[16px] font-semibold text-center" style={{ color: '#f9fafb' }}>Удалить день?</p>
+            <p className="text-[13px] text-center" style={{ color: '#6b7280' }}>Все упражнения будут удалены</p>
+            <button
+              onClick={() => handleDeleteDay(confirmDelete)}
+              disabled={removingDay}
+              className="w-full h-12 rounded-2xl font-bold text-[15px]"
+              style={{ background: '#ef4444', color: '#fff', border: 'none', cursor: 'pointer' }}
+            >
+              Удалить
+            </button>
+            <button
+              onClick={() => setConfirmDelete(null)}
+              className="w-full h-12 rounded-2xl font-medium text-[15px]"
+              style={{ background: '#16213e', color: '#f9fafb', border: '1px solid #2d2d4e', cursor: 'pointer' }}
+            >
+              Отмена
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

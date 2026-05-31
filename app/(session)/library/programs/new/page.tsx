@@ -1,20 +1,18 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
+import ProgramForm from '@/components/screens/library/program-form'
+import { useCreateProgram } from '@/hooks/use-programs'
+import type { ProgramInput } from '@/schemas/program'
 
-// TODO Phase 4: program creation form
 export default function NewProgramPage() {
   const router = useRouter()
-  return (
-    <div className="flex flex-col items-center justify-center flex-1 gap-4 px-4">
-      <p className="text-[15px]" style={{ color: '#6b7280' }}>Создание программы — Фаза 4</p>
-      <button
-        onClick={() => router.back()}
-        className="px-4 py-2 rounded-xl text-[14px] font-semibold"
-        style={{ background: '#1a1a2e', border: '1px solid #2d2d4e', color: '#f9fafb', cursor: 'pointer' }}
-      >
-        Назад
-      </button>
-    </div>
-  )
+  const { mutateAsync: createProgram } = useCreateProgram()
+
+  async function handleSave(input: ProgramInput) {
+    await createProgram(input)
+    router.back()
+  }
+
+  return <ProgramForm onSave={handleSave} onClose={() => router.back()} />
 }

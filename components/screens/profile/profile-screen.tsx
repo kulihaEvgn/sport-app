@@ -50,6 +50,7 @@ export default function ProfileScreen() {
         style={{ background: '#1a1a2e', border: '1px solid #2d2d4e' }}
       >
         {tgUser?.photo_url ? (
+          // eslint-disable-next-line @next/next/no-img-element
           <img
             src={tgUser.photo_url}
             alt="avatar"

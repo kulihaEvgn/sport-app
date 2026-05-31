@@ -60,6 +60,7 @@ export async function getActiveProgramState(): Promise<UserProgramState | null> 
   return userProgramState
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function advanceProgramDay(userId: string): Promise<void> {
   const active = programs.find(p => p.isActive)
   if (!active) return

@@ -2,7 +2,7 @@
 
 import { ChevronRight } from 'lucide-react'
 import type { Exercise } from '@/types'
-import { MUSCLE_GROUP_COLORS, MUSCLE_GROUP_LABELS, MUSCLE_GROUP_ABBR } from '@/lib/muscle-groups'
+import { MUSCLE_GROUP_COLORS, MUSCLE_GROUP_ABBR } from '@/lib/muscle-groups'
 
 interface Props {
   exercise: Exercise

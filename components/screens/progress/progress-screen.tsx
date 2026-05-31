@@ -62,6 +62,7 @@ export default function ProgressScreen() {
         setSelectedEx(fromUrl ?? exs[0] ?? null)
       }),
     ])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   // Sync selectedEx when URL exerciseId changes

@@ -21,7 +21,7 @@ export default function ActiveWorkout({ onFinish, onDiscard }: Props) {
     template, currentExerciseIndex, viewMode,
     restEndsAt, workoutStartedAt,
     nextExercise, prevExercise, logSet, startRest, stopRest,
-    finishWorkout, discardWorkout, setViewMode, logStatus,
+    finishWorkout, discardWorkout, setViewMode,
   } = useWorkoutStore()
 
   const [sets, setSets]             = useState<SetEntry[]>([])
@@ -72,12 +72,12 @@ export default function ActiveWorkout({ onFinish, onDiscard }: Props) {
         done: false,
       })),
     )
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentExerciseIndex, exercise?.id])
 
   if (!template || !exercise) return null
 
-  const ex            = exercise
-  const doneSets      = sets.filter(s => s.done).length
+  const ex             = exercise
   const totalExercises = template.exercises.length
 
   function formatTime(sec: number) {

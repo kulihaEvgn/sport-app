@@ -19,6 +19,7 @@ export default function DayPreviewPage({ params }: { params: Promise<{ templateI
       if (!t) router.replace('/workout')
       else setTemplate(t)
     })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [templateId])
 
   if (!template) return null

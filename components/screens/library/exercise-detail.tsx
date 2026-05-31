@@ -106,6 +106,7 @@ export default function ExerciseDetail({ exercise, onBack, onEdit, onDeleted }: 
             className="rounded-2xl overflow-hidden relative"
             style={{ aspectRatio: '16/9', background: '#1a1a2e' }}
           >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={`https://img.youtube.com/vi/${youtubeId}/mqdefault.jpg`}
               alt="preview"

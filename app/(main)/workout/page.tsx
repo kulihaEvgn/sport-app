@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import type { Program } from '@/types'
 import { getActiveProgram } from '@/services/programs'
-import { MOCK_USER } from '@/data/mock'
 import { useWorkoutStore } from '@/store/workout-store'
 import NoProgramView from '@/components/screens/workout/no-program-view'
 import ProgramOverview from '@/components/screens/workout/program-overview'
@@ -25,7 +24,8 @@ export default function WorkoutPage() {
       setProgram(p)
       setLoading(false)
     })
-  }, []) // run once on mount
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   if (loading) return null
 
