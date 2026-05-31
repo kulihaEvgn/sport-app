@@ -6,12 +6,14 @@ import {
   useMotionValue, useTransform,
   type PanInfo,
 } from 'framer-motion'
-import { X, LayoutList, CreditCard, Check, ChevronRight, ChevronLeft, RotateCcw } from 'lucide-react'
+import { X, LayoutList, CreditCard, Check, ChevronRight, ChevronLeft, RotateCcw, Play } from 'lucide-react'
 import { useWorkoutStore } from '@/store/workout-store'
 import { useLastExerciseSets } from '@/hooks/use-history'
+import { useExercise } from '@/hooks/use-exercises'
 import { MUSCLE_GROUP_COLORS, MUSCLE_GROUP_LABELS } from '@/lib/muscle-groups'
 import { ConfirmAlert } from '@/components/ui/confirm-alert'
 import { ExerciseInfoSheet } from '@/components/ui/exercise-info-sheet'
+import { VideoModal } from '@/components/ui/video-modal'
 import type { WorkoutTemplateExercise } from '@/types'
 
 // ─────────────────────────────────────────────────────────────────
@@ -239,15 +241,17 @@ function WorkoutListView({
 // ─────────────────────────────────────────────────────────────────
 
 function TinderCard({
-  te, isDone, weight, userId, onWeight, onSwipeDone, onSwipeSkip,
+  te, isDone, weight, userId, youtubeId, onWeight, onSwipeDone, onSwipeSkip, onVideoClick,
 }: {
   te: WorkoutTemplateExercise
   isDone: boolean
   weight: string
   userId: string
+  youtubeId: string | null
   onWeight: (v: string) => void
   onSwipeDone: () => void
   onSwipeSkip: () => void
+  onVideoClick: () => void
 }) {
   const color = MUSCLE_GROUP_COLORS[te.exercise.muscleGroup]
   const x = useMotionValue(0)
@@ -331,7 +335,7 @@ function TinderCard({
       </motion.div>
 
       {/* Card content */}
-      <div className="flex flex-col flex-1 p-5 gap-4 overflow-hidden">
+      <div className="flex flex-col flex-1 p-5 gap-4 overflow-hidden justify-center">
         {/* Done badge */}
         {isDone && (
           <div
@@ -386,10 +390,28 @@ function TinderCard({
           </div>
         )}
 
+        {/* Video button */}
+        {youtubeId && (
+          <button
+            onClick={e => { e.stopPropagation(); onVideoClick() }}
+            className="self-start flex items-center gap-2 px-3 py-1.5 rounded-xl text-[12px] font-semibold"
+            style={{
+              background: 'rgba(239,68,68,0.12)',
+              border: '1px solid rgba(239,68,68,0.3)',
+              color: '#f87171',
+              cursor: 'pointer',
+            }}
+          >
+            <Play size={12} fill="#f87171" color="#f87171" />
+            Видео
+          </button>
+        )}
       </div>
     </motion.div>
   )
 }
+
+const YT_REGEX = /(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/|v\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/
 
 function WorkoutTinderView({
   exercises, actions, tinderIdx, setTinderIdx, onFinish,
@@ -403,6 +425,11 @@ function WorkoutTinderView({
   const allDone = exercises.length > 0 && actions.completedIds.size >= exercises.length
   const te = exercises[tinderIdx % exercises.length]
   const [exitDir, setExitDir] = useState(0)
+  const [showVideo, setShowVideo] = useState(false)
+  const { data: liveExercise } = useExercise(te.exerciseId)
+  const exercise  = liveExercise ?? te.exercise
+  const youtubeId = exercise.videoUrl ? (exercise.videoUrl.match(YT_REGEX)?.[1] ?? null) : null
+  const isShorts  = Boolean(exercise.videoUrl?.includes('/shorts/'))
 
   function handleSwipeDone() {
     if (!actions.completedIds.has(te.id)) {
@@ -503,9 +530,11 @@ function WorkoutTinderView({
                 isDone={actions.completedIds.has(te.id)}
                 weight={actions.weights[te.id] ?? (te.plannedWeight ? String(te.plannedWeight) : '')}
                 userId={actions.userId}
+                youtubeId={youtubeId}
                 onWeight={v => actions.setWeight(te.id, v)}
                 onSwipeDone={handleSwipeDone}
                 onSwipeSkip={handleSwipeSkip}
+                onVideoClick={() => setShowVideo(true)}
               />
             </motion.div>
           </AnimatePresence>
@@ -548,6 +577,16 @@ function WorkoutTinderView({
             </motion.button>
           </div>
         </>
+      )}
+
+      {youtubeId && (
+        <VideoModal
+          open={showVideo}
+          youtubeId={youtubeId}
+          isShorts={isShorts}
+          title={exercise.name}
+          onClose={() => setShowVideo(false)}
+        />
       )}
     </div>
   )
