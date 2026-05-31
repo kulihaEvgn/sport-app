@@ -6,11 +6,12 @@ import { X } from 'lucide-react'
 interface VideoModalProps {
   open: boolean
   youtubeId: string
+  isShorts?: boolean
   title?: string
   onClose: () => void
 }
 
-export function VideoModal({ open, youtubeId, title, onClose }: VideoModalProps) {
+export function VideoModal({ open, youtubeId, isShorts = false, title, onClose }: VideoModalProps) {
   return (
     <AnimatePresence>
       {open && (
@@ -28,7 +29,8 @@ export function VideoModal({ open, youtubeId, title, onClose }: VideoModalProps)
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.94, y: 16 }}
             transition={{ type: 'spring', damping: 28, stiffness: 300 }}
-            className="w-full max-w-sm flex flex-col gap-3"
+            className="flex flex-col gap-3"
+            style={{ width: isShorts ? 'min(72vw, 320px)' : '100%', maxWidth: isShorts ? undefined : '28rem' }}
             onClick={e => e.stopPropagation()}
           >
             {/* Header */}
@@ -55,7 +57,7 @@ export function VideoModal({ open, youtubeId, title, onClose }: VideoModalProps)
             <div
               className="w-full rounded-2xl overflow-hidden"
               style={{
-                aspectRatio: '16/9',
+                aspectRatio: isShorts ? '9/16' : '16/9',
                 background: '#000',
                 boxShadow: '0 24px 64px rgba(0,0,0,0.7)',
                 border: '1px solid rgba(255,255,255,0.08)',

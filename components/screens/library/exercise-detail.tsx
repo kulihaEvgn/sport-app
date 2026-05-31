@@ -29,6 +29,7 @@ export default function ExerciseDetail({ exercise, onBack, onEdit, onDeleted }: 
   const youtubeId = exercise.videoUrl
     ? exercise.videoUrl.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/|v\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/)?.[1] ?? null
     : null
+  const isShorts = Boolean(exercise.videoUrl?.includes('/shorts/'))
 
   return (
     <div className="flex flex-col h-full">
@@ -150,6 +151,7 @@ export default function ExerciseDetail({ exercise, onBack, onEdit, onDeleted }: 
         <VideoModal
           open={showVideo}
           youtubeId={youtubeId}
+          isShorts={isShorts}
           title={exercise.name}
           onClose={() => setShowVideo(false)}
         />
