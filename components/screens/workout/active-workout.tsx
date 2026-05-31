@@ -400,9 +400,14 @@ function WorkoutTinderView({
   }
 
   const cardVariants = {
-    enter:  { x: 0, opacity: 1, scale: 1 },
-    exitR:  { x: 420, opacity: 0, rotate: 20, scale: 0.9, transition: { duration: 0.28 } },
-    exitL:  { x: -420, opacity: 0, rotate: -20, scale: 0.9, transition: { duration: 0.28 } },
+    enter:  { x: 0, opacity: 1, scale: 1, transition: { duration: 0.22 } },
+    exit: (dir: number) => ({
+      x:       dir >= 0 ? 480 : -480,
+      opacity: 0,
+      rotate:  dir >= 0 ? 20 : -20,
+      scale:   0.88,
+      transition: { duration: 0.26 },
+    }),
   }
 
   return (
@@ -467,9 +472,10 @@ function WorkoutTinderView({
         <AnimatePresence mode="wait" custom={exitDir}>
           <motion.div
             key={tinderIdx}
+            custom={exitDir}
             initial={{ scale: 0.95, opacity: 0 }}
             animate="enter"
-            exit={exitDir >= 0 ? 'exitR' : 'exitL'}
+            exit="exit"
             variants={cardVariants}
             className="flex-1 flex flex-col min-h-0"
           >
