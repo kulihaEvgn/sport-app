@@ -14,6 +14,7 @@ import {
 } from '@/hooks/use-programs'
 import ExercisePicker from '@/components/screens/library/exercise-picker'
 import { ConfirmAlert } from '@/components/ui/confirm-alert'
+import { BottomSheet } from '@/components/ui/bottom-sheet'
 import { MUSCLE_GROUP_COLORS, MUSCLE_GROUP_LABELS } from '@/lib/muscle-groups'
 
 interface ConfigState {
@@ -430,22 +431,8 @@ function ConfigSheet({
   saving, onChange, onSave, onClose,
 }: ConfigSheetProps) {
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-end"
-      style={{ background: 'rgba(0,0,0,0.7)' }}
-      onClick={onClose}
-    >
-      <div
-        className="w-full px-4 pb-8 pt-4 rounded-t-3xl flex flex-col gap-4 max-h-[85vh] overflow-y-auto"
-        style={{
-          background: 'rgba(10,10,20,0.92)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          border: '1px solid rgba(255,255,255,0.09)',
-        }}
-        onClick={e => e.stopPropagation()}
-      >
-        <div className="w-10 h-1 rounded-full mx-auto" style={{ background: 'rgba(255,255,255,0.15)' }} />
+    <BottomSheet open onClose={onClose}>
+      <div className="px-4 pb-8 pt-4 flex flex-col gap-4 overflow-y-auto">
         <h3 className="text-[15px] font-bold truncate" style={{ color: '#f9fafb' }}>{title}</h3>
 
         <NumberPad label="Подходы" value={targetSets} onChange={v => onChange({ targetSets: v })} />
@@ -510,6 +497,6 @@ function ConfigSheet({
           {saving ? 'Сохраняю...' : 'Сохранить'}
         </button>
       </div>
-    </div>
+    </BottomSheet>
   )
 }

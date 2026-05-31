@@ -6,6 +6,7 @@ import type { Program, WorkoutTemplate } from '@/types'
 import { MUSCLE_GROUP_COLORS, MUSCLE_GROUP_LABELS } from '@/lib/muscle-groups'
 import { useAddTemplate, useRemoveTemplate } from '@/hooks/use-programs'
 import { ConfirmAlert } from '@/components/ui/confirm-alert'
+import { BottomSheet } from '@/components/ui/bottom-sheet'
 
 interface Props {
   program: Program
@@ -203,18 +204,8 @@ export default function ProgramDetail({ program, onBack, onSetActive, onEdit, on
       </div>
 
       {/* Add day bottom sheet */}
-      {showAddDay && (
-        <div
-          className="fixed inset-0 z-50 flex items-end"
-          style={{ background: 'rgba(0,0,0,0.6)' }}
-          onClick={() => setShowAddDay(false)}
-        >
-          <div
-            className="w-full px-4 pb-8 pt-4 rounded-t-3xl flex flex-col gap-3"
-            style={{ background: 'rgba(10,10,20,0.92)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.09)' }}
-            onClick={e => e.stopPropagation()}
-          >
-            <div className="w-10 h-1 rounded-full mx-auto mb-2" style={{ background: 'rgba(255,255,255,0.09)' }} />
+      <BottomSheet open={showAddDay} onClose={() => setShowAddDay(false)} maxHeight="50vh">
+        <div className="px-4 pt-4 pb-8 flex flex-col gap-3">
             <h3 className="text-[16px] font-bold" style={{ color: '#f9fafb' }}>Новый день</h3>
             <input
               value={newDayName}
@@ -237,9 +228,8 @@ export default function ProgramDetail({ program, onBack, onSetActive, onEdit, on
             >
               Добавить
             </button>
-          </div>
         </div>
-      )}
+      </BottomSheet>
 
       <ConfirmAlert
         open={Boolean(confirmDelete)}
