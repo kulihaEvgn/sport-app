@@ -5,7 +5,7 @@
 
 ---
 
-## Текущее состояние: Фазы 1–6 завершены, Фаза 7 следующая
+## Текущее состояние: Фазы 1–7 завершены, Фаза 8 следующая
 
 ---
 
@@ -112,10 +112,9 @@
 - `activity-heatmap.tsx` — убран хардкод даты, используется `new Date()`
 - `exercise-picker.tsx` — spring bottom-sheet анимация, badge группы мышц
 
-### Фаза 7 — Профиль
-- Данные Telegram (имя, аватарка) — уже частично есть в `profile-screen.tsx`
-- Переключатель темы (dark/light)
-- Статистика (общее кол-во тренировок, недели активности, любимая группа мышц) — уже есть
+### Фаза 7 — Профиль ✅
+- `profile-screen.tsx` — мигрирован на `useActiveProgram`, `useWorkoutHistory`, `useFavoriteMuscleGroup`; `totalWorkouts`/`weeksActive` через `useMemo`; Framer Motion анимации
+- `store/theme-store.ts` — Zustand + persist, toggle `dark` класса на `<html>`, рабочая кнопка в профиле (Moon/Sun)
 
 ### Фаза 8 — ИИ фичи
 - Генерация описания упражнения — заглушка `handleGenerate` уже есть в `exercise-form.tsx`, нужно заменить на реальный вызов `/api/ai/description`
