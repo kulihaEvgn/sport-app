@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react'
 import { X, ChevronLeft, ChevronRight, LayoutList, CreditCard, Timer, Check } from 'lucide-react'
 import { useWorkoutStore } from '@/store/workout-store'
-import { saveWorkoutLog } from '@/services/history'
 import { MUSCLE_GROUP_COLORS, MUSCLE_GROUP_LABELS } from '@/lib/muscle-groups'
 
 interface SetEntry {
@@ -19,31 +18,46 @@ interface Props {
 
 export default function ActiveWorkout({ onFinish, onDiscard }: Props) {
   const {
-    template, currentExerciseIndex, viewMode, restTimerSeconds, isRestTimerActive,
-    nextExercise, prevExercise, logSet, startRestTimer, stopRestTimer, tickTimer,
-    finishWorkout: storeFinish, discardWorkout, setViewMode, workoutStartTime,
+    template, currentExerciseIndex, viewMode,
+    restEndsAt, workoutStartedAt,
+    nextExercise, prevExercise, logSet, startRest, stopRest,
+    finishWorkout, discardWorkout, setViewMode, logStatus,
   } = useWorkoutStore()
 
-  const [sets, setSets]           = useState<SetEntry[]>([])
+  const [sets, setSets]             = useState<SetEntry[]>([])
   const [showDiscard, setShowDiscard] = useState(false)
-  const [elapsed, setElapsed]     = useState(0)
+  const [elapsed, setElapsed]       = useState(0)
+  const [restSecondsLeft, setRestSecondsLeft] = useState(0)
 
   const exercise = template?.exercises[currentExerciseIndex]
 
-  // Workout timer
+  // Workout elapsed timer
   useEffect(() => {
     const id = setInterval(() => {
-      if (workoutStartTime) setElapsed(Math.floor((Date.now() - workoutStartTime) / 1000))
+      if (workoutStartedAt) setElapsed(Math.floor((Date.now() - workoutStartedAt.getTime()) / 1000))
     }, 1000)
     return () => clearInterval(id)
-  }, [workoutStartTime])
+  }, [workoutStartedAt])
 
-  // Rest timer
+  // Rest countdown derived from restEndsAt
   useEffect(() => {
-    if (!isRestTimerActive) return
-    const id = setInterval(tickTimer, 1000)
+    if (!restEndsAt) {
+      setRestSecondsLeft(0)
+      return
+    }
+    const tick = () => {
+      const remaining = Math.ceil((restEndsAt.getTime() - Date.now()) / 1000)
+      if (remaining <= 0) {
+        setRestSecondsLeft(0)
+        stopRest()
+      } else {
+        setRestSecondsLeft(remaining)
+      }
+    }
+    tick()
+    const id = setInterval(tick, 500)
     return () => clearInterval(id)
-  }, [isRestTimerActive, tickTimer])
+  }, [restEndsAt, stopRest])
 
   // Reset sets on exercise change
   useEffect(() => {
@@ -84,12 +98,11 @@ export default function ActiveWorkout({ onFinish, onDiscard }: Props) {
       reps: parseInt(s.reps) || 0,
       completedAt: new Date(),
     })
-    startRestTimer(ex.restSeconds)
+    startRest(ex.restSeconds)
   }
 
   async function handleFinish() {
-    const log = storeFinish()
-    if (log) await saveWorkoutLog(log)
+    await finishWorkout()
     onFinish()
   }
 
@@ -141,7 +154,7 @@ export default function ActiveWorkout({ onFinish, onDiscard }: Props) {
       </div>
 
       {/* Rest timer */}
-      {isRestTimerActive && (
+      {restSecondsLeft > 0 && (
         <div
           className="mx-4 mt-3 rounded-2xl px-4 py-3 flex items-center justify-between flex-shrink-0"
           style={{ background: 'rgba(34,211,238,0.08)', border: '1px solid rgba(34,211,238,0.3)' }}
@@ -151,10 +164,10 @@ export default function ActiveWorkout({ onFinish, onDiscard }: Props) {
             <span className="text-[13px] font-medium" style={{ color: '#22d3ee' }}>Отдых</span>
           </div>
           <span className="text-[20px] font-bold" style={{ color: '#22d3ee', fontFamily: 'var(--font-mono)' }}>
-            {formatTime(restTimerSeconds)}
+            {formatTime(restSecondsLeft)}
           </span>
           <button
-            onClick={stopRestTimer}
+            onClick={stopRest}
             className="text-[12px] font-semibold px-3 py-1 rounded-xl"
             style={{ background: 'rgba(34,211,238,0.15)', color: '#22d3ee', border: 'none', cursor: 'pointer' }}
           >

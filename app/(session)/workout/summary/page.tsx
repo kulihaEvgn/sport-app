@@ -3,23 +3,25 @@
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useWorkoutStore } from '@/store/workout-store'
+import { useWorkoutLog } from '@/hooks/use-history'
 import WorkoutSummary from '@/components/screens/workout/workout-summary'
 
 export default function WorkoutSummaryPage() {
   const router = useRouter()
-  const { lastCompletedLog, clearLastCompleted } = useWorkoutStore()
+  const { lastLogId, clearLastLogId } = useWorkoutStore()
+  const { data: log } = useWorkoutLog(lastLogId ?? '')
 
   useEffect(() => {
-    if (!lastCompletedLog) router.replace('/workout')
-  }, [lastCompletedLog, router])
+    if (!lastLogId) router.replace('/workout')
+  }, [lastLogId, router])
 
-  if (!lastCompletedLog) return null
+  if (!lastLogId || !log) return null
 
   return (
     <WorkoutSummary
-      log={lastCompletedLog}
+      log={log}
       onClose={() => {
-        clearLastCompleted()
+        clearLastLogId()
         router.push('/workout')
       }}
     />
