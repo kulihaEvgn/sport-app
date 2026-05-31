@@ -1,6 +1,8 @@
 'use client'
 
+import { motion } from 'framer-motion'
 import type { Exercise } from '@/types'
+import { MUSCLE_GROUP_LABELS, MUSCLE_GROUP_COLORS } from '@/lib/muscle-groups'
 
 interface Props {
   exercises: Exercise[]
@@ -11,13 +13,20 @@ interface Props {
 
 export default function ExercisePicker({ exercises, selectedId, onSelect, onClose }: Props) {
   return (
-    <div
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
       className="fixed inset-0 z-50 flex items-end"
       style={{ background: 'rgba(0,0,0,0.6)' }}
       onClick={onClose}
     >
-      <div
-        className="w-full max-h-[60vh] rounded-t-3xl flex flex-col"
+      <motion.div
+        initial={{ y: '100%' }}
+        animate={{ y: 0 }}
+        exit={{ y: '100%' }}
+        transition={{ type: 'spring', damping: 28, stiffness: 280 }}
+        className="w-full max-h-[65vh] rounded-t-3xl flex flex-col"
         style={{ background: '#1a1a2e', border: '1px solid #2d2d4e' }}
         onClick={e => e.stopPropagation()}
       >
@@ -30,20 +39,30 @@ export default function ExercisePicker({ exercises, selectedId, onSelect, onClos
               <button
                 key={ex.id}
                 onClick={() => onSelect(ex)}
-                className="w-full text-left px-4 py-3 text-[14px]"
+                className="w-full text-left px-4 py-3 flex items-center gap-3"
                 style={{
                   background: active ? 'rgba(74,222,128,0.08)' : 'transparent',
-                  color: active ? '#4ade80' : '#f9fafb',
                   border: 'none',
                   cursor: 'pointer',
                 }}
               >
-                {ex.name}
+                <span
+                  className="text-[10px] font-bold px-2 py-0.5 rounded-lg flex-shrink-0"
+                  style={{
+                    background: `${MUSCLE_GROUP_COLORS[ex.muscleGroup]}20`,
+                    color: MUSCLE_GROUP_COLORS[ex.muscleGroup],
+                  }}
+                >
+                  {MUSCLE_GROUP_LABELS[ex.muscleGroup]}
+                </span>
+                <span className="text-[14px]" style={{ color: active ? '#4ade80' : '#f9fafb' }}>
+                  {ex.name}
+                </span>
               </button>
             )
           })}
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   )
 }

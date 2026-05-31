@@ -2,8 +2,6 @@
 
 import { useMemo } from 'react'
 
-const REFERENCE_DATE = '2026-05-28' // matches mock data reference
-
 interface Props {
   workoutDates: Set<string>
 }
@@ -11,7 +9,7 @@ interface Props {
 export default function ActivityHeatmap({ workoutDates }: Props) {
   const weeks = useMemo(() => {
     const cells: { count: number }[] = []
-    const today = new Date(REFERENCE_DATE)
+    const today = new Date()
     for (let i = 83; i >= 0; i--) {
       const d = new Date(today)
       d.setDate(d.getDate() - i)

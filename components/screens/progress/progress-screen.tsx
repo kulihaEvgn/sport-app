@@ -1,14 +1,13 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useMemo } from 'react'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
+import { AnimatePresence, motion } from 'framer-motion'
 import { Flame, Trophy, Calendar, TrendingUp, ChevronDown } from 'lucide-react'
-import type { Exercise } from '@/types'
-import type { ExerciseProgressPoint } from '@/services/progress'
-import { getExercises } from '@/services/exercises'
-import { getWorkoutHistory } from '@/services/history'
-import { getStreak, getMonthStats, getExerciseProgress } from '@/services/progress'
 import { MOCK_USER } from '@/data/mock'
+import { useExercises } from '@/hooks/use-exercises'
+import { useWorkoutHistory } from '@/hooks/use-history'
+import { useStreak, useMonthStats, useExerciseProgress } from '@/hooks/use-progress'
 import ActivityHeatmap from './activity-heatmap'
 import ProgressChart from './progress-chart'
 import ExercisePicker from './exercise-picker'
@@ -22,23 +21,44 @@ const PERIODS = [
 
 type PeriodParam = typeof PERIODS[number]['param']
 
+const uid = MOCK_USER.id
+
 export default function ProgressScreen() {
-  const router      = useRouter()
-  const pathname    = usePathname()
+  const router       = useRouter()
+  const pathname     = usePathname()
   const searchParams = useSearchParams()
 
-  const periodParam  = (searchParams.get('period') ?? '3m') as PeriodParam
-  const exerciseId   = searchParams.get('exercise')
+  const periodParam = (searchParams.get('period') ?? '3m') as PeriodParam
+  const exerciseId  = searchParams.get('exercise')
+  const period      = PERIODS.find(p => p.param === periodParam) ?? PERIODS[1]
 
-  const period = PERIODS.find(p => p.param === periodParam) ?? PERIODS[1]
-
-  const [streak, setStreak]         = useState({ current: 0, best: 0 })
-  const [monthStats, setMonth]      = useState({ totalWorkouts: 0, totalSets: 0, totalVolume: 0 })
-  const [workoutDates, setDates]    = useState<Set<string>>(new Set())
-  const [exercises, setExercises]   = useState<Exercise[]>([])
-  const [selectedEx, setSelectedEx] = useState<Exercise | null>(null)
-  const [chartData, setChartData]   = useState<ExerciseProgressPoint[]>([])
   const [showPicker, setShowPicker] = useState(false)
+
+  const { data: exercises = [] }    = useExercises()
+  const { data: history   = [] }    = useWorkoutHistory(uid)
+  const { data: streak              = { current: 0, best: 0 } } = useStreak(uid)
+  const { data: monthStats          = { totalWorkouts: 0, totalSets: 0, totalVolume: 0 } } = useMonthStats(uid)
+
+  // Derive selected exercise from URL or first in list
+  const selectedExId = exerciseId ?? exercises[0]?.id ?? ''
+  const selectedEx   = exercises.find(e => e.id === selectedExId) ?? exercises[0] ?? null
+
+  const { data: chartData = [] } = useExerciseProgress(uid, selectedExId, period.days)
+
+  const workoutDates = useMemo(
+    () => new Set(history.map(l => l.startedAt.toDateString())),
+    [history],
+  )
+
+  const currentWeight = chartData.at(-1)?.weight ?? 0
+  const firstWeight   = chartData[0]?.weight ?? 0
+  const growthPct     = firstWeight > 0
+    ? Math.round(((currentWeight - firstWeight) / firstWeight) * 100)
+    : 0
+  const pr = chartData.reduce<typeof chartData[number] | null>(
+    (best, p) => (!best || p.weight > best.weight ? p : best),
+    null,
+  )
 
   function setParam(key: string, value: string) {
     const params = new URLSearchParams(searchParams.toString())
@@ -46,54 +66,25 @@ export default function ProgressScreen() {
     router.push(`${pathname}?${params.toString()}`)
   }
 
-  // Load static data once
-  useEffect(() => {
-    const uid = MOCK_USER.id
-    Promise.all([
-      getStreak(uid).then(setStreak),
-      getMonthStats(uid).then(setMonth),
-      getWorkoutHistory(uid).then(logs => {
-        setDates(new Set(logs.map(l => l.startedAt.toDateString())))
-      }),
-      getExercises().then(exs => {
-        setExercises(exs)
-        // Set initial exercise from URL or default to first
-        const fromUrl = exerciseId ? exs.find(e => e.id === exerciseId) : null
-        setSelectedEx(fromUrl ?? exs[0] ?? null)
-      }),
-    ])
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  // Sync selectedEx when URL exerciseId changes
-  useEffect(() => {
-    if (!exercises.length) return
-    const ex = exerciseId ? exercises.find(e => e.id === exerciseId) : exercises[0]
-    if (ex) setSelectedEx(ex)
-  }, [exerciseId, exercises])
-
-  // Load chart data when exercise or period changes
-  useEffect(() => {
-    if (!selectedEx) return
-    getExerciseProgress(MOCK_USER.id, selectedEx.id, period.days).then(setChartData)
-  }, [selectedEx, period.days])
-
-  const currentWeight = chartData.at(-1)?.weight ?? 0
-  const firstWeight   = chartData[0]?.weight ?? 0
-  const growthPct     = firstWeight > 0
-    ? Math.round(((currentWeight - firstWeight) / firstWeight) * 100)
-    : 0
-  const pr = chartData.reduce<ExerciseProgressPoint | null>(
-    (best, p) => (!best || p.weight > best.weight ? p : best),
-    null,
-  )
-
   return (
     <div className="flex flex-col px-4 pt-5 gap-5 pb-4">
-      <h1 className="text-[22px] font-bold" style={{ color: '#f9fafb' }}>Прогресс</h1>
+      <motion.h1
+        initial={{ opacity: 0, y: -8 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="text-[22px] font-bold"
+        style={{ color: '#f9fafb' }}
+      >
+        Прогресс
+      </motion.h1>
 
       {/* Activity card */}
-      <div className="rounded-2xl px-4 py-4 flex flex-col gap-3" style={{ background: '#1a1a2e', border: '1px solid #2d2d4e' }}>
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.05 }}
+        className="rounded-2xl px-4 py-4 flex flex-col gap-3"
+        style={{ background: '#1a1a2e', border: '1px solid #2d2d4e' }}
+      >
         <div className="flex items-center justify-between">
           <span className="text-[11px] font-bold tracking-widest uppercase" style={{ color: '#6b7280', fontFamily: 'var(--font-mono)' }}>
             АКТИВНОСТЬ
@@ -108,42 +99,51 @@ export default function ProgressScreen() {
         <ActivityHeatmap workoutDates={workoutDates} />
 
         <div className="flex gap-5 pt-1">
-          <div>
-            <div className="text-[18px] font-bold" style={{ color: '#4ade80' }}>{monthStats.totalWorkouts}</div>
-            <div className="text-[11px]" style={{ color: '#6b7280' }}>трен. за месяц</div>
-          </div>
-          <div>
-            <div className="text-[18px] font-bold" style={{ color: '#4ade80' }}>{streak.best}</div>
-            <div className="text-[11px]" style={{ color: '#6b7280' }}>лучший streak</div>
-          </div>
-          <div>
-            <div className="text-[18px] font-bold" style={{ color: '#4ade80' }}>{streak.current}</div>
-            <div className="text-[11px]" style={{ color: '#6b7280' }}>текущий streak</div>
-          </div>
+          {[
+            { value: monthStats.totalWorkouts, label: 'трен. за месяц' },
+            { value: streak.best,              label: 'лучший streak'  },
+            { value: streak.current,           label: 'текущий streak' },
+          ].map(stat => (
+            <div key={stat.label}>
+              <div className="text-[18px] font-bold" style={{ color: '#4ade80' }}>{stat.value}</div>
+              <div className="text-[11px]" style={{ color: '#6b7280' }}>{stat.label}</div>
+            </div>
+          ))}
         </div>
-      </div>
+      </motion.div>
 
       {/* Month stats row */}
-      <div className="flex gap-3">
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+        className="flex gap-3"
+      >
         {[
-          { icon: <Calendar size={16} color="#22d3ee" />, value: monthStats.totalWorkouts,                     label: 'тренировок' },
-          { icon: <TrendingUp size={16} color="#4ade80" />, value: monthStats.totalSets,                       label: 'подходов'   },
-          { icon: <Trophy size={16} color="#f59e0b" />,    value: `${Math.round(monthStats.totalVolume/1000)}к`, label: 'кг объём'  },
-        ].map(stat => (
+          { Icon: Calendar,   color: '#22d3ee', value: monthStats.totalWorkouts,                      label: 'тренировок' },
+          { Icon: TrendingUp, color: '#4ade80', value: monthStats.totalSets,                          label: 'подходов'   },
+          { Icon: Trophy,     color: '#f59e0b', value: `${Math.round(monthStats.totalVolume / 1000)}к`, label: 'кг объём' },
+        ].map(({ Icon, color, value, label }) => (
           <div
-            key={stat.label}
+            key={label}
             className="flex-1 rounded-2xl px-3 py-3 flex flex-col gap-1"
             style={{ background: '#1a1a2e', border: '1px solid #2d2d4e' }}
           >
-            {stat.icon}
-            <div className="text-[20px] font-bold" style={{ color: '#f9fafb' }}>{stat.value}</div>
-            <div className="text-[11px]" style={{ color: '#6b7280' }}>{stat.label}</div>
+            <Icon size={16} color={color} />
+            <div className="text-[20px] font-bold" style={{ color: '#f9fafb' }}>{value}</div>
+            <div className="text-[11px]" style={{ color: '#6b7280' }}>{label}</div>
           </div>
         ))}
-      </div>
+      </motion.div>
 
       {/* Progress chart card */}
-      <div className="rounded-2xl px-4 py-4 flex flex-col gap-4" style={{ background: '#1a1a2e', border: '1px solid #2d2d4e' }}>
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.15 }}
+        className="rounded-2xl px-4 py-4 flex flex-col gap-4"
+        style={{ background: '#1a1a2e', border: '1px solid #2d2d4e' }}
+      >
         {/* Header + period selector */}
         <div className="flex items-center justify-between">
           <span className="text-[11px] font-bold tracking-widest uppercase" style={{ color: '#6b7280', fontFamily: 'var(--font-mono)' }}>
@@ -188,9 +188,9 @@ export default function ProgressScreen() {
         {/* Metrics */}
         <div className="flex gap-3">
           {[
-            { label: 'текущий',  value: `${currentWeight} кг`, color: '#4ade80' },
-            { label: 'за период', value: `${growthPct >= 0 ? '+' : ''}${growthPct}%`, color: growthPct >= 0 ? '#4ade80' : '#ef4444' },
-            { label: 'сессий',   value: String(chartData.length), color: '#f9fafb' },
+            { label: 'текущий',   value: `${currentWeight} кг`,                              color: '#4ade80' },
+            { label: 'за период', value: `${growthPct >= 0 ? '+' : ''}${growthPct}%`,        color: growthPct >= 0 ? '#4ade80' : '#ef4444' },
+            { label: 'сессий',    value: String(chartData.length),                           color: '#f9fafb' },
           ].map(m => (
             <div key={m.label} className="flex-1 text-center">
               <div className="text-[18px] font-bold" style={{ color: m.color }}>{m.value}</div>
@@ -200,35 +200,42 @@ export default function ProgressScreen() {
         </div>
 
         {/* PR card */}
-        {pr && (
-          <div
-            className="flex items-center gap-3 px-3 py-2.5 rounded-xl"
-            style={{ background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.3)' }}
-          >
-            <Trophy size={18} color="#f59e0b" />
-            <div>
-              <div className="text-[13px] font-bold" style={{ color: '#f9fafb' }}>
-                Личный рекорд: {pr.weight} кг
+        <AnimatePresence>
+          {pr && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="flex items-center gap-3 px-3 py-2.5 rounded-xl"
+              style={{ background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.3)' }}
+            >
+              <Trophy size={18} color="#f59e0b" />
+              <div>
+                <div className="text-[13px] font-bold" style={{ color: '#f9fafb' }}>
+                  Личный рекорд: {pr.weight} кг
+                </div>
+                <div className="text-[11px]" style={{ color: '#6b7280' }}>
+                  {pr.date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' })}
+                </div>
               </div>
-              <div className="text-[11px]" style={{ color: '#6b7280' }}>
-                {pr.date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' })}
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
 
-      {showPicker && (
-        <ExercisePicker
-          exercises={exercises}
-          selectedId={selectedEx?.id ?? null}
-          onSelect={ex => {
-            setParam('exercise', ex.id)
-            setShowPicker(false)
-          }}
-          onClose={() => setShowPicker(false)}
-        />
-      )}
+      <AnimatePresence>
+        {showPicker && (
+          <ExercisePicker
+            exercises={exercises}
+            selectedId={selectedEx?.id ?? null}
+            onSelect={ex => {
+              setParam('exercise', ex.id)
+              setShowPicker(false)
+            }}
+            onClose={() => setShowPicker(false)}
+          />
+        )}
+      </AnimatePresence>
     </div>
   )
 }
