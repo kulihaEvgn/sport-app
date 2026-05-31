@@ -1,4 +1,4 @@
-import type { Exercise, MuscleGroup, Difficulty, Equipment } from '@/types'
+import type { Exercise, MuscleGroup } from '@/types'
 import { MOCK_EXERCISES } from '@/data/mock'
 
 let exercises = [...MOCK_EXERCISES]
@@ -6,8 +6,7 @@ let exercises = [...MOCK_EXERCISES]
 export type CreateExerciseInput = {
   name: string
   muscleGroup: MuscleGroup
-  difficulty: Difficulty
-  equipment: Equipment
+  equipment: string
   videoUrl?: string
   description?: string
 }

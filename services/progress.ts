@@ -1,4 +1,4 @@
-import type { WorkoutLog, SetLog, MuscleGroup, Exercise } from '@/types'
+import type { SetLog, MuscleGroup, Exercise } from '@/types'
 import { getWorkoutHistory } from './history'
 
 export interface ExerciseProgressPoint {
@@ -32,7 +32,7 @@ export async function getExerciseProgress(
 
   for (const log of history) {
     if (log.startedAt < cutoff) continue
-    const sets = log.sets.filter(s => s.exerciseId === exerciseId && !s.isWarmup)
+    const sets = log.sets.filter(s => s.exerciseId === exerciseId)
     if (sets.length === 0) continue
 
     const maxWeightSet = sets.reduce<SetLog | null>((best, s) =>

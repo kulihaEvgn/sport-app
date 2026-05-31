@@ -41,7 +41,9 @@ export const useWorkoutStore = create<WorkoutStore>((set, get) => ({
     const workout: WorkoutLog = {
       id: `wlog-${Date.now()}`,
       userId,
+      programId: template.programId,
       workoutTemplateId: template.id,
+      dayIndex: template.order,
       startedAt: new Date(),
       isCompleted: false,
       sets: [],

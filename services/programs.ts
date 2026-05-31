@@ -1,5 +1,7 @@
-import type { Program, WorkoutTemplate } from '@/types'
-import { MOCK_PROGRAMS } from '@/data/mock'
+import type { Program, WorkoutTemplate, UserProgramState } from '@/types'
+import { MOCK_PROGRAMS, MOCK_USER_PROGRAM_STATE } from '@/data/mock'
+
+let userProgramState: UserProgramState = { ...MOCK_USER_PROGRAM_STATE }
 
 let programs = [...MOCK_PROGRAMS]
 
@@ -27,12 +29,31 @@ export async function createProgram(input: {
   const program: Program = {
     id: `prog-${Date.now()}`,
     ...input,
+    cycleLength: 0,
     isActive: false,
     templates: [],
     createdAt: new Date(),
   }
   programs = [program, ...programs]
   return program
+}
+
+export async function getActiveProgramState(): Promise<UserProgramState | null> {
+  const active = programs.find(p => p.isActive)
+  if (!active) return null
+  if (userProgramState.programId !== active.id) {
+    userProgramState = { userId: userProgramState.userId, programId: active.id, currentDayIndex: 0 }
+  }
+  return userProgramState
+}
+
+export async function advanceProgramDay(userId: string): Promise<void> {
+  const active = programs.find(p => p.isActive)
+  if (!active) return
+  userProgramState = {
+    ...userProgramState,
+    currentDayIndex: (userProgramState.currentDayIndex + 1) % active.cycleLength,
+  }
 }
 
 export async function updateProgram(

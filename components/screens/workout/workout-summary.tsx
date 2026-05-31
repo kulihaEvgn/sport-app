@@ -12,7 +12,7 @@ export default function WorkoutSummary({ log, onClose }: Props) {
   const duration = log.finishedAt
     ? Math.round((log.finishedAt.getTime() - log.startedAt.getTime()) / 60000)
     : 0
-  const totalSets   = log.sets.filter(s => !s.isWarmup).length
+  const totalSets   = log.sets.length
   const totalVolume = log.sets.reduce((s, set) => s + set.weight * set.reps, 0)
 
   return (

@@ -82,7 +82,7 @@ export default function ProgramDetail({ program, onBack, onSetActive }: Props) {
                   className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 text-[11px] font-bold"
                   style={{ background: 'rgba(74,222,128,0.1)', color: '#4ade80', fontFamily: 'var(--font-mono)' }}
                 >
-                  {template.dayNumber}
+                  {template.order + 1}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">

@@ -67,9 +67,13 @@ export default function DayPreview({ template, onStart, onBack }: Props) {
               <div className="flex-1">
                 <div className="text-[14px] font-semibold" style={{ color: '#f9fafb' }}>{te.exercise.name}</div>
                 <div className="text-[12px] mt-0.5" style={{ color: '#6b7280' }}>
-                  {te.targetSets} × {te.targetReps}
+                  {te.targetSets} ×{' '}
+                  {te.targetVolume.type === 'reps'
+                    ? te.targetVolume.max
+                      ? `${te.targetVolume.min}-${te.targetVolume.max}`
+                      : String(te.targetVolume.min)
+                    : `${te.targetVolume.seconds}с`}
                   {te.plannedWeight ? ` · ${te.plannedWeight} кг` : ''}
-                  {te.needsWarmup ? ' · P' : ''}
                 </div>
               </div>
               <span

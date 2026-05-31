@@ -2,11 +2,11 @@
 
 import { useState } from 'react'
 import { X, Sparkles } from 'lucide-react'
-import type { Exercise, MuscleGroup, Difficulty, Equipment } from '@/types'
+import type { Exercise, MuscleGroup } from '@/types'
 import type { CreateExerciseInput } from '@/services/exercises'
 import { MUSCLE_GROUP_LABELS, ALL_MUSCLE_GROUPS, MUSCLE_GROUP_COLORS } from '@/lib/muscle-groups'
 
-const EQUIPMENT_OPTIONS: Equipment[] = ['Штанга', 'Гантели', 'Блок', 'Тренажёр', 'Без инвентаря']
+const EQUIPMENT_OPTIONS = ['Штанга', 'Гантели', 'Блок', 'Тренажёр', 'Без инвентаря'] as const
 
 interface Props {
   initial?: Exercise
@@ -17,8 +17,7 @@ interface Props {
 export default function ExerciseForm({ initial, onSave, onClose }: Props) {
   const [name, setName]               = useState(initial?.name ?? '')
   const [muscleGroup, setMuscleGroup] = useState<MuscleGroup>(initial?.muscleGroup ?? 'chest')
-  const [difficulty, setDifficulty]   = useState<Difficulty>(initial?.difficulty ?? 3)
-  const [equipment, setEquipment]     = useState<Equipment>(initial?.equipment ?? 'Штанга')
+  const [equipment, setEquipment]     = useState(initial?.equipment ?? 'Штанга')
   const [videoUrl, setVideoUrl]       = useState(initial?.videoUrl ?? '')
   const [description, setDescription] = useState(initial?.description ?? '')
   const [saving, setSaving]           = useState(false)
@@ -28,7 +27,7 @@ export default function ExerciseForm({ initial, onSave, onClose }: Props) {
     if (!name.trim()) return
     setSaving(true)
     try {
-      await onSave({ name: name.trim(), muscleGroup, difficulty, equipment, videoUrl: videoUrl || undefined, description: description || undefined })
+      await onSave({ name: name.trim(), muscleGroup, equipment, videoUrl: videoUrl || undefined, description: description || undefined })
     } finally {
       setSaving(false)
     }
@@ -109,30 +108,6 @@ export default function ExerciseForm({ initial, onSave, onClose }: Props) {
                 </button>
               )
             })}
-          </div>
-        </div>
-
-        {/* Difficulty */}
-        <div className="flex flex-col gap-1.5">
-          <label className="text-[12px] font-semibold tracking-widest uppercase" style={{ color: '#6b7280', fontFamily: 'var(--font-mono)' }}>
-            Сложность
-          </label>
-          <div className="flex gap-2">
-            {([1, 2, 3, 4, 5] as Difficulty[]).map(d => (
-              <button
-                key={d}
-                onClick={() => setDifficulty(d)}
-                className="w-10 h-10 rounded-xl text-[13px] font-bold transition-all"
-                style={{
-                  background: difficulty >= d ? 'rgba(74,222,128,0.15)' : '#1a1a2e',
-                  border: `1px solid ${difficulty >= d ? '#4ade80' : '#2d2d4e'}`,
-                  color: difficulty >= d ? '#4ade80' : '#6b7280',
-                  cursor: 'pointer',
-                }}
-              >
-                {d}
-              </button>
-            ))}
           </div>
         </div>
 

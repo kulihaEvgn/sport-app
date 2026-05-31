@@ -36,7 +36,7 @@ export default function WorkoutPage() {
   return (
     <ProgramOverview
       program={program}
-      currentDayIndex={MOCK_USER.currentDayIndex}
+      currentDayIndex={0}
       onStartDay={t => router.push(`/workout/${t.id}`)}
       onChangeProgram={() => router.push('/library/programs')}
     />

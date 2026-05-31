@@ -111,7 +111,7 @@ export default function ProfileScreen() {
                 {activeProgram.name}
               </div>
               <div className="text-[12px] mt-0.5" style={{ color: '#6b7280' }}>
-                День {(MOCK_USER.currentDayIndex % activeProgram.templates.length) + 1} из {activeProgram.templates.length}
+                {activeProgram.templates.length} дней в цикле
                 {' · '}{activeProgram.daysPerWeek} дн/нед
               </div>
             </div>

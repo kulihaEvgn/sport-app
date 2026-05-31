@@ -8,8 +8,7 @@ export type MuscleGroup =
   | 'core'
   | 'other'
 
-export type Difficulty = 1 | 2 | 3 | 4 | 5
-
+// Используется в схемах и формах
 export type Equipment =
   | 'Штанга'
   | 'Гантели'
@@ -17,12 +16,16 @@ export type Equipment =
   | 'Тренажёр'
   | 'Без инвентаря'
 
+// Целевой объём подхода: повторы ИЛИ время — без смешения в строке
+export type TargetVolume =
+  | { type: 'reps'; min: number; max?: number }
+  | { type: 'time'; seconds: number }
+
 export interface Exercise {
   id: string
   name: string
   muscleGroup: MuscleGroup
-  difficulty: Difficulty
-  equipment: Equipment
+  equipment: string
   videoUrl?: string
   description?: string
   imageUrl?: string
@@ -35,47 +38,55 @@ export interface WorkoutTemplateExercise {
   exercise: Exercise
   order: number
   targetSets: number
-  targetReps: string
+  targetVolume: TargetVolume
   restSeconds: number
-  needsWarmup: boolean
-  rirTarget: number
   plannedWeight?: number
 }
 
 export interface WorkoutTemplate {
   id: string
   programId: string
-  dayNumber: number
+  order: number           // позиция дня в цикле (0..cycleLength-1)
   name: string
   exercises: WorkoutTemplateExercise[]
 }
 
+// cycleLength === templates.length (инвариант)
 export interface Program {
   id: string
   name: string
   description?: string
   daysPerWeek: number
+  cycleLength: number
   isActive: boolean
   templates: WorkoutTemplate[]
   createdAt: Date
+}
+
+// Прогресс пользователя по конкретной программе
+export interface UserProgramState {
+  userId: string
+  programId: string
+  currentDayIndex: number  // 0..cycleLength-1
 }
 
 export interface SetLog {
   id: string
   workoutLogId: string
   exerciseId: string
+  templateExerciseId: string
   setNumber: number
-  isWarmup: boolean
   weight: number
   reps: number
-  rir: number
   completedAt: Date
 }
 
 export interface WorkoutLog {
   id: string
   userId: string
+  programId: string
   workoutTemplateId: string
+  dayIndex: number          // снимок currentDayIndex на момент старта
   startedAt: Date
   finishedAt?: Date
   isCompleted: boolean
@@ -87,5 +98,4 @@ export interface User {
   username?: string
   firstName: string
   avatarUrl?: string
-  currentDayIndex: number
 }

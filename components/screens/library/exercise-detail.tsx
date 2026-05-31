@@ -94,18 +94,9 @@ export default function ExerciseDetail({ exercise, onBack, onEdit, onDeleted }: 
           className="flex items-center gap-3 px-4 py-3 rounded-2xl"
           style={{ background: '#1a1a2e', border: '1px solid #2d2d4e' }}
         >
-          <span className="text-[12px] font-medium" style={{ color: '#6b7280' }}>Сложность</span>
-          <div className="flex gap-1.5">
-            {Array.from({ length: 5 }, (_, i) => (
-              <div
-                key={i}
-                className="w-5 h-2 rounded-full"
-                style={{ background: i < exercise.difficulty ? color : '#2d2d4e' }}
-              />
-            ))}
-          </div>
+          <span className="text-[12px] font-medium" style={{ color: '#6b7280' }}>Инвентарь</span>
           <span className="text-[12px] font-semibold ml-auto" style={{ color }}>
-            {exercise.difficulty}/5
+            {exercise.equipment}
           </span>
         </div>
 

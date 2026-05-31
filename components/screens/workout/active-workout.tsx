@@ -9,7 +9,6 @@ import { MUSCLE_GROUP_COLORS, MUSCLE_GROUP_LABELS } from '@/lib/muscle-groups'
 interface SetEntry {
   weight: string
   reps: string
-  rir: string
   done: boolean
 }
 
@@ -49,11 +48,13 @@ export default function ActiveWorkout({ onFinish, onDiscard }: Props) {
   // Reset sets on exercise change
   useEffect(() => {
     if (!exercise) return
+    const defaultReps = exercise.targetVolume.type === 'reps'
+      ? String(exercise.targetVolume.min)
+      : '0'
     setSets(
       Array.from({ length: exercise.targetSets }, () => ({
         weight: exercise.plannedWeight ? String(exercise.plannedWeight) : '',
-        reps: exercise.targetReps.split('-')[0],
-        rir: String(exercise.rirTarget),
+        reps: defaultReps,
         done: false,
       })),
     )
@@ -77,11 +78,10 @@ export default function ActiveWorkout({ onFinish, onDiscard }: Props) {
     setSets(prev => prev.map((se, i) => i === idx ? { ...se, done: true } : se))
     logSet({
       exerciseId: ex.exerciseId,
+      templateExerciseId: ex.id,
       setNumber: idx + 1,
-      isWarmup: idx === 0 && ex.needsWarmup,
       weight: parseFloat(s.weight) || 0,
       reps: parseInt(s.reps) || 0,
-      rir: parseInt(s.rir) || 0,
       completedAt: new Date(),
     })
     startRestTimer(ex.restSeconds)
@@ -183,9 +183,13 @@ export default function ActiveWorkout({ onFinish, onDiscard }: Props) {
           {ex.exercise.name}
         </h2>
         <p className="text-[13px] mt-1" style={{ color: '#6b7280' }}>
-          {ex.targetSets} подходов × {ex.targetReps}
+          {ex.targetSets} подходов ×{' '}
+          {ex.targetVolume.type === 'reps'
+            ? ex.targetVolume.max
+              ? `${ex.targetVolume.min}-${ex.targetVolume.max}`
+              : String(ex.targetVolume.min)
+            : `${ex.targetVolume.seconds}с`}
           {ex.plannedWeight ? ` · план ${ex.plannedWeight} кг` : ''}
-          {ex.needsWarmup ? ' · P' : ''}
         </p>
       </div>
 
@@ -209,7 +213,6 @@ export default function ActiveWorkout({ onFinish, onDiscard }: Props) {
               {[
                 { label: 'кг',    key: 'weight' as const, mode: 'decimal'  as const, w: 'w-16' },
                 { label: 'повт.', key: 'reps'   as const, mode: 'numeric'  as const, w: 'w-16' },
-                { label: 'ЗДО',   key: 'rir'    as const, mode: 'numeric'  as const, w: 'w-12' },
               ].map(({ label, key, mode, w }) => (
                 <div key={key} className="flex flex-col items-center gap-0.5">
                   <span className="text-[10px]" style={{ color: '#6b7280' }}>{label}</span>

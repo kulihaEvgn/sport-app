@@ -38,18 +38,6 @@ export default function ExerciseCard({ exercise, onClick }: Props) {
           {exercise.name}
         </div>
         <div className="flex items-center gap-2 mt-0.5">
-          {/* Difficulty dots */}
-          <div className="flex gap-0.5">
-            {Array.from({ length: 5 }, (_, i) => (
-              <div
-                key={i}
-                className="w-1.5 h-1.5 rounded-full"
-                style={{
-                  background: i < exercise.difficulty ? color : '#2d2d4e',
-                }}
-              />
-            ))}
-          </div>
           <span className="text-[11px]" style={{ color: '#6b7280' }}>
             {exercise.equipment}
           </span>

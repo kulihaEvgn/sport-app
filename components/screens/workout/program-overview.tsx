@@ -65,7 +65,7 @@ export default function ProgramOverview({ program, currentDayIndex, onStartDay, 
                   fontFamily: 'var(--font-mono)',
                 }}
               >
-                {template.dayNumber}
+                {template.order + 1}
               </div>
               <div className="flex-1">
                 <div className="flex items-center gap-2">
