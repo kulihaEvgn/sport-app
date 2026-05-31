@@ -1,12 +1,13 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import {
   motion, AnimatePresence,
   useMotionValue, useTransform,
   type PanInfo,
 } from 'framer-motion'
-import { X, LayoutList, CreditCard, Check, ChevronRight, ChevronLeft, Play, RotateCcw } from 'lucide-react'
+import { X, LayoutList, CreditCard, Check, ChevronRight, ChevronLeft, Play, RotateCcw, ArrowUpRight } from 'lucide-react'
 import { useWorkoutStore } from '@/store/workout-store'
 import { useLastExerciseSets } from '@/hooks/use-history'
 import { MUSCLE_GROUP_COLORS, MUSCLE_GROUP_LABELS } from '@/lib/muscle-groups'
@@ -192,6 +193,7 @@ function ExerciseListRow({
 
 function ExerciseInfoSheet({ te, onClose }: { te: WorkoutTemplateExercise; onClose: () => void }) {
   const [showVideo, setShowVideo] = useState(false)
+  const router = useRouter()
   const color     = MUSCLE_GROUP_COLORS[te.exercise.muscleGroup]
   const youtubeId = te.exercise.videoUrl
     ? te.exercise.videoUrl.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/|v\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/)?.[1] ?? null
@@ -239,24 +241,40 @@ function ExerciseInfoSheet({ te, onClose }: { te: WorkoutTemplateExercise; onClo
             </p>
           )}
 
-          {/* Video button */}
-          {youtubeId && (
+          {/* Buttons row */}
+          <div className="flex gap-2">
+            {youtubeId && (
+              <button
+                onClick={() => setShowVideo(true)}
+                className="flex-1 flex items-center justify-center gap-2 rounded-2xl font-bold text-[15px]"
+                style={{
+                  height: 52,
+                  background: 'linear-gradient(135deg, #c0392b 0%, #ef4444 100%)',
+                  color: '#fff',
+                  border: 'none',
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 20px rgba(239,68,68,0.35)',
+                }}
+              >
+                <Play size={18} fill="#fff" color="#fff" />
+                Видео
+              </button>
+            )}
             <button
-              onClick={() => setShowVideo(true)}
-              className="w-full h-13 flex items-center justify-center gap-2.5 rounded-2xl font-bold text-[15px]"
+              onClick={() => { onClose(); router.push(`/library/exercises/${te.exerciseId}`) }}
+              className="flex-1 flex items-center justify-center gap-2 rounded-2xl font-semibold text-[15px]"
               style={{
                 height: 52,
-                background: 'linear-gradient(135deg, #c0392b 0%, #ef4444 100%)',
-                color: '#fff',
-                border: 'none',
+                background: 'rgba(255,255,255,0.07)',
+                border: '1px solid rgba(255,255,255,0.12)',
+                color: '#f9fafb',
                 cursor: 'pointer',
-                boxShadow: '0 4px 20px rgba(239,68,68,0.35)',
               }}
             >
-              <Play size={18} fill="#fff" color="#fff" />
-              Смотреть видео
+              <ArrowUpRight size={17} />
+              Карточка
             </button>
-          )}
+          </div>
         </div>
       </BottomSheet>
 
