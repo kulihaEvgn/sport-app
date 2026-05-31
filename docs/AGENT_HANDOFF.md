@@ -5,7 +5,7 @@
 
 ---
 
-## Текущее состояние: Фазы 1–7 завершены, Фаза 8 следующая
+## Текущее состояние: Фазы 1–5 завершены, Фаза 6 следующая
 
 ---
 
@@ -36,19 +36,24 @@
 **Сервисы** (`services/`): все async, возвращают `Promise<T>`, работают над mock:
 - `services/exercises.ts` — CRUD
 - `services/programs.ts` — CRUD программ, шаблонов, упражнений дня; `advanceProgramDay`
-- `services/history.ts` — `saveWorkoutLog`, `getWorkoutHistory`, `getWorkoutLog`, `getLastExerciseSets`
+- `services/history.ts` — `saveWorkoutLog`, `getWorkoutHistory`, `getWorkoutLog`
 - `services/progress.ts` — `getExerciseProgress`, `getStreak`, `getMonthStats`, `getFavoriteMuscleGroup`
 
 **Хуки** (`hooks/`):
 - `use-exercises.ts` — `useExercises`, `useExercise`, `useCreateExercise`, `useUpdateExercise`, `useDeleteExercise`
-- `use-programs.ts` — `usePrograms`, `useProgram`, `useActiveProgram`, `useActiveProgramState`, `useTemplate`, `useSetActiveProgram`, `useCreateProgram`, `useUpdateProgram`, `useDeleteProgram`, `useAddTemplate`, `useUpdateTemplate`, `useRemoveTemplate`, `useAddExerciseToDay`, `useUpdateDayExercise`, `useRemoveExerciseFromDay`
+- `use-programs.ts` — `usePrograms`, `useProgram`, `useActiveProgram`, `useActiveProgramState`, `useTemplate`, `useSetActiveProgram`, `useCreateProgram`, `useUpdateProgram`, `useDeleteProgram`, `useAddTemplate`, `useUpdateTemplate`, `useRemoveTemplate`, `useAddExerciseToDay`, `useUpdateDayExercise`, `useRemoveExerciseFromDay`, `useReorderExercises`
 - `use-history.ts` — `useWorkoutHistory`, `useWorkoutLog`, `useSaveWorkoutLog`, `useLastExerciseSets`
 - `use-progress.ts` — `useExerciseProgress`, `useStreak`, `useMonthStats`, `useFavoriteMuscleGroup`
 - `use-safe-area.ts` — `useSafeAreaInsets()` → `{ top, bottom }` из Telegram SDK
 
-**Zustand stores** (`store/`):
-- `workout-store.ts` — persist + localStorage; `finishWorkout(): Promise<void>` сохраняет в history, двигает `currentDayIndex`, чистит стор; `lastLogId` — мост после завершения; `restEndsAt` не персистируется
-- `theme-store.ts` — persist + localStorage; `toggle()` переключает `dark` класс на `<html>`
+**Zustand store** (`store/workout-store.ts`):
+- persist + localStorage, `partialize` (только нужные поля)
+- `onRehydrateStorage` — оживляет Date объекты из JSON
+- `startWorkout(template, userId)` — снапшотит шаблон в стор
+- `finishWorkout(): Promise<void>` — сохраняет в history, двигает `currentDayIndex`, чистит стор
+- `lastLogId: string | null` — мост: после `finishWorkout` session-страница читает его и делает `router.push('/workout/summary/${logId}')`
+- `restoreSession(): void` — STUB (восстановление сессии работает автоматически через persist + useEffect в `/workout/page.tsx`)
+- `viewMode: 'list' | 'cards'` — персистируется между сессиями
 
 ### Фаза 3 — Layout и навигация ✅
 
@@ -58,62 +63,103 @@
 
 **Навигация**:
 - `components/nav/header.tsx` — логотип + аватарка (инициалы из Telegram), тап → `/profile`
-- `components/nav/bottom-nav.tsx` — 3 таба: `/library` | `/workout` | `/progress`, центральный акцентный
+- `components/nav/bottom-nav.tsx` — 3 таба: `/library` | `/workout` | `/progress`, zIndex: 100
 
 **Роуты (session)**:
 - `/library/exercises/new` — новое упражнение
-- `/library/exercises/[id]` — детальная карточка
+- `/library/exercises/[id]` — детальная карточка (onBack использует `router.back()`)
 - `/library/exercises/[id]/edit` — редактирование
 - `/library/programs/new` — новая программа
 - `/library/programs/[id]/edit` — редактирование программы
-- `/library/programs/[id]/days/[dayId]` — редактор дня (упражнения шаблона)
-- `/library/import` — заглушка (Import Hub отложен)
+- `/library/programs/[id]/days/[dayId]` — редактор дня
+- `/library/import` — заглушка
 - `/workout/[templateId]/session` — активная тренировка
-- `/workout/summary/[logId]` — саммари (читает из history по logId)
+- `/workout/summary/[logId]` — саммари
 - `/profile` — профиль пользователя
 
 ### Фаза 4 — Библиотека ✅
 
 **Упражнения**:
-- Список с поиском и фильтром по группе мышц (`(main)/library/exercises`)
-- CRUD: create / edit / delete — через хуки + `ExerciseForm` (react-hook-form + zod)
-- Детальная карточка с превью YouTube
+- Список с поиском и фильтром по группе мышц
+- CRUD через хуки + `ExerciseForm` (react-hook-form + zod)
+- Детальная карточка: мышца, описание, оборудование, YouTube видео (кнопка закреплена внизу)
+- `videoUrl` в mock добавлен у 9 упражнений; regex поддерживает все форматы YouTube (watch, shorts, embed, youtu.be)
 
 **Программы**:
-- Список с кнопкой активации (`(main)/library/programs`)
-- CRUD: `ProgramForm` (react-hook-form + zod, выбор дней/нед кнопками 1–7)
-- `ProgramDetail` — добавить/удалить день, перейти в редактор дня, активировать
-
-**День программы** (`(session)/library/programs/[id]/days/[dayId]`):
-- `ExercisePicker` — поиск + фильтр по мышцам, выбор из всей библиотеки
-- `ConfigSheet` — настройка: подходы, тип объёма (reps/time), min/max повторений, секунды, отдых, плановый вес
-- Редактирование / удаление упражнений
+- Список с кнопкой активации
+- CRUD: `ProgramForm`, `ProgramDetail`
+- День программы: `ExercisePicker` + `ConfigSheet`, drag-to-reorder (Framer Motion Reorder)
+- В редакторе дня: клик на упражнение → `ExerciseInfoSheet`, карандаш → `ConfigSheet`
 
 ### Фаза 5 — Тренировка ✅
-- `workout/page.tsx` — `useActiveProgram()` + `useActiveProgramState()`, реальный `currentDayIndex`
-- `workout/[templateId]/page.tsx` — `useTemplate()` хук
-- `services/history.ts` + `use-history.ts` — `getLastExerciseSets` / `useLastExerciseSets`
-- `active-workout.tsx` — Framer Motion свайпы (drag x), list-view с галочками, стрип "Предыдущий" из истории, анимированный прогресс-бар
-- `workout-summary.tsx` — анимированный Trophy, breakdown по упражнениям с max weight
 
-### Фаза 6 — Прогресс ✅
-- `progress-screen.tsx` — `useExercises`, `useWorkoutHistory`, `useStreak`, `useMonthStats`, `useExerciseProgress`; выбор упражнения из URL без локального стейта; Framer Motion анимации
-- `activity-heatmap.tsx` — динамическая дата (`new Date()` вместо хардкода)
-- `exercise-picker.tsx` — spring bottom-sheet анимация, badge группы мышц
+**`/workout` page** (`app/(main)/workout/page.tsx`):
+- Использует `useActiveProgram()` + `useActiveProgramState()` (хуки, не прямые вызовы)
+- `currentDayIndex` берётся из `programState?.currentDayIndex`
+- При наличии `activeWorkout && template` — редиректит на сессию (restore session через persist)
 
-### Фаза 7 — Профиль ✅
-- `profile-screen.tsx` — `useActiveProgram`, `useWorkoutHistory`, `useFavoriteMuscleGroup`; `totalWorkouts`/`weeksActive` через `useMemo`; Framer Motion анимации
-- `store/theme-store.ts` — Zustand + persist, кнопка Moon/Sun в профиле переключает `dark` класс на `<html>`
+**Day preview** (`components/screens/workout/day-preview.tsx`):
+- Показывает упражнения, подходы × повторения, плановый вес
+- Клик на упражнение → `ExerciseInfoSheet`
+
+**Активная тренировка** (`components/screens/workout/active-workout.tsx`):
+
+*List view* (`viewMode === 'list'`):
+- Все упражнения видны, каждый ряд кликабелен → `ExerciseInfoSheet`
+- Кнопка "Выполнено" + поле веса, предыдущий результат (`PrevResult` через `useLastExerciseSets`)
+- Деселект выполненного: кнопка "Отменить" (RotateCcw) + клик по чекмарку
+- Кнопка "Завершить тренировку" появляется когда всё выполнено
+
+*Tinder view* (`viewMode === 'cards'`):
+- Swipe right = выполнено, swipe left = пропустить (бесконечный цикл)
+- Карточка центрирована по вертикали (`justify-center`)
+- Directional exit animation через `custom` prop pattern (Framer Motion)
+- `touchAction: 'none'` на карточке — обязательно для drag на mobile
+- Action hint кнопки внизу ("← Пропустить" / "✓ Выполнено")
+- Кнопка "Видео" на карточке если есть YouTube ссылка (данные через `useExercise` — живые)
+- Progress dots вверху
+
+*Оба вида*:
+- Таймер тренировки (elapsed), переключатель вида (list ↔ cards) в хедере
+- Прогресс-бар выполненных упражнений
+- `ConfirmAlert` при отмене тренировки
+
+**Workout Summary** (`components/screens/workout/workout-summary.tsx`):
+- Показывает время, кол-во подходов, объём (кг), список упражнений
 
 ---
 
-## Что НЕ сделано (Фазы 8–10)
+## Shared UI компоненты (`components/ui/`)
+
+Все модалки/шиты используют `zIndex: 110` (выше bottom nav с `zIndex: 100`).
+
+| Компонент | Описание |
+|-----------|---------|
+| `confirm-alert.tsx` | Центрированный алерт с двумя кнопками (отмена/подтверждение), scale+fade анимация |
+| `video-modal.tsx` | YouTube iframe, `isShorts` → 9:16 aspect ratio |
+| `bottom-sheet.tsx` | Slide-up снизу, drag-to-dismiss (offset > 80px или velocity > 500), `maxHeight` prop |
+| `exercise-info-sheet.tsx` | Инфо об упражнении: мышца, план, описание, видео-кнопка, иконка-ссылка на полную карточку. Данные через `useExercise` (живые, не из снапшота Zustand). Используется в 3 местах: list view тренировки, редактор дня, day preview |
+
+---
+
+## Что НЕ сделано (Фазы 6–10)
+
+### Фаза 6 — Прогресс ⏳ СЛЕДУЮЩАЯ
+- Тепловая карта активности (заглушка `activity-heatmap.tsx` есть)
+- Графики прогресса по упражнению (заглушка `progress-chart.tsx` есть)
+- Personal Records (PR) по каждому упражнению
+- Всё читает из `services/history` через `use-history` / `use-progress` хуки
+
+### Фаза 7 — Профиль
+- Данные Telegram (имя, аватарка) — уже частично есть в `profile-screen.tsx`
+- Переключатель темы (dark/light)
+- Статистика: кол-во тренировок, недели активности, любимая группа мышц
 
 ### Фаза 8 — ИИ фичи
-- Генерация описания упражнения — заглушка `handleGenerate` уже есть в `exercise-form.tsx`, нужно реализовать `POST /api/ai/generate-exercise` и вызвать из `services/ai.ts`
-- Генерация картинки — `POST /api/ai/generate-image` (отдельный image-провайдер)
-- Подсказки прогрессии весов — `POST /api/ai/progression` (анализ последних 3 сессий из history)
-- Все ключи только серверные (env), клиентский `services/ai.ts` ходит в `/api/ai/*`
+- Генерация описания упражнения — заглушка `handleGenerate` уже есть в `exercise-form.tsx`, нужно заменить на `/api/ai/description`
+- Генерация картинки — `/api/ai/image`
+- Подсказки прогрессии весов — `/api/ai/progression`
+- Все ключи только серверные (env), клиентский код ходит в `/api/ai/*`
 
 ### Фаза 9 — Бэкенд
 - Neon (Postgres serverless) + Prisma schema
@@ -135,12 +181,19 @@
 4. Источник истины по завершённым тренировкам — `services/history`, не Zustand.
 5. Safe Area Insets — `useSafeAreaInsets()`, отступы не хардкодить.
 6. Gate перед каждым коммитом: `npx tsc --noEmit && npm run lint && npm test`.
+7. Все модальные оверлеи: `zIndex: 110` (выше bottom nav `zIndex: 100`).
+8. Framer Motion drag: обязателен `touchAction: 'none'`, нельзя `overflow-y-auto` внутри draggable.
+9. Directional exit в AnimatePresence — только через `custom` prop pattern (не через state в `exit`).
+10. `useExercise(id)` в инфо-компонентах — получает живые данные поверх снапшота в Zustand.
 
 ---
 
 ## Известные технические долги
 
-_(Нет — всё из Фаз 1–7 устранено)_
+| Файл | Проблема |
+|------|---------|
+| `store/workout-store.ts` | `restoreSession()` — stub, восстановление работает через persist + useEffect |
+| `app/(main)/workout/[templateId]/page.tsx` | Использует `MOCK_USER` напрямую — нужно заменить на Telegram userId в Фазе 9 |
 
 ---
 
@@ -159,6 +212,7 @@ app/
     profile/
 
 components/
+  ui/              — bottom-sheet, confirm-alert, video-modal, exercise-info-sheet
   nav/             — header.tsx, bottom-nav.tsx
   screens/
     library/       — exercise-card, exercise-detail, exercise-form, exercise-picker
@@ -168,9 +222,9 @@ components/
     profile/       — profile-screen
 
 hooks/             — use-exercises, use-programs, use-history, use-progress, use-safe-area
-services/          — exercises, programs, history, progress, ai (все async mock/stub)
+services/          — exercises, programs, history, progress (все async mock)
 schemas/           — exercise, program, target-volume
-store/             — workout-store.ts, theme-store.ts
+store/             — workout-store.ts (Zustand + persist)
 types/             — index.ts (все типы)
-data/              — mock.ts (mock данные)
+data/              — mock.ts (mock данные, videoUrl у 9 упражнений)
 ```
