@@ -5,7 +5,7 @@
 
 ---
 
-## Текущее состояние: Фазы 1–5 завершены, Фаза 6 следующая
+## Текущее состояние: Фазы 1–6 завершены, Фаза 7 следующая
 
 ---
 
@@ -107,11 +107,10 @@
 - `active-workout.tsx` — Framer Motion свайпы (drag x), анимированный прогресс-бар, list-view с галочками, стрип "Предыдущий" из истории
 - `workout-summary.tsx` — анимированный Trophy, breakdown по упражнениям с max weight
 
-### Фаза 6 — Прогресс
-- Тепловая карта активности (заглушка `activity-heatmap.tsx` есть)
-- Графики прогресса по упражнению (заглушка `progress-chart.tsx` есть)
-- Personal Records (PR) по каждому упражнению
-- Всё читает из `services/history` через `use-history` / `use-progress` хуки
+### Фаза 6 — Прогресс ✅
+- `progress-screen.tsx` — мигрирован на `useExercises`, `useWorkoutHistory`, `useStreak`, `useMonthStats`, `useExerciseProgress`; без useState/useEffect для данных; Framer Motion анимации
+- `activity-heatmap.tsx` — убран хардкод даты, используется `new Date()`
+- `exercise-picker.tsx` — spring bottom-sheet анимация, badge группы мышц
 
 ### Фаза 7 — Профиль
 - Данные Telegram (имя, аватарка) — уже частично есть в `profile-screen.tsx`
