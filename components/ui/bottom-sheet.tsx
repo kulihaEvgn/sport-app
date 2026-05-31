@@ -23,8 +23,8 @@ export function BottomSheet({ open, onClose, children, maxHeight = '85vh' }: Bot
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.22 }}
-          className="fixed inset-0 z-50 flex items-end"
-          style={{ background: 'rgba(0,0,0,0.65)' }}
+          className="fixed inset-0 flex items-end"
+          style={{ zIndex: 110, background: 'rgba(0,0,0,0.65)' }}
           onClick={onClose}
         >
           <motion.div
