@@ -27,7 +27,7 @@ export default function ExerciseDetail({ exercise, onBack, onEdit, onDeleted }: 
   }
 
   const youtubeId = exercise.videoUrl
-    ? exercise.videoUrl.match(/(?:v=|youtu\.be\/)([^&\n?#]+)/)?.[1] ?? null
+    ? exercise.videoUrl.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/|v\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/)?.[1] ?? null
     : null
 
   return (
