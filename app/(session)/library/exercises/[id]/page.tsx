@@ -16,7 +16,7 @@ export default function ExerciseDetailPage({ params }: { params: Promise<{ id: s
   return (
     <ExerciseDetail
       exercise={exercise}
-      onBack={() => router.push('/library/exercises')}
+      onBack={() => router.back()}
       onEdit={ex => router.push(`/library/exercises/${ex.id}/edit`)}
       onDeleted={async () => {
         await deleteExercise(exercise.id)
