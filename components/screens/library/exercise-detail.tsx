@@ -1,11 +1,12 @@
 'use client'
 
 import { useState } from 'react'
-import { ArrowLeft, Edit2, Trash2, ExternalLink, Play } from 'lucide-react'
+import { ArrowLeft, Edit2, Trash2, Play } from 'lucide-react'
 import type { Exercise } from '@/types'
 import { MUSCLE_GROUP_COLORS, MUSCLE_GROUP_LABELS, MUSCLE_GROUP_ABBR } from '@/lib/muscle-groups'
 import { deleteExercise } from '@/services/exercises'
 import { ConfirmAlert } from '@/components/ui/confirm-alert'
+import { VideoModal } from '@/components/ui/video-modal'
 
 interface Props {
   exercise: Exercise
@@ -16,6 +17,7 @@ interface Props {
 
 export default function ExerciseDetail({ exercise, onBack, onEdit, onDeleted }: Props) {
   const [confirmDelete, setConfirmDelete] = useState(false)
+  const [showVideo, setShowVideo] = useState(false)
   const color = MUSCLE_GROUP_COLORS[exercise.muscleGroup]
   const abbr = MUSCLE_GROUP_ABBR[exercise.muscleGroup]
 
@@ -25,13 +27,13 @@ export default function ExerciseDetail({ exercise, onBack, onEdit, onDeleted }: 
   }
 
   const youtubeId = exercise.videoUrl
-    ? exercise.videoUrl.match(/(?:v=|youtu\.be\/)([^&\n?#]+)/)?.[1]
+    ? exercise.videoUrl.match(/(?:v=|youtu\.be\/)([^&\n?#]+)/)?.[1] ?? null
     : null
 
   return (
-    <div className="flex flex-col min-h-full">
+    <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 pt-4 pb-3" style={{ borderBottom: '1px solid rgba(255,255,255,0.09)' }}>
+      <div className="flex items-center justify-between px-4 pt-4 pb-3 flex-shrink-0" style={{ borderBottom: '1px solid rgba(255,255,255,0.09)' }}>
         <button
           onClick={onBack}
           className="flex items-center gap-2 text-[14px] font-medium"
@@ -58,7 +60,8 @@ export default function ExerciseDetail({ exercise, onBack, onEdit, onDeleted }: 
         </div>
       </div>
 
-      <div className="px-4 py-5 flex flex-col gap-5">
+      {/* Scrollable content */}
+      <div className="flex-1 overflow-y-auto px-4 py-5 flex flex-col gap-5">
         {/* Avatar + title */}
         <div className="flex items-center gap-4">
           <div
@@ -90,7 +93,7 @@ export default function ExerciseDetail({ exercise, onBack, onEdit, onDeleted }: 
           </div>
         </div>
 
-        {/* Difficulty */}
+        {/* Equipment row */}
         <div
           className="flex items-center gap-3 px-4 py-3 rounded-2xl"
           style={{ background: 'rgba(255,255,255,0.06)', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)', border: '1px solid rgba(255,255,255,0.09)', boxShadow: '0 4px 24px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06)' }}
@@ -100,47 +103,6 @@ export default function ExerciseDetail({ exercise, onBack, onEdit, onDeleted }: 
             {exercise.equipment}
           </span>
         </div>
-
-        {/* YouTube preview */}
-        {youtubeId && (
-          <div
-            className="rounded-2xl overflow-hidden relative"
-            style={{ aspectRatio: '16/9', background: 'rgba(255,255,255,0.04)' }}
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={`https://img.youtube.com/vi/${youtubeId}/mqdefault.jpg`}
-              alt="preview"
-              className="w-full h-full object-cover"
-            />
-            <a
-              href={exercise.videoUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="absolute inset-0 flex items-center justify-center"
-              style={{ background: 'rgba(0,0,0,0.4)' }}
-            >
-              <div
-                className="w-14 h-14 rounded-full flex items-center justify-center"
-                style={{ background: 'rgba(239,68,68,0.9)' }}
-              >
-                <Play size={24} color="#fff" fill="#fff" />
-              </div>
-            </a>
-          </div>
-        )}
-        {exercise.videoUrl && !youtubeId && (
-          <a
-            href={exercise.videoUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 px-4 py-3 rounded-2xl text-[13px] font-medium"
-            style={{ background: 'rgba(255,255,255,0.06)', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)', border: '1px solid rgba(255,255,255,0.09)', boxShadow: '0 4px 24px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06)', color: '#22d3ee', textDecoration: 'none' }}
-          >
-            <ExternalLink size={15} />
-            Смотреть видео
-          </a>
-        )}
 
         {/* Description */}
         {exercise.description && (
@@ -155,6 +117,27 @@ export default function ExerciseDetail({ exercise, onBack, onEdit, onDeleted }: 
         )}
       </div>
 
+      {/* Pinned video button */}
+      {youtubeId && (
+        <div className="flex-shrink-0 px-4 pb-6 pt-3" style={{ borderTop: '1px solid rgba(255,255,255,0.07)' }}>
+          <button
+            onClick={() => setShowVideo(true)}
+            className="w-full h-13 flex items-center justify-center gap-2.5 rounded-2xl font-bold text-[15px]"
+            style={{
+              height: 52,
+              background: 'linear-gradient(135deg, #c0392b 0%, #ef4444 100%)',
+              color: '#fff',
+              border: 'none',
+              cursor: 'pointer',
+              boxShadow: '0 4px 20px rgba(239,68,68,0.35)',
+            }}
+          >
+            <Play size={18} fill="#fff" color="#fff" />
+            Видео
+          </button>
+        </div>
+      )}
+
       <ConfirmAlert
         open={confirmDelete}
         title={`Удалить «${exercise.name}»?`}
@@ -162,6 +145,15 @@ export default function ExerciseDetail({ exercise, onBack, onEdit, onDeleted }: 
         onConfirm={handleDelete}
         onCancel={() => setConfirmDelete(false)}
       />
+
+      {youtubeId && (
+        <VideoModal
+          open={showVideo}
+          youtubeId={youtubeId}
+          title={exercise.name}
+          onClose={() => setShowVideo(false)}
+        />
+      )}
     </div>
   )
 }

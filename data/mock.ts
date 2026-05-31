@@ -8,6 +8,7 @@ export const MOCK_EXERCISES: Exercise[] = [
     id: 'ex-01', name: 'Жим штанги лёжа', muscleGroup: 'chest',
     equipment: 'Штанга',
     description: 'Базовое упражнение для грудных мышц. Лёжа на скамье, хват чуть шире плеч.',
+    videoUrl: 'https://www.youtube.com/watch?v=vcBig73ojpE',
     createdAt: new Date('2026-01-01'),
   },
   {
@@ -26,6 +27,7 @@ export const MOCK_EXERCISES: Exercise[] = [
     id: 'ex-04', name: 'Жим штанги в наклоне', muscleGroup: 'chest',
     equipment: 'Штанга',
     description: 'Жим под углом 30-45°. Акцент на верхнюю часть грудных.',
+    videoUrl: 'https://www.youtube.com/watch?v=2z8JmcrW-As',
     createdAt: new Date('2026-01-01'),
   },
   // Спина
@@ -33,12 +35,14 @@ export const MOCK_EXERCISES: Exercise[] = [
     id: 'ex-05', name: 'Тяга штанги в наклоне', muscleGroup: 'back',
     equipment: 'Штанга',
     description: 'Базовое упражнение для широчайших и ромбовидных мышц.',
+    videoUrl: 'https://www.youtube.com/watch?v=9efgcAjQe7E',
     createdAt: new Date('2026-01-01'),
   },
   {
     id: 'ex-06', name: 'Подтягивания широким хватом', muscleGroup: 'back',
     equipment: 'Без инвентаря',
     description: 'Лучшее упражнение для широчайших. Хват чуть шире плеч.',
+    videoUrl: 'https://www.youtube.com/watch?v=eGo4IYlbE5g',
     createdAt: new Date('2026-01-01'),
   },
   {
@@ -58,6 +62,7 @@ export const MOCK_EXERCISES: Exercise[] = [
     id: 'ex-09', name: 'Приседания со штангой', muscleGroup: 'legs',
     equipment: 'Штанга',
     description: 'Король упражнений. Штанга на трапеции, спина прямая, колени по линии носков.',
+    videoUrl: 'https://www.youtube.com/watch?v=ultWZbUMPL8',
     createdAt: new Date('2026-01-01'),
   },
   {
@@ -89,6 +94,7 @@ export const MOCK_EXERCISES: Exercise[] = [
     id: 'ex-14', name: 'Жим гантелей сидя', muscleGroup: 'shoulders',
     equipment: 'Гантели',
     description: 'Основной жим для плеч. Больший контроль по сравнению со штангой.',
+    videoUrl: 'https://www.youtube.com/watch?v=qEwKCR5JCog',
     createdAt: new Date('2026-01-01'),
   },
   {
@@ -108,6 +114,7 @@ export const MOCK_EXERCISES: Exercise[] = [
     id: 'ex-17', name: 'Подъём штанги на бицепс', muscleGroup: 'biceps',
     equipment: 'Штанга',
     description: 'Классическое базовое упражнение для бицепса.',
+    videoUrl: 'https://www.youtube.com/watch?v=kwG2ipFRgfo',
     createdAt: new Date('2026-01-01'),
   },
   {
@@ -127,6 +134,7 @@ export const MOCK_EXERCISES: Exercise[] = [
     id: 'ex-20', name: 'Разгибания на блоке', muscleGroup: 'triceps',
     equipment: 'Блок',
     description: 'Хорошая изоляция трицепса. Локти прижаты к корпусу.',
+    videoUrl: 'https://www.youtube.com/watch?v=6SS6K3lAwZ8',
     createdAt: new Date('2026-01-01'),
   },
   // Кор
@@ -140,6 +148,7 @@ export const MOCK_EXERCISES: Exercise[] = [
     id: 'ex-22', name: 'Планка', muscleGroup: 'core',
     equipment: 'Без инвентаря',
     description: 'Статическое упражнение для всего корпуса. Не опускай таз!',
+    videoUrl: 'https://www.youtube.com/watch?v=ASdvN_XEl_c',
     createdAt: new Date('2026-01-01'),
   },
   {
