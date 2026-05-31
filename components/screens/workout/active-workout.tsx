@@ -355,19 +355,6 @@ function TinderCard({
           </div>
         )}
 
-        {/* Swipe hints */}
-        {!isDone && (
-          <div className="flex items-center justify-between mt-auto pt-2">
-            <div className="flex items-center gap-1.5" style={{ color: '#4b5563' }}>
-              <ChevronLeft size={16} />
-              <span className="text-[11px] font-medium">Пропустить</span>
-            </div>
-            <div className="flex items-center gap-1.5" style={{ color: '#4b5563' }}>
-              <span className="text-[11px] font-medium">Выполнено</span>
-              <ChevronRight size={16} />
-            </div>
-          </div>
-        )}
       </div>
     </motion.div>
   )
@@ -469,27 +456,67 @@ function WorkoutTinderView({
           </button>
         </motion.div>
       ) : (
-        <AnimatePresence mode="wait" custom={exitDir}>
-          <motion.div
-            key={tinderIdx}
-            custom={exitDir}
-            initial={{ scale: 0.95, opacity: 0 }}
-            animate="enter"
-            exit="exit"
-            variants={cardVariants}
-            className="flex-1 flex flex-col min-h-0"
-          >
-            <TinderCard
-              te={te}
-              isDone={actions.completedIds.has(te.id)}
-              weight={actions.weights[te.id] ?? (te.plannedWeight ? String(te.plannedWeight) : '')}
-              userId={actions.userId}
-              onWeight={v => actions.setWeight(te.id, v)}
-              onSwipeDone={handleSwipeDone}
-              onSwipeSkip={handleSwipeSkip}
-            />
-          </motion.div>
-        </AnimatePresence>
+        <>
+          <AnimatePresence mode="wait" custom={exitDir}>
+            <motion.div
+              key={tinderIdx}
+              custom={exitDir}
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate="enter"
+              exit="exit"
+              variants={cardVariants}
+              className="flex-1 flex flex-col min-h-0"
+            >
+              <TinderCard
+                te={te}
+                isDone={actions.completedIds.has(te.id)}
+                weight={actions.weights[te.id] ?? (te.plannedWeight ? String(te.plannedWeight) : '')}
+                userId={actions.userId}
+                onWeight={v => actions.setWeight(te.id, v)}
+                onSwipeDone={handleSwipeDone}
+                onSwipeSkip={handleSwipeSkip}
+              />
+            </motion.div>
+          </AnimatePresence>
+
+          {/* Action hints */}
+          <div className="flex gap-3 px-4 pb-2 flex-shrink-0">
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              onClick={handleSwipeSkip}
+              className="flex-1 h-14 rounded-2xl flex items-center justify-center gap-2 font-semibold text-[15px]"
+              style={{
+                background: 'rgba(255,255,255,0.06)',
+                border: '1px solid rgba(255,255,255,0.1)',
+                color: '#9ca3af',
+                cursor: 'pointer',
+              }}
+            >
+              <ChevronLeft size={18} strokeWidth={2} />
+              Пропустить
+            </motion.button>
+
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              onClick={handleSwipeDone}
+              className="flex-1 h-14 rounded-2xl flex items-center justify-center gap-2 font-bold text-[15px]"
+              style={{
+                background: actions.completedIds.has(te.id)
+                  ? 'rgba(74,222,128,0.08)'
+                  : 'rgba(74,222,128,0.14)',
+                border: '1px solid rgba(74,222,128,0.35)',
+                color: '#4ade80',
+                cursor: 'pointer',
+                boxShadow: actions.completedIds.has(te.id)
+                  ? 'none'
+                  : '0 0 20px rgba(74,222,128,0.15)',
+              }}
+            >
+              <Check size={18} strokeWidth={2.5} />
+              Выполнено
+            </motion.button>
+          </div>
+        </>
       )}
     </div>
   )
