@@ -6,11 +6,13 @@ import {
   useMotionValue, useTransform,
   type PanInfo,
 } from 'framer-motion'
-import { X, LayoutList, CreditCard, Check, ChevronRight, ChevronLeft } from 'lucide-react'
+import { X, LayoutList, CreditCard, Check, ChevronRight, ChevronLeft, Play, RotateCcw } from 'lucide-react'
 import { useWorkoutStore } from '@/store/workout-store'
 import { useLastExerciseSets } from '@/hooks/use-history'
 import { MUSCLE_GROUP_COLORS, MUSCLE_GROUP_LABELS } from '@/lib/muscle-groups'
 import { ConfirmAlert } from '@/components/ui/confirm-alert'
+import { BottomSheet } from '@/components/ui/bottom-sheet'
+import { VideoModal } from '@/components/ui/video-modal'
 import type { WorkoutTemplateExercise } from '@/types'
 
 // ─────────────────────────────────────────────────────────────────
@@ -64,6 +66,7 @@ interface WorkoutActions {
   setWeight: (teId: string, v: string) => void
   completedIds: Set<string>
   markDone: (te: WorkoutTemplateExercise) => void
+  unmarkDone: (teId: string) => void
   userId: string
 }
 
@@ -72,13 +75,14 @@ interface WorkoutActions {
 // ─────────────────────────────────────────────────────────────────
 
 function ExerciseListRow({
-  te, idx, actions,
+  te, idx, actions, onInfoClick,
 }: {
   te: WorkoutTemplateExercise
   idx: number
   actions: WorkoutActions
+  onInfoClick: (te: WorkoutTemplateExercise) => void
 }) {
-  const { weights, setWeight, completedIds, markDone, userId } = actions
+  const { weights, setWeight, completedIds, markDone, unmarkDone, userId } = actions
   const color  = MUSCLE_GROUP_COLORS[te.exercise.muscleGroup]
   const isDone = completedIds.has(te.id)
   const weight = weights[te.id] ?? (te.plannedWeight ? String(te.plannedWeight) : '')
@@ -88,28 +92,33 @@ function ExerciseListRow({
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: idx * 0.04 }}
+      onClick={() => onInfoClick(te)}
       className="rounded-2xl p-4 flex flex-col gap-3"
       style={{
         background: isDone ? 'rgba(74,222,128,0.04)' : 'rgba(255,255,255,0.05)',
         border: `1px solid ${isDone ? 'rgba(74,222,128,0.25)' : 'rgba(255,255,255,0.09)'}`,
-        opacity: isDone ? 0.55 : 1,
+        opacity: isDone ? 0.6 : 1,
         transition: 'opacity 0.3s',
+        cursor: 'pointer',
       }}
     >
-      {/* Top: number + name + muscle + sets */}
+      {/* Top: check/number + name + muscle + sets + unmark */}
       <div className="flex items-start gap-3">
-        <div
-          className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
+        <button
+          onClick={e => { e.stopPropagation(); if (isDone) unmarkDone(te.id) }}
+          className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 transition-transform active:scale-90"
           style={{
             background: isDone ? 'rgba(74,222,128,0.15)' : `${color}15`,
             border: `1px solid ${isDone ? 'rgba(74,222,128,0.4)' : `${color}40`}`,
+            cursor: isDone ? 'pointer' : 'default',
           }}
         >
           {isDone
             ? <Check size={14} color="#4ade80" strokeWidth={2.5} />
             : <span className="text-[11px] font-bold" style={{ color, fontFamily: 'var(--font-mono)' }}>{idx + 1}</span>
           }
-        </div>
+        </button>
+
         <div className="flex-1 min-w-0">
           <p className="text-[15px] font-semibold" style={{ color: isDone ? '#6b7280' : '#f9fafb' }}>
             {te.exercise.name}
@@ -121,13 +130,30 @@ function ExerciseListRow({
             <span className="text-[12px]" style={{ color: '#6b7280' }}>{setsLabel(te)}</span>
           </div>
         </div>
+
+        {isDone && (
+          <button
+            onClick={e => { e.stopPropagation(); unmarkDone(te.id) }}
+            className="flex items-center gap-1 px-2 py-1 rounded-xl flex-shrink-0"
+            style={{
+              background: 'rgba(255,255,255,0.06)',
+              border: '1px solid rgba(255,255,255,0.1)',
+              color: '#6b7280',
+              cursor: 'pointer',
+              fontSize: 11,
+            }}
+          >
+            <RotateCcw size={11} />
+            Отменить
+          </button>
+        )}
       </div>
 
       {/* Prev result + controls (only when not done) */}
       {!isDone && (
         <>
           {userId && <PrevResult userId={userId} exerciseId={te.exerciseId} />}
-          <div className="flex items-end gap-3">
+          <div className="flex items-end gap-3" onClick={e => e.stopPropagation()}>
             <div className="flex flex-col gap-1">
               <span className="text-[10px] font-medium" style={{ color: '#6b7280' }}>Вес, кг</span>
               <input
@@ -164,6 +190,89 @@ function ExerciseListRow({
   )
 }
 
+function ExerciseInfoSheet({ te, onClose }: { te: WorkoutTemplateExercise; onClose: () => void }) {
+  const [showVideo, setShowVideo] = useState(false)
+  const color     = MUSCLE_GROUP_COLORS[te.exercise.muscleGroup]
+  const youtubeId = te.exercise.videoUrl
+    ? te.exercise.videoUrl.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/|v\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/)?.[1] ?? null
+    : null
+  const isShorts  = Boolean(te.exercise.videoUrl?.includes('/shorts/'))
+
+  return (
+    <>
+      <BottomSheet open onClose={onClose}>
+        <div className="px-4 pt-4 pb-8 flex flex-col gap-4">
+          {/* Name + muscle */}
+          <div className="flex items-start gap-3">
+            <div
+              className="w-12 h-12 rounded-2xl flex items-center justify-center text-[13px] font-bold flex-shrink-0"
+              style={{ background: `${color}20`, border: `1.5px solid ${color}50`, color, fontFamily: 'var(--font-mono)' }}
+            >
+              {te.exercise.name.slice(0, 2).toUpperCase()}
+            </div>
+            <div>
+              <p className="text-[18px] font-bold leading-tight" style={{ color: '#f9fafb' }}>{te.exercise.name}</p>
+              <div className="flex items-center gap-2 mt-1">
+                <span className="text-[11px] font-semibold px-2 py-0.5 rounded-lg" style={{ background: `${color}20`, color }}>
+                  {MUSCLE_GROUP_LABELS[te.exercise.muscleGroup]}
+                </span>
+                <span className="text-[12px]" style={{ color: '#6b7280' }}>{te.exercise.equipment}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Plan */}
+          <div
+            className="px-4 py-3 rounded-2xl flex items-center justify-between"
+            style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.09)' }}
+          >
+            <span className="text-[12px]" style={{ color: '#6b7280' }}>План</span>
+            <span className="text-[13px] font-bold" style={{ color: '#f9fafb', fontFamily: 'var(--font-mono)' }}>
+              {setsLabel(te)}{te.plannedWeight ? ` · ${te.plannedWeight} кг` : ''}
+            </span>
+          </div>
+
+          {/* Description */}
+          {te.exercise.description && (
+            <p className="text-[14px] leading-relaxed" style={{ color: '#9ca3af' }}>
+              {te.exercise.description}
+            </p>
+          )}
+
+          {/* Video button */}
+          {youtubeId && (
+            <button
+              onClick={() => setShowVideo(true)}
+              className="w-full h-13 flex items-center justify-center gap-2.5 rounded-2xl font-bold text-[15px]"
+              style={{
+                height: 52,
+                background: 'linear-gradient(135deg, #c0392b 0%, #ef4444 100%)',
+                color: '#fff',
+                border: 'none',
+                cursor: 'pointer',
+                boxShadow: '0 4px 20px rgba(239,68,68,0.35)',
+              }}
+            >
+              <Play size={18} fill="#fff" color="#fff" />
+              Смотреть видео
+            </button>
+          )}
+        </div>
+      </BottomSheet>
+
+      {youtubeId && (
+        <VideoModal
+          open={showVideo}
+          youtubeId={youtubeId}
+          isShorts={isShorts}
+          title={te.exercise.name}
+          onClose={() => setShowVideo(false)}
+        />
+      )}
+    </>
+  )
+}
+
 function WorkoutListView({
   exercises, actions, onFinish,
 }: {
@@ -171,12 +280,14 @@ function WorkoutListView({
   actions: WorkoutActions
   onFinish: () => void
 }) {
+  const [infoTe, setInfoTe] = useState<WorkoutTemplateExercise | null>(null)
   const allDone = exercises.length > 0 && actions.completedIds.size >= exercises.length
 
   return (
+    <>
     <div className="flex-1 overflow-y-auto px-4 flex flex-col gap-3 py-4">
       {exercises.map((te, idx) => (
-        <ExerciseListRow key={te.id} te={te} idx={idx} actions={actions} />
+        <ExerciseListRow key={te.id} te={te} idx={idx} actions={actions} onInfoClick={setInfoTe} />
       ))}
 
       <AnimatePresence>
@@ -200,6 +311,9 @@ function WorkoutListView({
         )}
       </AnimatePresence>
     </div>
+
+    {infoTe && <ExerciseInfoSheet te={infoTe} onClose={() => setInfoTe(null)} />}
+    </>
   )
 }
 
@@ -579,13 +693,17 @@ export default function ActiveWorkout({ onFinish, onDiscard }: Props) {
     setCompletedIds(prev => new Set([...prev, te.id]))
   }
 
+  function unmarkDone(teId: string) {
+    setCompletedIds(prev => { const s = new Set(prev); s.delete(teId); return s })
+  }
+
   async function handleFinish() {
     await finishWorkout()
     const { lastLogId } = useWorkoutStore.getState()
     onFinish(lastLogId ?? '')
   }
 
-  const actions: WorkoutActions = { weights, setWeight, completedIds, markDone, userId }
+  const actions: WorkoutActions = { weights, setWeight, completedIds, markDone, unmarkDone, userId }
   const doneCount = completedIds.size
 
   return (
