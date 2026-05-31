@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { getWorkoutHistory, getWorkoutLog, saveWorkoutLog } from '@/services/history'
+import { getWorkoutHistory, getWorkoutLog, saveWorkoutLog, getLastExerciseSets } from '@/services/history'
 import type { WorkoutLog } from '@/types'
 
 export const historyKeys = {
@@ -20,6 +20,14 @@ export function useWorkoutLog(id: string) {
     queryKey: historyKeys.detail(id),
     queryFn:  () => getWorkoutLog(id),
     enabled:  Boolean(id),
+  })
+}
+
+export function useLastExerciseSets(userId: string, exerciseId: string) {
+  return useQuery({
+    queryKey: ['history', userId, 'exercise', exerciseId],
+    queryFn:  () => getLastExerciseSets(userId, exerciseId),
+    enabled:  Boolean(userId) && Boolean(exerciseId),
   })
 }
 

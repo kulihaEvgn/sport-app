@@ -22,3 +22,16 @@ export async function saveWorkoutLog(log: WorkoutLog): Promise<WorkoutLog> {
   }
   return log
 }
+
+// Returns sets from the most recent completed workout that included the given exercise.
+export async function getLastExerciseSets(userId: string, exerciseId: string): Promise<import('@/types').SetLog[]> {
+  const logs = workoutLogs
+    .filter(l => l.userId === userId && l.isCompleted)
+    .sort((a, b) => b.startedAt.getTime() - a.startedAt.getTime())
+
+  for (const log of logs) {
+    const sets = log.sets.filter(s => s.exerciseId === exerciseId)
+    if (sets.length > 0) return sets
+  }
+  return []
+}
