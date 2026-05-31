@@ -12,7 +12,7 @@ interface SetEntry {
 }
 
 interface Props {
-  onFinish: () => void
+  onFinish: (logId: string) => void
   onDiscard: () => void
 }
 
@@ -103,7 +103,8 @@ export default function ActiveWorkout({ onFinish, onDiscard }: Props) {
 
   async function handleFinish() {
     await finishWorkout()
-    onFinish()
+    const { lastLogId } = useWorkoutStore.getState()
+    onFinish(lastLogId ?? '')
   }
 
   async function handleDiscard() {

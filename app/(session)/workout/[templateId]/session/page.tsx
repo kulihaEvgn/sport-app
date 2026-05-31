@@ -6,7 +6,7 @@ import { useWorkoutStore } from '@/store/workout-store'
 import ActiveWorkout from '@/components/screens/workout/active-workout'
 
 export default function WorkoutSessionPage({ params }: { params: Promise<{ templateId: string }> }) {
-  use(params) // templateId available from store
+  use(params)
   const router = useRouter()
   const { activeWorkout } = useWorkoutStore()
 
@@ -18,7 +18,7 @@ export default function WorkoutSessionPage({ params }: { params: Promise<{ templ
 
   return (
     <ActiveWorkout
-      onFinish={() => router.push('/workout/summary')}
+      onFinish={(logId) => router.push(`/workout/summary/${logId}`)}
       onDiscard={() => router.push('/workout')}
     />
   )

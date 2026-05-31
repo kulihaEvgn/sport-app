@@ -1,11 +1,13 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { createExercise, type CreateExerciseInput } from '@/services/exercises'
+import { useCreateExercise } from '@/hooks/use-exercises'
 import ExerciseForm from '@/components/screens/library/exercise-form'
+import type { CreateExerciseInput } from '@/services/exercises'
 
 export default function NewExercisePage() {
   const router = useRouter()
+  const { mutateAsync: createExercise } = useCreateExercise()
 
   async function handleSave(input: CreateExerciseInput) {
     await createExercise(input)
