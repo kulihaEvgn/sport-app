@@ -1,8 +1,10 @@
 'use client'
 
+import { useState } from 'react'
 import { ChevronLeft, Zap } from 'lucide-react'
-import type { WorkoutTemplate } from '@/types'
+import type { WorkoutTemplate, WorkoutTemplateExercise } from '@/types'
 import { MUSCLE_GROUP_COLORS, MUSCLE_GROUP_LABELS } from '@/lib/muscle-groups'
+import { ExerciseInfoSheet } from '@/components/ui/exercise-info-sheet'
 
 interface Props {
   template: WorkoutTemplate
@@ -11,6 +13,7 @@ interface Props {
 }
 
 export default function DayPreview({ template, onStart, onBack }: Props) {
+  const [infoTe, setInfoTe] = useState<WorkoutTemplateExercise | null>(null)
   const muscleGroups = [...new Set(template.exercises.map(te => te.exercise.muscleGroup))]
   const totalSets = template.exercises.reduce((s, te) => s + te.targetSets, 0)
 
@@ -56,15 +59,16 @@ export default function DayPreview({ template, onStart, onBack }: Props) {
             УПРАЖНЕНИЯ
           </span>
           {template.exercises.map((te, idx) => (
-            <div
+            <button
               key={te.id}
-              className="rounded-2xl px-4 py-3 flex items-center gap-3"
-              style={{ background: 'rgba(255,255,255,0.06)', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)', border: '1px solid rgba(255,255,255,0.09)', boxShadow: '0 4px 24px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06)' }}
+              onClick={() => setInfoTe(te)}
+              className="rounded-2xl px-4 py-3 flex items-center gap-3 w-full text-left"
+              style={{ background: 'rgba(255,255,255,0.06)', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)', border: '1px solid rgba(255,255,255,0.09)', boxShadow: '0 4px 24px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06)', cursor: 'pointer' }}
             >
-              <span className="text-[13px] font-bold w-5 flex-shrink-0" style={{ color: '#6b7280', fontFamily: 'var(--font-mono)' }}>
+              <span className="text-[13px] font-bold w-5 shrink-0" style={{ color: '#6b7280', fontFamily: 'var(--font-mono)' }}>
                 {idx + 1}
               </span>
-              <div className="flex-1">
+              <div className="flex-1 min-w-0">
                 <div className="text-[14px] font-semibold" style={{ color: '#f9fafb' }}>{te.exercise.name}</div>
                 <div className="text-[12px] mt-0.5" style={{ color: '#6b7280' }}>
                   {te.targetSets} ×{' '}
@@ -77,7 +81,7 @@ export default function DayPreview({ template, onStart, onBack }: Props) {
                 </div>
               </div>
               <span
-                className="text-[11px] font-medium px-2 py-0.5 rounded-lg"
+                className="text-[11px] font-medium px-2 py-0.5 rounded-lg shrink-0"
                 style={{
                   background: `${MUSCLE_GROUP_COLORS[te.exercise.muscleGroup]}15`,
                   color: MUSCLE_GROUP_COLORS[te.exercise.muscleGroup],
@@ -85,7 +89,7 @@ export default function DayPreview({ template, onStart, onBack }: Props) {
               >
                 {MUSCLE_GROUP_LABELS[te.exercise.muscleGroup]}
               </span>
-            </div>
+            </button>
           ))}
         </div>
       </div>
@@ -100,6 +104,8 @@ export default function DayPreview({ template, onStart, onBack }: Props) {
           Начать тренировку
         </button>
       </div>
+
+      {infoTe && <ExerciseInfoSheet te={infoTe} onClose={() => setInfoTe(null)} />}
     </div>
   )
 }
