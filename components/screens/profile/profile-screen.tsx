@@ -1,61 +1,66 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useMemo } from 'react'
 import { useRouter } from 'next/navigation'
-import { User, Dumbbell, Calendar, Trophy, ChevronRight, Globe, Moon, ArrowLeft } from 'lucide-react'
+import { motion } from 'framer-motion'
+import { User, Dumbbell, Calendar, Trophy, ChevronRight, Moon, Sun, ArrowLeft } from 'lucide-react'
 import { useSignal, initDataUser } from '@telegram-apps/sdk-react'
-import { getActiveProgram } from '@/services/programs'
-import { getWorkoutHistory } from '@/services/history'
-import { getFavoriteMuscleGroup } from '@/services/progress'
-import { getExercises } from '@/services/exercises'
+import { useActiveProgram } from '@/hooks/use-programs'
+import { useWorkoutHistory } from '@/hooks/use-history'
+import { useFavoriteMuscleGroup } from '@/hooks/use-progress'
+import { useThemeStore } from '@/store/theme-store'
 import { MUSCLE_GROUP_LABELS, MUSCLE_GROUP_COLORS } from '@/lib/muscle-groups'
 import { MOCK_USER } from '@/data/mock'
-import type { Program, MuscleGroup } from '@/types'
+
+const uid = MOCK_USER.id
 
 export default function ProfileScreen() {
-  const router = useRouter()
-  const tgUser = useSignal(initDataUser)
+  const router  = useRouter()
+  const tgUser  = useSignal(initDataUser)
+  const { theme, toggle } = useThemeStore()
 
-  const [activeProgram,  setActiveProgram]  = useState<Program | null>(null)
-  const [totalWorkouts,  setTotalWorkouts]  = useState(0)
-  const [weeksActive,    setWeeksActive]    = useState(0)
-  const [favMuscle,      setFavMuscle]      = useState<MuscleGroup | null>(null)
+  const { data: activeProgram }  = useActiveProgram()
+  const { data: history = [] }   = useWorkoutHistory(uid)
+  const { data: favMuscle }      = useFavoriteMuscleGroup(uid)
 
-  useEffect(() => {
-    getActiveProgram().then(setActiveProgram)
-
-    Promise.all([getWorkoutHistory(MOCK_USER.id), getExercises()]).then(([logs, exercises]) => {
-      const completed = logs.filter(l => l.isCompleted)
-      setTotalWorkouts(completed.length)
-
-      if (completed.length > 0) {
-        const oldest = completed.at(-1)!.startedAt
-        setWeeksActive(Math.ceil((Date.now() - oldest.getTime()) / (7 * 24 * 3600 * 1000)))
-      }
-
-      getFavoriteMuscleGroup(MOCK_USER.id, exercises).then(setFavMuscle)
-    })
-  }, [])
+  const { totalWorkouts, weeksActive } = useMemo(() => {
+    const completed = history.filter(l => l.isCompleted)
+    const oldest    = completed.at(-1)?.startedAt
+    return {
+      totalWorkouts: completed.length,
+      weeksActive:   oldest ? Math.ceil((Date.now() - oldest.getTime()) / (7 * 24 * 3600 * 1000)) : 0,
+    }
+  }, [history])
 
   const displayName = tgUser?.first_name ?? MOCK_USER.firstName
   const username    = tgUser?.username    ?? MOCK_USER.username
 
   return (
-    <div className="flex flex-col px-4 pt-5 pb-6 gap-5">
-      <div className="flex items-center gap-3">
-        <button
-          onClick={() => router.back()}
-          className="flex items-center gap-1 text-[14px] font-medium"
-          style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#4ade80' }}
-        >
-          <ArrowLeft size={18} color="#4ade80" />
-          Назад
-        </button>
-      </div>
-      <h1 className="text-[22px] font-bold" style={{ color: '#f9fafb' }}>Профиль</h1>
+    <div className="flex flex-col px-4 pt-5 pb-6 gap-5 overflow-y-auto">
+      {/* Back */}
+      <button
+        onClick={() => router.back()}
+        className="flex items-center gap-1 text-[14px] font-medium self-start"
+        style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#4ade80' }}
+      >
+        <ArrowLeft size={18} color="#4ade80" />
+        Назад
+      </button>
+
+      <motion.h1
+        initial={{ opacity: 0, y: -8 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="text-[22px] font-bold"
+        style={{ color: '#f9fafb' }}
+      >
+        Профиль
+      </motion.h1>
 
       {/* User card */}
-      <div
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.05 }}
         className="rounded-2xl px-4 py-5 flex items-center gap-4"
         style={{ background: '#1a1a2e', border: '1px solid #2d2d4e' }}
       >
@@ -86,91 +91,117 @@ export default function ProfileScreen() {
             Telegram
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Stats */}
-      <div className="flex gap-3">
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+        className="flex gap-3"
+      >
+        <StatCard icon={<Trophy size={20} color="#4ade80" />}     value={String(totalWorkouts)} label="тренировок" />
+        <StatCard icon={<Calendar size={20} color="#22d3ee" />}   value={String(weeksActive)}   label="недель в зале" />
         <StatCard
-          icon={<Trophy size={20} color="#4ade80" />}
-          value={String(totalWorkouts)}
-          label="тренировок"
-        />
-        <StatCard
-          icon={<Calendar size={20} color="#22d3ee" />}
-          value={String(weeksActive)}
-          label="недель в зале"
-        />
-        <StatCard
-          icon={<Dumbbell size={20} color="#f59e0b" />}
-          value={favMuscle ? MUSCLE_GROUP_LABELS[favMuscle].slice(0, 3) : '—'}
+          icon={<Dumbbell size={20} color={favMuscle ? MUSCLE_GROUP_COLORS[favMuscle] : '#f59e0b'} />}
+          value={favMuscle ? MUSCLE_GROUP_LABELS[favMuscle] : '—'}
           label="любимая гр."
           valueColor={favMuscle ? MUSCLE_GROUP_COLORS[favMuscle] : '#f9fafb'}
+          small={Boolean(favMuscle)}
         />
-      </div>
+      </motion.div>
 
       {/* Active program */}
-      <Section label="АКТИВНАЯ ПРОГРАММА">
-        {activeProgram ? (
-          <button
-            onClick={() => router.push('/library/programs')}
-            className="w-full text-left rounded-2xl px-4 py-3 flex items-center gap-3 transition-all active:opacity-80"
-            style={{ background: 'rgba(74,222,128,0.07)', border: '1px solid rgba(74,222,128,0.25)', cursor: 'pointer' }}
-          >
-            <Dumbbell size={18} color="#4ade80" className="flex-shrink-0" />
-            <div className="flex-1 min-w-0">
-              <div className="text-[14px] font-semibold truncate" style={{ color: '#f9fafb' }}>
-                {activeProgram.name}
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.15 }}
+      >
+        <Section label="АКТИВНАЯ ПРОГРАММА">
+          {activeProgram ? (
+            <button
+              onClick={() => router.push('/library/programs')}
+              className="w-full text-left rounded-2xl px-4 py-3 flex items-center gap-3 transition-all active:opacity-80"
+              style={{ background: 'rgba(74,222,128,0.07)', border: '1px solid rgba(74,222,128,0.25)', cursor: 'pointer' }}
+            >
+              <Dumbbell size={18} color="#4ade80" className="flex-shrink-0" />
+              <div className="flex-1 min-w-0">
+                <div className="text-[14px] font-semibold truncate" style={{ color: '#f9fafb' }}>
+                  {activeProgram.name}
+                </div>
+                <div className="text-[12px] mt-0.5" style={{ color: '#6b7280' }}>
+                  {activeProgram.templates.length} дней в цикле · {activeProgram.daysPerWeek} дн/нед
+                </div>
               </div>
-              <div className="text-[12px] mt-0.5" style={{ color: '#6b7280' }}>
-                {activeProgram.templates.length} дней в цикле
-                {' · '}{activeProgram.daysPerWeek} дн/нед
-              </div>
-            </div>
-            <ChevronRight size={16} color="#6b7280" className="flex-shrink-0" />
-          </button>
-        ) : (
-          <button
-            onClick={() => router.push('/library/programs')}
-            className="w-full text-left rounded-2xl px-4 py-3 flex items-center gap-3"
-            style={{ background: '#1a1a2e', border: '1px solid #2d2d4e', cursor: 'pointer' }}
-          >
-            <Dumbbell size={18} color="#6b7280" />
-            <span className="flex-1 text-[14px]" style={{ color: '#6b7280' }}>Выбрать программу</span>
-            <ChevronRight size={16} color="#6b7280" />
-          </button>
-        )}
-      </Section>
+              <ChevronRight size={16} color="#6b7280" className="flex-shrink-0" />
+            </button>
+          ) : (
+            <button
+              onClick={() => router.push('/library/programs')}
+              className="w-full text-left rounded-2xl px-4 py-3 flex items-center gap-3"
+              style={{ background: '#1a1a2e', border: '1px solid #2d2d4e', cursor: 'pointer' }}
+            >
+              <Dumbbell size={18} color="#6b7280" />
+              <span className="flex-1 text-[14px]" style={{ color: '#6b7280' }}>Выбрать программу</span>
+              <ChevronRight size={16} color="#6b7280" />
+            </button>
+          )}
+        </Section>
+      </motion.div>
 
       {/* Settings */}
-      <Section label="НАСТРОЙКИ">
-        <div className="rounded-2xl overflow-hidden" style={{ border: '1px solid #2d2d4e' }}>
-          <SettingsRow
-            icon={<Globe size={16} color="#22d3ee" />}
-            label="Язык"
-            value="Русский"
-          />
-          <div style={{ height: 1, background: '#2d2d4e' }} />
-          <SettingsRow
-            icon={<Moon size={16} color="#a78bfa" />}
-            label="Тема"
-            value="Тёмная"
-          />
-        </div>
-      </Section>
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+      >
+        <Section label="НАСТРОЙКИ">
+          <div className="rounded-2xl overflow-hidden" style={{ border: '1px solid #2d2d4e' }}>
+            <div
+              className="flex items-center gap-3 px-4 py-3.5"
+              style={{ background: '#1a1a2e' }}
+            >
+              {theme === 'dark'
+                ? <Moon size={16} color="#a78bfa" />
+                : <Sun  size={16} color="#f59e0b" />
+              }
+              <span className="flex-1 text-[14px]" style={{ color: '#f9fafb' }}>Тема</span>
+              <button
+                onClick={toggle}
+                className="flex items-center gap-1.5 px-3 py-1 rounded-xl text-[12px] font-semibold"
+                style={{
+                  background: theme === 'dark' ? 'rgba(167,139,250,0.12)' : 'rgba(245,158,11,0.12)',
+                  color:      theme === 'dark' ? '#a78bfa' : '#f59e0b',
+                  border:     `1px solid ${theme === 'dark' ? 'rgba(167,139,250,0.3)' : 'rgba(245,158,11,0.3)'}`,
+                  cursor: 'pointer',
+                }}
+              >
+                {theme === 'dark' ? 'Тёмная' : 'Светлая'}
+              </button>
+            </div>
+          </div>
+        </Section>
+      </motion.div>
 
       {/* App info */}
-      <Section label="ПРИЛОЖЕНИЕ">
-        <div
-          className="rounded-2xl px-4 py-3"
-          style={{ background: '#1a1a2e', border: '1px solid #2d2d4e' }}
-        >
-          <div className="flex items-center justify-between">
-            <span className="text-[14px] font-medium" style={{ color: '#f9fafb' }}>GymApp</span>
-            <span className="text-[12px]" style={{ color: '#6b7280' }}>v0.1.0</span>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.25 }}
+      >
+        <Section label="ПРИЛОЖЕНИЕ">
+          <div
+            className="rounded-2xl px-4 py-3"
+            style={{ background: '#1a1a2e', border: '1px solid #2d2d4e' }}
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-[14px] font-medium" style={{ color: '#f9fafb' }}>GymApp</span>
+              <span className="text-[12px]" style={{ color: '#6b7280' }}>v0.1.0</span>
+            </div>
+            <div className="text-[12px] mt-1" style={{ color: '#6b7280' }}>Telegram Mini App · Фазы 1–7</div>
           </div>
-          <div className="text-[12px] mt-1" style={{ color: '#6b7280' }}>Telegram Mini App · Фаза 1–7</div>
-        </div>
-      </Section>
+        </Section>
+      </motion.div>
     </div>
   )
 }
@@ -178,12 +209,13 @@ export default function ProfileScreen() {
 // ── Sub-components ────────────────────────────────────────────────────────
 
 function StatCard({
-  icon, value, label, valueColor = '#f9fafb',
+  icon, value, label, valueColor = '#f9fafb', small = false,
 }: {
   icon: React.ReactNode
   value: string
   label: string
   valueColor?: string
+  small?: boolean
 }) {
   return (
     <div
@@ -191,7 +223,12 @@ function StatCard({
       style={{ background: '#1a1a2e', border: '1px solid #2d2d4e' }}
     >
       {icon}
-      <div className="text-[22px] font-bold" style={{ color: valueColor }}>{value}</div>
+      <div
+        className={`font-bold text-center leading-tight ${small ? 'text-[14px]' : 'text-[22px]'}`}
+        style={{ color: valueColor }}
+      >
+        {value}
+      </div>
       <div className="text-[11px] text-center" style={{ color: '#6b7280' }}>{label}</div>
     </div>
   )
@@ -207,25 +244,6 @@ function Section({ label, children }: { label: string; children: React.ReactNode
         {label}
       </span>
       {children}
-    </div>
-  )
-}
-
-function SettingsRow({
-  icon, label, value,
-}: {
-  icon: React.ReactNode
-  label: string
-  value: string
-}) {
-  return (
-    <div
-      className="flex items-center gap-3 px-4 py-3.5"
-      style={{ background: '#1a1a2e' }}
-    >
-      <div className="flex-shrink-0">{icon}</div>
-      <span className="flex-1 text-[14px]" style={{ color: '#f9fafb' }}>{label}</span>
-      <span className="text-[13px]" style={{ color: '#6b7280' }}>{value}</span>
     </div>
   )
 }
