@@ -16,7 +16,7 @@ export default function DayPreview({ template, onStart, onBack }: Props) {
 
   return (
     <div className="flex flex-col min-h-full">
-      <div className="flex items-center px-4 pt-4 pb-3" style={{ borderBottom: '1px solid #2d2d4e' }}>
+      <div className="flex items-center px-4 pt-4 pb-3" style={{ borderBottom: '1px solid rgba(255,255,255,0.09)' }}>
         <button onClick={onBack} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
           <ChevronLeft size={24} color="#4ade80" />
         </button>
@@ -59,7 +59,7 @@ export default function DayPreview({ template, onStart, onBack }: Props) {
             <div
               key={te.id}
               className="rounded-2xl px-4 py-3 flex items-center gap-3"
-              style={{ background: '#1a1a2e', border: '1px solid #2d2d4e' }}
+              style={{ background: 'rgba(255,255,255,0.06)', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)', border: '1px solid rgba(255,255,255,0.09)', boxShadow: '0 4px 24px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06)' }}
             >
               <span className="text-[13px] font-bold w-5 flex-shrink-0" style={{ color: '#6b7280', fontFamily: 'var(--font-mono)' }}>
                 {idx + 1}

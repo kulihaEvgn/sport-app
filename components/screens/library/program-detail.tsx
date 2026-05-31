@@ -44,7 +44,7 @@ export default function ProgramDetail({ program, onBack, onSetActive, onEdit, on
       {/* Header */}
       <div
         className="flex items-center justify-between px-4 pt-4 pb-3"
-        style={{ borderBottom: '1px solid #2d2d4e' }}
+        style={{ borderBottom: '1px solid rgba(255,255,255,0.09)' }}
       >
         <button
           onClick={onBack}
@@ -78,7 +78,7 @@ export default function ProgramDetail({ program, onBack, onSetActive, onEdit, on
           <button
             onClick={onEdit}
             className="w-8 h-8 flex items-center justify-center rounded-full"
-            style={{ background: '#1a1a2e', border: '1px solid #2d2d4e', cursor: 'pointer' }}
+            style={{ background: 'rgba(255,255,255,0.06)', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)', border: '1px solid rgba(255,255,255,0.09)', boxShadow: '0 4px 24px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06)', cursor: 'pointer' }}
           >
             <Pencil size={14} color="#6b7280" />
           </button>
@@ -134,7 +134,7 @@ export default function ProgramDetail({ program, onBack, onSetActive, onEdit, on
               <div
                 key={template.id}
                 className="rounded-2xl px-4 py-3 flex items-center gap-3"
-                style={{ background: '#1a1a2e', border: '1px solid #2d2d4e' }}
+                style={{ background: 'rgba(255,255,255,0.06)', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)', border: '1px solid rgba(255,255,255,0.09)', boxShadow: '0 4px 24px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06)' }}
               >
                 <div
                   className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 text-[11px] font-bold"
@@ -174,14 +174,14 @@ export default function ProgramDetail({ program, onBack, onSetActive, onEdit, on
                   <button
                     onClick={() => onEditDay(template.id)}
                     className="w-8 h-8 flex items-center justify-center rounded-lg"
-                    style={{ background: '#16213e', border: '1px solid #2d2d4e', cursor: 'pointer' }}
+                    style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.09)', cursor: 'pointer' }}
                   >
                     <ChevronRight size={14} color="#6b7280" />
                   </button>
                   <button
                     onClick={() => setConfirmDelete(template.id)}
                     className="w-8 h-8 flex items-center justify-center rounded-lg"
-                    style={{ background: '#16213e', border: '1px solid #2d2d4e', cursor: 'pointer' }}
+                    style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.09)', cursor: 'pointer' }}
                   >
                     <Trash2 size={14} color="#f87171" />
                   </button>
@@ -193,7 +193,7 @@ export default function ProgramDetail({ program, onBack, onSetActive, onEdit, on
           {program.templates.length === 0 && (
             <div
               className="rounded-2xl py-10 flex flex-col items-center gap-2"
-              style={{ background: '#1a1a2e', border: '1px solid #2d2d4e' }}
+              style={{ background: 'rgba(255,255,255,0.06)', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)', border: '1px solid rgba(255,255,255,0.09)', boxShadow: '0 4px 24px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06)' }}
             >
               <p className="text-[13px]" style={{ color: '#6b7280' }}>Добавьте дни тренировок</p>
             </div>
@@ -210,17 +210,17 @@ export default function ProgramDetail({ program, onBack, onSetActive, onEdit, on
         >
           <div
             className="w-full px-4 pb-8 pt-4 rounded-t-3xl flex flex-col gap-3"
-            style={{ background: '#1a1a2e', border: '1px solid #2d2d4e' }}
+            style={{ background: 'rgba(10,10,20,0.92)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.09)' }}
             onClick={e => e.stopPropagation()}
           >
-            <div className="w-10 h-1 rounded-full mx-auto mb-2" style={{ background: '#2d2d4e' }} />
+            <div className="w-10 h-1 rounded-full mx-auto mb-2" style={{ background: 'rgba(255,255,255,0.09)' }} />
             <h3 className="text-[16px] font-bold" style={{ color: '#f9fafb' }}>Новый день</h3>
             <input
               value={newDayName}
               onChange={e => setNewDayName(e.target.value)}
               placeholder="День А / Верх / Ноги"
               className="px-3 py-3 rounded-xl text-[14px] outline-none"
-              style={{ background: '#16213e', border: '1px solid #2d2d4e', color: '#f9fafb' }}
+              style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.09)', color: '#f9fafb' }}
               autoFocus
             />
             <button
@@ -228,7 +228,7 @@ export default function ProgramDetail({ program, onBack, onSetActive, onEdit, on
               disabled={!newDayName.trim() || addingDay}
               className="w-full h-12 rounded-2xl font-bold text-[15px]"
               style={{
-                background: newDayName.trim() ? '#4ade80' : '#2d2d4e',
+                background: newDayName.trim() ? '#4ade80' : 'rgba(255,255,255,0.09)',
                 color: newDayName.trim() ? '#0f172a' : '#6b7280',
                 border: 'none',
                 cursor: newDayName.trim() ? 'pointer' : 'not-allowed',
@@ -249,7 +249,7 @@ export default function ProgramDetail({ program, onBack, onSetActive, onEdit, on
         >
           <div
             className="w-full px-4 pb-8 pt-5 flex flex-col gap-3 rounded-t-3xl"
-            style={{ background: '#1a1a2e', border: '1px solid #2d2d4e' }}
+            style={{ background: 'rgba(10,10,20,0.92)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.09)' }}
             onClick={e => e.stopPropagation()}
           >
             <p className="text-[16px] font-semibold text-center" style={{ color: '#f9fafb' }}>Удалить день?</p>
@@ -265,7 +265,7 @@ export default function ProgramDetail({ program, onBack, onSetActive, onEdit, on
             <button
               onClick={() => setConfirmDelete(null)}
               className="w-full h-12 rounded-2xl font-medium text-[15px]"
-              style={{ background: '#16213e', color: '#f9fafb', border: '1px solid #2d2d4e', cursor: 'pointer' }}
+              style={{ background: 'rgba(255,255,255,0.05)', color: '#f9fafb', border: '1px solid rgba(255,255,255,0.09)', cursor: 'pointer' }}
             >
               Отмена
             </button>

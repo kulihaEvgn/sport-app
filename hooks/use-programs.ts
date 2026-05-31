@@ -15,6 +15,7 @@ import {
   addExerciseToDay,
   updateDayExercise,
   removeExerciseFromDay,
+  reorderExercises,
   type AddTemplateInput,
   type DayExerciseInput,
   type UpdateDayExerciseInput,
@@ -171,6 +172,21 @@ export function useUpdateDayExercise() {
       teId: string
       input: UpdateDayExerciseInput
     }) => updateDayExercise(programId, templateId, teId, input),
+    onSuccess: (_data, { programId, templateId }) => {
+      qc.invalidateQueries({ queryKey: programKeys.detail(programId) })
+      qc.invalidateQueries({ queryKey: programKeys.template(templateId) })
+    },
+  })
+}
+
+export function useReorderExercises() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ programId, templateId, orderedIds }: {
+      programId: string
+      templateId: string
+      orderedIds: string[]
+    }) => reorderExercises(programId, templateId, orderedIds),
     onSuccess: (_data, { programId, templateId }) => {
       qc.invalidateQueries({ queryKey: programKeys.detail(programId) })
       qc.invalidateQueries({ queryKey: programKeys.template(templateId) })

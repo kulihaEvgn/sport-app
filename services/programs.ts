@@ -180,6 +180,24 @@ export async function updateDayExercise(
   return template!.exercises.find(e => e.id === teId)!
 }
 
+export async function reorderExercises(
+  programId: string,
+  templateId: string,
+  orderedIds: string[],
+): Promise<void> {
+  updateProgramTemplates(programId, ts =>
+    ts.map(t => t.id !== templateId ? t : {
+      ...t,
+      exercises: orderedIds
+        .map((id, i) => {
+          const ex = t.exercises.find(e => e.id === id)
+          return ex ? { ...ex, order: i + 1 } : null
+        })
+        .filter((e): e is WorkoutTemplateExercise => e !== null),
+    }),
+  )
+}
+
 export async function removeExerciseFromDay(
   programId: string,
   templateId: string,

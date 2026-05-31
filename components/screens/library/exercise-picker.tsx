@@ -26,11 +26,11 @@ export default function ExercisePicker({ onSelect, onClose }: Props) {
   }, [exercises, query, filter])
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col" style={{ background: '#0f0f0f' }}>
+    <div className="fixed inset-0 z-50 flex flex-col" style={{ background: '#07070e' }}>
       {/* Header */}
       <div
         className="flex items-center justify-between px-4 pt-4 pb-3 flex-shrink-0"
-        style={{ borderBottom: '1px solid #2d2d4e' }}
+        style={{ borderBottom: '1px solid rgba(255,255,255,0.09)' }}
       >
         <span className="text-[16px] font-semibold" style={{ color: '#f9fafb' }}>
           Выбрать упражнение
@@ -38,7 +38,7 @@ export default function ExercisePicker({ onSelect, onClose }: Props) {
         <button
           onClick={onClose}
           className="w-8 h-8 flex items-center justify-center rounded-full"
-          style={{ background: '#2d2d4e', cursor: 'pointer' }}
+          style={{ background: 'rgba(255,255,255,0.1)', cursor: 'pointer' }}
         >
           <X size={16} color="#f9fafb" />
         </button>
@@ -48,7 +48,7 @@ export default function ExercisePicker({ onSelect, onClose }: Props) {
       <div className="px-4 pt-3 pb-2 flex-shrink-0">
         <div
           className="flex items-center gap-2 px-3 rounded-xl"
-          style={{ background: '#1a1a2e', border: '1px solid #2d2d4e' }}
+          style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.09)' }}
         >
           <Search size={15} color="#6b7280" />
           <input
@@ -68,8 +68,8 @@ export default function ExercisePicker({ onSelect, onClose }: Props) {
             onClick={() => setFilter(null)}
             className="px-3 py-1.5 rounded-xl text-[12px] font-medium flex-shrink-0"
             style={{
-              background: !filter ? 'rgba(74,222,128,0.15)' : '#1a1a2e',
-              border: `1px solid ${!filter ? '#4ade80' : '#2d2d4e'}`,
+              background: !filter ? 'rgba(74,222,128,0.15)' : 'rgba(255,255,255,0.05)',
+              border: `1px solid ${!filter ? '#4ade80' : 'rgba(255,255,255,0.09)'}`,
               color: !filter ? '#4ade80' : '#6b7280',
               cursor: 'pointer',
             }}
@@ -85,8 +85,8 @@ export default function ExercisePicker({ onSelect, onClose }: Props) {
                 onClick={() => setFilter(active ? null : mg)}
                 className="px-3 py-1.5 rounded-xl text-[12px] font-medium flex-shrink-0"
                 style={{
-                  background: active ? `${color}20` : '#1a1a2e',
-                  border: `1px solid ${active ? color : '#2d2d4e'}`,
+                  background: active ? `${color}20` : 'rgba(255,255,255,0.05)',
+                  border: `1px solid ${active ? color : 'rgba(255,255,255,0.09)'}`,
                   color: active ? color : '#6b7280',
                   cursor: 'pointer',
                 }}
@@ -112,7 +112,7 @@ export default function ExercisePicker({ onSelect, onClose }: Props) {
               key={ex.id}
               onClick={() => onSelect(ex)}
               className="w-full text-left rounded-2xl px-4 py-3 flex items-center gap-3"
-              style={{ background: '#1a1a2e', border: '1px solid #2d2d4e', cursor: 'pointer' }}
+              style={{ background: 'rgba(255,255,255,0.06)', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)', border: '1px solid rgba(255,255,255,0.09)', boxShadow: '0 4px 24px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06)', cursor: 'pointer' }}
             >
               <div
                 className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 text-[11px] font-bold"

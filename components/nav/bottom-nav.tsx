@@ -23,16 +23,18 @@ export default function BottomNav({ bottomInset = 0 }: Props) {
       style={{
         paddingBottom: 12 + bottomInset,
         zIndex: 100,
-        background: 'linear-gradient(transparent, #0f0f0f 40%)',
+        background: 'linear-gradient(transparent, #07070e 40%)',
       }}
     >
       <nav
         className="flex items-center h-[60px] px-1 pointer-events-auto"
         style={{
-          background: '#1a1a2e',
+          background: 'rgba(255,255,255,0.06)',
+          backdropFilter: 'blur(14px)',
+          WebkitBackdropFilter: 'blur(14px)',
           borderRadius: 28,
-          border: '1px solid #2d2d4e',
-          boxShadow: '0 8px 32px rgba(0,0,0,0.6)',
+          border: '1px solid rgba(255,255,255,0.09)',
+          boxShadow: '0 4px 24px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06)',
         }}
       >
         {TABS.map((tab, idx) => {

@@ -1,7 +1,8 @@
 'use client'
 
-import { use, useState } from 'react'
+import { use, useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { Reorder, useDragControls } from 'framer-motion'
 import { ArrowLeft, Plus, Trash2, GripVertical } from 'lucide-react'
 import type { Exercise, TargetVolume, WorkoutTemplateExercise } from '@/types'
 import {
@@ -9,6 +10,7 @@ import {
   useAddExerciseToDay,
   useUpdateDayExercise,
   useRemoveExerciseFromDay,
+  useReorderExercises,
 } from '@/hooks/use-programs'
 import ExercisePicker from '@/components/screens/library/exercise-picker'
 import { MUSCLE_GROUP_COLORS, MUSCLE_GROUP_LABELS } from '@/lib/muscle-groups'
@@ -49,14 +51,23 @@ export default function DayEditorPage({
   const router = useRouter()
 
   const { data: template } = useTemplate(templateId)
-  const { mutateAsync: addExercise,    isPending: adding }   = useAddExerciseToDay()
-  const { mutateAsync: updateExercise, isPending: updating } = useUpdateDayExercise()
-  const { mutateAsync: removeExercise, isPending: removing } = useRemoveExerciseFromDay()
+  const { mutateAsync: addExercise,    isPending: adding }    = useAddExerciseToDay()
+  const { mutateAsync: updateExercise, isPending: updating }  = useUpdateDayExercise()
+  const { mutateAsync: removeExercise, isPending: removing }  = useRemoveExerciseFromDay()
+  const { mutateAsync: reorderMutation }                       = useReorderExercises()
 
+  const [exercises, setExercises] = useState<WorkoutTemplateExercise[]>([])
   const [showPicker, setShowPicker] = useState(false)
   const [addConfig, setAddConfig]   = useState<ConfigState | null>(null)
   const [editConfig, setEditConfig] = useState<EditConfig | null>(null)
   const [confirmDel, setConfirmDel] = useState<string | null>(null)
+
+  // Sync local order from server data
+  useEffect(() => {
+    if (template) {
+      setExercises([...template.exercises].sort((a, b) => a.order - b.order))
+    }
+  }, [template])
 
   function openAddConfig(exercise: Exercise) {
     setShowPicker(false)
@@ -129,6 +140,14 @@ export default function DayEditorPage({
     setConfirmDel(null)
   }
 
+  async function handleDragEnd(newOrder: WorkoutTemplateExercise[]) {
+    await reorderMutation({
+      programId,
+      templateId,
+      orderedIds: newOrder.map(e => e.id),
+    })
+  }
+
   if (!template) return null
 
   return (
@@ -136,7 +155,7 @@ export default function DayEditorPage({
       {/* Header */}
       <div
         className="flex items-center justify-between px-4 pt-4 pb-3 flex-shrink-0"
-        style={{ borderBottom: '1px solid #2d2d4e' }}
+        style={{ borderBottom: '1px solid rgba(255,255,255,0.09)' }}
       >
         <button
           onClick={() => router.back()}
@@ -163,8 +182,8 @@ export default function DayEditorPage({
       </div>
 
       {/* Exercise list */}
-      <div className="flex-1 overflow-y-auto px-4 py-4 flex flex-col gap-2">
-        {template.exercises.length === 0 && (
+      <div className="flex-1 overflow-y-auto px-4 py-4">
+        {exercises.length === 0 && (
           <div className="flex flex-col items-center justify-center py-20 gap-3">
             <p className="text-[14px]" style={{ color: '#6b7280' }}>Добавьте упражнения</p>
             <button
@@ -183,65 +202,23 @@ export default function DayEditorPage({
           </div>
         )}
 
-        {template.exercises.map((te, idx) => {
-          const color = MUSCLE_GROUP_COLORS[te.exercise.muscleGroup]
-          return (
-            <div
+        <Reorder.Group
+          axis="y"
+          values={exercises}
+          onReorder={setExercises}
+          className="flex flex-col gap-2"
+          style={{ listStyle: 'none', padding: 0, margin: 0 }}
+        >
+          {exercises.map((te) => (
+            <ExerciseRow
               key={te.id}
-              className="rounded-2xl px-4 py-3 flex items-center gap-3"
-              style={{ background: '#1a1a2e', border: '1px solid #2d2d4e' }}
-            >
-              <div className="flex items-center gap-2 flex-shrink-0">
-                <GripVertical size={14} color="#2d2d4e" />
-                <span
-                  className="text-[11px] font-bold w-5 text-center"
-                  style={{ color: '#6b7280', fontFamily: 'var(--font-mono)' }}
-                >
-                  {idx + 1}
-                </span>
-              </div>
-
-              <button
-                onClick={() => openEditConfig(te)}
-                className="flex-1 min-w-0 text-left"
-                style={{ background: 'none', border: 'none', cursor: 'pointer' }}
-              >
-                <div className="flex items-center gap-2">
-                  <span
-                    className="text-[10px] font-bold px-1.5 py-0.5 rounded-md flex-shrink-0"
-                    style={{ background: `${color}20`, color }}
-                  >
-                    {MUSCLE_GROUP_LABELS[te.exercise.muscleGroup].slice(0, 2).toUpperCase()}
-                  </span>
-                  <span className="text-[14px] font-semibold truncate" style={{ color: '#f9fafb' }}>
-                    {te.exercise.name}
-                  </span>
-                </div>
-                <div className="flex gap-3 mt-0.5">
-                  <span className="text-[12px]" style={{ color: '#6b7280' }}>
-                    {te.targetSets} × {formatVolume(te.targetVolume)}
-                  </span>
-                  <span className="text-[12px]" style={{ color: '#6b7280' }}>
-                    {te.restSeconds}с отдых
-                  </span>
-                  {te.plannedWeight && (
-                    <span className="text-[12px]" style={{ color: '#6b7280' }}>
-                      {te.plannedWeight} кг
-                    </span>
-                  )}
-                </div>
-              </button>
-
-              <button
-                onClick={() => setConfirmDel(te.id)}
-                className="w-8 h-8 flex items-center justify-center rounded-lg flex-shrink-0"
-                style={{ background: '#16213e', border: '1px solid #2d2d4e', cursor: 'pointer' }}
-              >
-                <Trash2 size={14} color="#f87171" />
-              </button>
-            </div>
-          )
-        })}
+              te={te}
+              onEdit={() => openEditConfig(te)}
+              onDelete={() => setConfirmDel(te.id)}
+              onDragEnd={() => handleDragEnd(exercises)}
+            />
+          ))}
+        </Reorder.Group>
       </div>
 
       {/* Exercise picker overlay */}
@@ -297,7 +274,12 @@ export default function DayEditorPage({
         >
           <div
             className="w-full px-4 pb-8 pt-5 flex flex-col gap-3 rounded-t-3xl"
-            style={{ background: '#1a1a2e', border: '1px solid #2d2d4e' }}
+            style={{
+              background: 'rgba(10,10,20,0.92)',
+              backdropFilter: 'blur(20px)',
+              WebkitBackdropFilter: 'blur(20px)',
+              border: '1px solid rgba(255,255,255,0.09)',
+            }}
             onClick={e => e.stopPropagation()}
           >
             <p className="text-[16px] font-semibold text-center" style={{ color: '#f9fafb' }}>Удалить упражнение?</p>
@@ -312,7 +294,7 @@ export default function DayEditorPage({
             <button
               onClick={() => setConfirmDel(null)}
               className="w-full h-12 rounded-2xl font-medium text-[15px]"
-              style={{ background: '#16213e', color: '#f9fafb', border: '1px solid #2d2d4e', cursor: 'pointer' }}
+              style={{ background: 'rgba(255,255,255,0.05)', color: '#f9fafb', border: '1px solid rgba(255,255,255,0.09)', cursor: 'pointer' }}
             >
               Отмена
             </button>
@@ -320,6 +302,90 @@ export default function DayEditorPage({
         </div>
       )}
     </div>
+  )
+}
+
+// ─── Exercise row with drag handle ───────────────────────────────────────────
+
+function ExerciseRow({
+  te, onEdit, onDelete, onDragEnd,
+}: {
+  te: WorkoutTemplateExercise
+  onEdit: () => void
+  onDelete: () => void
+  onDragEnd: () => void
+}) {
+  const dragControls = useDragControls()
+  const color = MUSCLE_GROUP_COLORS[te.exercise.muscleGroup]
+
+  return (
+    <Reorder.Item
+      value={te}
+      dragListener={false}
+      dragControls={dragControls}
+      onDragEnd={onDragEnd}
+      className="rounded-2xl px-4 py-3 flex items-center gap-3"
+      style={{
+        background: 'rgba(255,255,255,0.06)',
+        border: '1px solid rgba(255,255,255,0.09)',
+        backdropFilter: 'blur(14px)',
+        WebkitBackdropFilter: 'blur(14px)',
+        boxShadow: '0 4px 24px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06)',
+        listStyle: 'none',
+        cursor: 'default',
+        touchAction: 'none',
+      }}
+    >
+      {/* Drag handle */}
+      <div
+        onPointerDown={e => dragControls.start(e)}
+        className="flex items-center gap-1.5 flex-shrink-0 touch-none"
+        style={{ cursor: 'grab', WebkitUserSelect: 'none', userSelect: 'none' }}
+      >
+        <GripVertical size={16} color="rgba(255,255,255,0.25)" />
+      </div>
+
+      {/* Exercise info */}
+      <button
+        onClick={onEdit}
+        className="flex-1 min-w-0 text-left"
+        style={{ background: 'none', border: 'none', cursor: 'pointer' }}
+      >
+        <div className="flex items-center gap-2">
+          <span
+            className="text-[10px] font-bold px-1.5 py-0.5 rounded-md flex-shrink-0"
+            style={{ background: `${color}20`, color }}
+          >
+            {MUSCLE_GROUP_LABELS[te.exercise.muscleGroup].slice(0, 2).toUpperCase()}
+          </span>
+          <span className="text-[14px] font-semibold truncate" style={{ color: '#f9fafb' }}>
+            {te.exercise.name}
+          </span>
+        </div>
+        <div className="flex gap-3 mt-0.5">
+          <span className="text-[12px]" style={{ color: '#6b7280' }}>
+            {te.targetSets} × {formatVolume(te.targetVolume)}
+          </span>
+          <span className="text-[12px]" style={{ color: '#6b7280' }}>
+            {te.restSeconds}с отдых
+          </span>
+          {te.plannedWeight && (
+            <span className="text-[12px]" style={{ color: '#6b7280' }}>
+              {te.plannedWeight} кг
+            </span>
+          )}
+        </div>
+      </button>
+
+      {/* Delete */}
+      <button
+        onClick={onDelete}
+        className="w-8 h-8 flex items-center justify-center rounded-lg flex-shrink-0"
+        style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.09)', cursor: 'pointer' }}
+      >
+        <Trash2 size={14} color="#f87171" />
+      </button>
+    </Reorder.Item>
   )
 }
 
@@ -363,7 +429,7 @@ function NumberPad({
           type="button"
           onClick={() => onChange(Math.max(min, value - step))}
           className="w-8 h-8 rounded-lg text-[18px] font-bold flex items-center justify-center"
-          style={{ background: '#16213e', border: '1px solid #2d2d4e', color: '#f9fafb', cursor: 'pointer' }}
+          style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.09)', color: '#f9fafb', cursor: 'pointer' }}
         >
           −
         </button>
@@ -377,7 +443,7 @@ function NumberPad({
           type="button"
           onClick={() => onChange(value + step)}
           className="w-8 h-8 rounded-lg text-[18px] font-bold flex items-center justify-center"
-          style={{ background: '#16213e', border: '1px solid #2d2d4e', color: '#f9fafb', cursor: 'pointer' }}
+          style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.09)', color: '#f9fafb', cursor: 'pointer' }}
         >
           +
         </button>
@@ -398,17 +464,18 @@ function ConfigSheet({
     >
       <div
         className="w-full px-4 pb-8 pt-4 rounded-t-3xl flex flex-col gap-4 max-h-[85vh] overflow-y-auto"
-        style={{ background: '#1a1a2e', border: '1px solid #2d2d4e' }}
+        style={{
+          background: 'rgba(10,10,20,0.92)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          border: '1px solid rgba(255,255,255,0.09)',
+        }}
         onClick={e => e.stopPropagation()}
       >
-        <div className="w-10 h-1 rounded-full mx-auto" style={{ background: '#2d2d4e' }} />
+        <div className="w-10 h-1 rounded-full mx-auto" style={{ background: 'rgba(255,255,255,0.15)' }} />
         <h3 className="text-[15px] font-bold truncate" style={{ color: '#f9fafb' }}>{title}</h3>
 
-        <NumberPad
-          label="Подходы"
-          value={targetSets}
-          onChange={v => onChange({ targetSets: v })}
-        />
+        <NumberPad label="Подходы" value={targetSets} onChange={v => onChange({ targetSets: v })} />
 
         {/* Volume type */}
         <div className="flex flex-col gap-2">
@@ -421,8 +488,8 @@ function ConfigSheet({
                 onClick={() => onChange({ volumeType: t })}
                 className="flex-1 h-9 rounded-xl text-[13px] font-semibold"
                 style={{
-                  background: volumeType === t ? 'rgba(74,222,128,0.15)' : '#16213e',
-                  border: `1px solid ${volumeType === t ? '#4ade80' : '#2d2d4e'}`,
+                  background: volumeType === t ? 'rgba(74,222,128,0.15)' : 'rgba(255,255,255,0.05)',
+                  border: `1px solid ${volumeType === t ? '#4ade80' : 'rgba(255,255,255,0.09)'}`,
                   color: volumeType === t ? '#4ade80' : '#6b7280',
                   cursor: 'pointer',
                 }}
@@ -439,22 +506,10 @@ function ConfigSheet({
             <NumberPad label="Макс повт." value={repsMax} onChange={v => onChange({ repsMax: v })} />
           </div>
         ) : (
-          <NumberPad
-            label="Секунды"
-            value={seconds}
-            min={5}
-            step={5}
-            onChange={v => onChange({ seconds: v })}
-          />
+          <NumberPad label="Секунды" value={seconds} min={5} step={5} onChange={v => onChange({ seconds: v })} />
         )}
 
-        <NumberPad
-          label="Отдых (сек)"
-          value={restSeconds}
-          min={10}
-          step={10}
-          onChange={v => onChange({ restSeconds: v })}
-        />
+        <NumberPad label="Отдых (сек)" value={restSeconds} min={10} step={10} onChange={v => onChange({ restSeconds: v })} />
 
         <div className="flex flex-col gap-1">
           <span className="text-[11px]" style={{ color: '#6b7280' }}>Плановый вес (кг, опционально)</span>
@@ -464,7 +519,7 @@ function ConfigSheet({
             placeholder="60"
             inputMode="decimal"
             className="px-3 py-2.5 rounded-xl text-[14px] outline-none"
-            style={{ background: '#16213e', border: '1px solid #2d2d4e', color: '#f9fafb' }}
+            style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.09)', color: '#f9fafb' }}
           />
         </div>
 
@@ -473,8 +528,8 @@ function ConfigSheet({
           disabled={saving}
           className="w-full h-12 rounded-2xl font-bold text-[15px] mt-2"
           style={{
-            background: saving ? '#2d2d4e' : '#4ade80',
-            color: saving ? '#6b7280' : '#0f172a',
+            background: saving ? 'rgba(255,255,255,0.09)' : '#4ade80',
+            color: saving ? '#6b7280' : '#052e16',
             border: 'none',
             cursor: saving ? 'not-allowed' : 'pointer',
           }}

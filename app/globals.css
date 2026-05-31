@@ -12,15 +12,15 @@
   --font-heading: var(--font-ibm), sans-serif;
 
   /* App brand */
-  --color-app-bg: #0f0f0f;
-  --color-app-surface: #1a1a2e;
-  --color-app-surface2: #16213e;
-  --color-app-border: #2d2d4e;
+  --color-app-bg: #07070e;
+  --color-app-surface: rgba(255,255,255,0.06);
+  --color-app-surface2: rgba(255,255,255,0.05);
+  --color-app-border: rgba(255,255,255,0.09);
   --color-app-text: #f9fafb;
   --color-app-muted: #6b7280;
   --color-app-accent: #4ade80;
-  --color-app-accent-dim: rgba(74, 222, 128, 0.15);
-  --color-app-accent-text: #0f172a;
+  --color-app-accent-dim: rgba(74, 222, 128, 0.12);
+  --color-app-accent-text: #052e16;
   --color-app-cyan: #22d3ee;
   --color-app-red: #ef4444;
 

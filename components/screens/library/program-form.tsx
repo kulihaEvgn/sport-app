@@ -36,12 +36,12 @@ export default function ProgramForm({ initial, onSave, onClose }: Props) {
     <form
       onSubmit={handleSubmit(onSave)}
       className="fixed inset-0 z-50 flex flex-col"
-      style={{ background: '#0f0f0f' }}
+      style={{ background: '#07070e' }}
     >
       {/* Header */}
       <div
         className="flex items-center justify-between px-4 pt-4 pb-3 flex-shrink-0"
-        style={{ borderBottom: '1px solid #2d2d4e' }}
+        style={{ borderBottom: '1px solid rgba(255,255,255,0.09)' }}
       >
         <span className="text-[16px] font-semibold" style={{ color: '#f9fafb' }}>
           {initial ? 'Редактировать программу' : 'Новая программа'}
@@ -50,7 +50,7 @@ export default function ProgramForm({ initial, onSave, onClose }: Props) {
           type="button"
           onClick={onClose}
           className="w-8 h-8 flex items-center justify-center rounded-full"
-          style={{ background: '#2d2d4e', cursor: 'pointer' }}
+          style={{ background: 'rgba(255,255,255,0.1)', cursor: 'pointer' }}
         >
           <X size={16} color="#f9fafb" />
         </button>
@@ -72,8 +72,8 @@ export default function ProgramForm({ initial, onSave, onClose }: Props) {
             placeholder="Full Body / Сила / Масса"
             className="px-3 py-2.5 rounded-xl text-[14px] outline-none"
             style={{
-              background: '#1a1a2e',
-              border: `1px solid ${errors.name ? '#f87171' : '#2d2d4e'}`,
+              background: 'rgba(255,255,255,0.05)',
+              border: `1px solid ${errors.name ? '#f87171' : 'rgba(255,255,255,0.09)'}`,
               color: '#f9fafb',
             }}
           />
@@ -98,8 +98,8 @@ export default function ProgramForm({ initial, onSave, onClose }: Props) {
                 onClick={() => setValue('daysPerWeek', d)}
                 className="w-10 h-10 rounded-xl text-[14px] font-bold transition-all flex-shrink-0"
                 style={{
-                  background: daysPerWeek === d ? 'rgba(74,222,128,0.15)' : '#1a1a2e',
-                  border: `1px solid ${daysPerWeek === d ? '#4ade80' : '#2d2d4e'}`,
+                  background: daysPerWeek === d ? 'rgba(74,222,128,0.15)' : 'rgba(255,255,255,0.05)',
+                  border: `1px solid ${daysPerWeek === d ? '#4ade80' : 'rgba(255,255,255,0.09)'}`,
                   color: daysPerWeek === d ? '#4ade80' : '#6b7280',
                   cursor: 'pointer',
                 }}
@@ -123,7 +123,7 @@ export default function ProgramForm({ initial, onSave, onClose }: Props) {
             placeholder="Цель программы, особенности..."
             rows={3}
             className="px-3 py-2.5 rounded-xl text-[13px] outline-none resize-none"
-            style={{ background: '#1a1a2e', border: '1px solid #2d2d4e', color: '#f9fafb' }}
+            style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.09)', color: '#f9fafb' }}
           />
         </div>
 
@@ -134,7 +134,7 @@ export default function ProgramForm({ initial, onSave, onClose }: Props) {
             disabled={isSubmitting}
             className="w-full h-12 rounded-2xl text-[15px] font-bold transition-all"
             style={{
-              background: isSubmitting ? '#2d2d4e' : '#4ade80',
+              background: isSubmitting ? 'rgba(255,255,255,0.09)' : '#4ade80',
               color: isSubmitting ? '#6b7280' : '#0f172a',
               cursor: isSubmitting ? 'not-allowed' : 'pointer',
             }}

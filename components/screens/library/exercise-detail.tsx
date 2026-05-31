@@ -30,7 +30,7 @@ export default function ExerciseDetail({ exercise, onBack, onEdit, onDeleted }: 
   return (
     <div className="flex flex-col min-h-full">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 pt-4 pb-3" style={{ borderBottom: '1px solid #2d2d4e' }}>
+      <div className="flex items-center justify-between px-4 pt-4 pb-3" style={{ borderBottom: '1px solid rgba(255,255,255,0.09)' }}>
         <button
           onClick={onBack}
           className="flex items-center gap-2 text-[14px] font-medium"
@@ -43,7 +43,7 @@ export default function ExerciseDetail({ exercise, onBack, onEdit, onDeleted }: 
           <button
             onClick={() => onEdit(exercise)}
             className="w-8 h-8 flex items-center justify-center rounded-full"
-            style={{ background: '#1a1a2e', border: '1px solid #2d2d4e', cursor: 'pointer' }}
+            style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.09)', cursor: 'pointer' }}
           >
             <Edit2 size={14} color="#6b7280" />
           </button>
@@ -92,7 +92,7 @@ export default function ExerciseDetail({ exercise, onBack, onEdit, onDeleted }: 
         {/* Difficulty */}
         <div
           className="flex items-center gap-3 px-4 py-3 rounded-2xl"
-          style={{ background: '#1a1a2e', border: '1px solid #2d2d4e' }}
+          style={{ background: 'rgba(255,255,255,0.06)', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)', border: '1px solid rgba(255,255,255,0.09)', boxShadow: '0 4px 24px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06)' }}
         >
           <span className="text-[12px] font-medium" style={{ color: '#6b7280' }}>Инвентарь</span>
           <span className="text-[12px] font-semibold ml-auto" style={{ color }}>
@@ -104,7 +104,7 @@ export default function ExerciseDetail({ exercise, onBack, onEdit, onDeleted }: 
         {youtubeId && (
           <div
             className="rounded-2xl overflow-hidden relative"
-            style={{ aspectRatio: '16/9', background: '#1a1a2e' }}
+            style={{ aspectRatio: '16/9', background: 'rgba(255,255,255,0.04)' }}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
@@ -134,7 +134,7 @@ export default function ExerciseDetail({ exercise, onBack, onEdit, onDeleted }: 
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-2 px-4 py-3 rounded-2xl text-[13px] font-medium"
-            style={{ background: '#1a1a2e', border: '1px solid #2d2d4e', color: '#22d3ee', textDecoration: 'none' }}
+            style={{ background: 'rgba(255,255,255,0.06)', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)', border: '1px solid rgba(255,255,255,0.09)', boxShadow: '0 4px 24px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06)', color: '#22d3ee', textDecoration: 'none' }}
           >
             <ExternalLink size={15} />
             Смотреть видео
@@ -159,7 +159,7 @@ export default function ExerciseDetail({ exercise, onBack, onEdit, onDeleted }: 
         <div className="fixed inset-0 z-50 flex items-end" style={{ background: 'rgba(0,0,0,0.7)' }}>
           <div
             className="w-full px-4 pb-8 pt-5 flex flex-col gap-3 rounded-t-3xl"
-            style={{ background: '#1a1a2e', border: '1px solid #2d2d4e' }}
+            style={{ background: 'rgba(10,10,20,0.92)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.09)' }}
           >
             <p className="text-[16px] font-semibold text-center" style={{ color: '#f9fafb' }}>
               Удалить «{exercise.name}»?
@@ -177,7 +177,7 @@ export default function ExerciseDetail({ exercise, onBack, onEdit, onDeleted }: 
             <button
               onClick={() => setConfirmDelete(false)}
               className="w-full h-12 rounded-2xl font-medium text-[15px]"
-              style={{ background: '#16213e', color: '#f9fafb', border: '1px solid #2d2d4e', cursor: 'pointer' }}
+              style={{ background: 'rgba(255,255,255,0.05)', color: '#f9fafb', border: '1px solid rgba(255,255,255,0.09)', cursor: 'pointer' }}
             >
               Отмена
             </button>
