@@ -3,7 +3,7 @@
 import { use, useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Reorder, useDragControls } from 'framer-motion'
-import { ArrowLeft, Plus, Trash2, GripVertical } from 'lucide-react'
+import { ArrowLeft, Plus, Trash2, GripVertical, Pencil } from 'lucide-react'
 import type { Exercise, TargetVolume, WorkoutTemplateExercise } from '@/types'
 import {
   useTemplate,
@@ -15,6 +15,7 @@ import {
 import ExercisePicker from '@/components/screens/library/exercise-picker'
 import { ConfirmAlert } from '@/components/ui/confirm-alert'
 import { BottomSheet } from '@/components/ui/bottom-sheet'
+import { ExerciseInfoSheet } from '@/components/ui/exercise-info-sheet'
 import { MUSCLE_GROUP_COLORS, MUSCLE_GROUP_LABELS } from '@/lib/muscle-groups'
 
 interface ConfigState {
@@ -63,6 +64,7 @@ export default function DayEditorPage({
   const [addConfig, setAddConfig]   = useState<ConfigState | null>(null)
   const [editConfig, setEditConfig] = useState<EditConfig | null>(null)
   const [confirmDel, setConfirmDel] = useState<string | null>(null)
+  const [infoTe, setInfoTe]         = useState<WorkoutTemplateExercise | null>(null)
 
   // Sync local order from server data
   useEffect(() => {
@@ -215,6 +217,7 @@ export default function DayEditorPage({
             <ExerciseRow
               key={te.id}
               te={te}
+              onInfo={() => setInfoTe(te)}
               onEdit={() => openEditConfig(te)}
               onDelete={() => setConfirmDel(te.id)}
               onDragEnd={() => handleDragEnd(exercises)}
@@ -267,6 +270,8 @@ export default function DayEditorPage({
         />
       )}
 
+      {infoTe && <ExerciseInfoSheet te={infoTe} onClose={() => setInfoTe(null)} />}
+
       <ConfirmAlert
         open={Boolean(confirmDel)}
         title="Удалить упражнение?"
@@ -282,9 +287,10 @@ export default function DayEditorPage({
 // ─── Exercise row with drag handle ───────────────────────────────────────────
 
 function ExerciseRow({
-  te, onEdit, onDelete, onDragEnd,
+  te, onInfo, onEdit, onDelete, onDragEnd,
 }: {
   te: WorkoutTemplateExercise
+  onInfo: () => void
   onEdit: () => void
   onDelete: () => void
   onDragEnd: () => void
@@ -313,21 +319,21 @@ function ExerciseRow({
       {/* Drag handle */}
       <div
         onPointerDown={e => dragControls.start(e)}
-        className="flex items-center gap-1.5 flex-shrink-0 touch-none"
+        className="flex items-center gap-1.5 shrink-0 touch-none"
         style={{ cursor: 'grab', WebkitUserSelect: 'none', userSelect: 'none' }}
       >
         <GripVertical size={16} color="rgba(255,255,255,0.25)" />
       </div>
 
-      {/* Exercise info */}
+      {/* Exercise info — tap to view detail */}
       <button
-        onClick={onEdit}
+        onClick={onInfo}
         className="flex-1 min-w-0 text-left"
         style={{ background: 'none', border: 'none', cursor: 'pointer' }}
       >
         <div className="flex items-center gap-2">
           <span
-            className="text-[10px] font-bold px-1.5 py-0.5 rounded-md flex-shrink-0"
+            className="text-[10px] font-bold px-1.5 py-0.5 rounded-md shrink-0"
             style={{ background: `${color}20`, color }}
           >
             {MUSCLE_GROUP_LABELS[te.exercise.muscleGroup].slice(0, 2).toUpperCase()}
@@ -351,10 +357,19 @@ function ExerciseRow({
         </div>
       </button>
 
+      {/* Edit */}
+      <button
+        onClick={onEdit}
+        className="w-8 h-8 flex items-center justify-center rounded-lg shrink-0"
+        style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.09)', cursor: 'pointer' }}
+      >
+        <Pencil size={13} color="#9ca3af" />
+      </button>
+
       {/* Delete */}
       <button
         onClick={onDelete}
-        className="w-8 h-8 flex items-center justify-center rounded-lg flex-shrink-0"
+        className="w-8 h-8 flex items-center justify-center rounded-lg shrink-0"
         style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.09)', cursor: 'pointer' }}
       >
         <Trash2 size={14} color="#f87171" />
