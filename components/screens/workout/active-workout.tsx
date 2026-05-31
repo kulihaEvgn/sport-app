@@ -237,7 +237,7 @@ function TinderCard({
       dragElastic={0.55}
       style={{
         x, rotate,
-        touchAction: 'pan-y',
+        touchAction: 'none',
         background: isDone ? 'rgba(74,222,128,0.05)' : 'rgba(255,255,255,0.05)',
         border: `1px solid ${isDone ? 'rgba(74,222,128,0.3)' : 'rgba(255,255,255,0.09)'}`,
         backdropFilter: 'blur(18px)',
@@ -300,7 +300,7 @@ function TinderCard({
       </motion.div>
 
       {/* Card content */}
-      <div className="flex flex-col flex-1 p-5 gap-4 overflow-y-auto">
+      <div className="flex flex-col flex-1 p-5 gap-4 overflow-hidden">
         {/* Done badge */}
         {isDone && (
           <div
