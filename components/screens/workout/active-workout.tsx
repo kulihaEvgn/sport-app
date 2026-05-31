@@ -6,6 +6,7 @@ import { X, ChevronLeft, ChevronRight, LayoutList, CreditCard, Timer, Check } fr
 import { useWorkoutStore } from '@/store/workout-store'
 import { useLastExerciseSets } from '@/hooks/use-history'
 import { MUSCLE_GROUP_COLORS, MUSCLE_GROUP_LABELS } from '@/lib/muscle-groups'
+import { ConfirmAlert } from '@/components/ui/confirm-alert'
 
 interface SetEntry {
   weight: string
@@ -450,44 +451,15 @@ export default function ActiveWorkout({ onFinish, onDiscard }: Props) {
         </>
       )}
 
-      {/* Discard confirmation */}
-      <AnimatePresence>
-        {showDiscard && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-end"
-            style={{ background: 'rgba(0,0,0,0.7)' }}
-          >
-            <motion.div
-              initial={{ y: '100%' }}
-              animate={{ y: 0 }}
-              exit={{ y: '100%' }}
-              transition={{ type: 'spring', damping: 28, stiffness: 280 }}
-              className="w-full px-4 pb-8 pt-5 flex flex-col gap-3 rounded-t-3xl"
-              style={{ background: '#1a1a2e', border: '1px solid #2d2d4e' }}
-            >
-              <p className="text-[16px] font-semibold text-center" style={{ color: '#f9fafb' }}>Прервать тренировку?</p>
-              <p className="text-[13px] text-center" style={{ color: '#6b7280' }}>Прогресс не сохранится</p>
-              <button
-                onClick={() => { discardWorkout(); onDiscard() }}
-                className="w-full h-12 rounded-2xl font-bold text-[15px]"
-                style={{ background: '#ef4444', color: '#fff', border: 'none', cursor: 'pointer' }}
-              >
-                Прервать
-              </button>
-              <button
-                onClick={() => setShowDiscard(false)}
-                className="w-full h-12 rounded-2xl font-medium text-[15px]"
-                style={{ background: '#16213e', color: '#f9fafb', border: '1px solid #2d2d4e', cursor: 'pointer' }}
-              >
-                Продолжить
-              </button>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <ConfirmAlert
+        open={showDiscard}
+        title="Прервать тренировку?"
+        description="Прогресс этой тренировки не сохранится."
+        confirmLabel="Прервать"
+        cancelLabel="Продолжить"
+        onConfirm={() => { discardWorkout(); onDiscard() }}
+        onCancel={() => setShowDiscard(false)}
+      />
     </div>
   )
 }

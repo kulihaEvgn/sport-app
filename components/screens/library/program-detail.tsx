@@ -5,6 +5,7 @@ import { ArrowLeft, CheckCircle2, Play, Pencil, Plus, Trash2, ChevronRight } fro
 import type { Program, WorkoutTemplate } from '@/types'
 import { MUSCLE_GROUP_COLORS, MUSCLE_GROUP_LABELS } from '@/lib/muscle-groups'
 import { useAddTemplate, useRemoveTemplate } from '@/hooks/use-programs'
+import { ConfirmAlert } from '@/components/ui/confirm-alert'
 
 interface Props {
   program: Program
@@ -240,38 +241,14 @@ export default function ProgramDetail({ program, onBack, onSetActive, onEdit, on
         </div>
       )}
 
-      {/* Delete day confirm */}
-      {confirmDelete && (
-        <div
-          className="fixed inset-0 z-50 flex items-end"
-          style={{ background: 'rgba(0,0,0,0.6)' }}
-          onClick={() => setConfirmDelete(null)}
-        >
-          <div
-            className="w-full px-4 pb-8 pt-5 flex flex-col gap-3 rounded-t-3xl"
-            style={{ background: 'rgba(10,10,20,0.92)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.09)' }}
-            onClick={e => e.stopPropagation()}
-          >
-            <p className="text-[16px] font-semibold text-center" style={{ color: '#f9fafb' }}>Удалить день?</p>
-            <p className="text-[13px] text-center" style={{ color: '#6b7280' }}>Все упражнения будут удалены</p>
-            <button
-              onClick={() => handleDeleteDay(confirmDelete)}
-              disabled={removingDay}
-              className="w-full h-12 rounded-2xl font-bold text-[15px]"
-              style={{ background: '#ef4444', color: '#fff', border: 'none', cursor: 'pointer' }}
-            >
-              Удалить
-            </button>
-            <button
-              onClick={() => setConfirmDelete(null)}
-              className="w-full h-12 rounded-2xl font-medium text-[15px]"
-              style={{ background: 'rgba(255,255,255,0.05)', color: '#f9fafb', border: '1px solid rgba(255,255,255,0.09)', cursor: 'pointer' }}
-            >
-              Отмена
-            </button>
-          </div>
-        </div>
-      )}
+      <ConfirmAlert
+        open={Boolean(confirmDelete)}
+        title="Удалить день?"
+        description="Все упражнения дня будут удалены безвозвратно."
+        loading={removingDay}
+        onConfirm={() => confirmDelete && handleDeleteDay(confirmDelete)}
+        onCancel={() => setConfirmDelete(null)}
+      />
     </div>
   )
 }
