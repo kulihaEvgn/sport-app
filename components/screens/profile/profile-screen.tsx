@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { User, Dumbbell, Calendar, Trophy, ChevronRight, Globe, Moon } from 'lucide-react'
+import { User, Dumbbell, Calendar, Trophy, ChevronRight, Globe, Moon, ArrowLeft } from 'lucide-react'
 import { useSignal, initDataUser } from '@telegram-apps/sdk-react'
 import { getActiveProgram } from '@/services/programs'
 import { getWorkoutHistory } from '@/services/history'
@@ -42,6 +42,16 @@ export default function ProfileScreen() {
 
   return (
     <div className="flex flex-col px-4 pt-5 pb-6 gap-5">
+      <div className="flex items-center gap-3">
+        <button
+          onClick={() => router.back()}
+          className="flex items-center gap-1 text-[14px] font-medium"
+          style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#4ade80' }}
+        >
+          <ArrowLeft size={18} color="#4ade80" />
+          Назад
+        </button>
+      </div>
       <h1 className="text-[22px] font-bold" style={{ color: '#f9fafb' }}>Профиль</h1>
 
       {/* User card */}
