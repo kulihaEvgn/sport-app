@@ -5,7 +5,7 @@
 
 ---
 
-## Текущее состояние: Фазы 1–4 завершены, Фаза 5 следующая
+## Текущее состояние: Фазы 1–5 завершены, Фаза 6 следующая
 
 ---
 
@@ -98,30 +98,14 @@
 
 ## Что НЕ сделано (Фазы 5–10)
 
-### Фаза 5 — Тренировка ⏳ СЛЕДУЮЩАЯ
+### Фаза 5 — Тренировка ✅
 
-**Конкретные задачи:**
-
-1. **`/workout` page** (`app/(main)/workout/page.tsx`) — сейчас использует прямой `getActiveProgram()`, нужно мигрировать на `useActiveProgram()` + `useActiveProgramState()`. Также `currentDayIndex` всегда 0 — нужно передавать реальный из `UserProgramState`.
-
-2. **`restoreSession()`** в `store/workout-store.ts` — сейчас STUB. При маунте нужно проверять persisted state и если `activeWorkout != null` — редиректить на сессию. Логика уже частично есть в `/workout/page.tsx` (проверяет `activeWorkout && template` → `router.replace`), но `restoreSession()` как метод не реализован.
-
-3. **Предыдущий результат** в `active-workout.tsx` — поле "Предыдущий" (readonly). Нужно при инициализации сета брать последний `SetLog` по `exerciseId` из history. Сейчас поля веса/повторений инициализируются из `plannedWeight` / `targetVolume.min`, но не из реальной истории.
-
-4. **`WorkoutSummary`** (`components/screens/workout/workout-summary.tsx`) — базовый компонент уже есть (Trophy, время, подходы, объём). Может потребоваться обогащение: список упражнений с деталями подходов.
-
-5. **Список-вид** (`viewMode === 'list'`) в `active-workout.tsx` — кнопка переключения есть, но list-вид не реализован (рендерит то же что cards-вид). Нужен отдельный layout: все упражнения видны, галочки по мере выполнения.
-
-6. **Framer Motion** — свайпы между упражнениями (drag left/right = next/prev), анимации появления карточек подходов.
-
-7. **`DayPreview`** (`components/screens/workout/day-preview.tsx`) — уже написан, проверить что показывает плановый вес, подходы × повторения корректно.
-
-**Файлы которые трогать в Фазе 5:**
-- `app/(main)/workout/page.tsx`
-- `store/workout-store.ts` (метод `restoreSession`)
-- `components/screens/workout/active-workout.tsx`
-- `components/screens/workout/workout-summary.tsx`
-- `app/(session)/workout/[templateId]/session/page.tsx`
+- `workout/page.tsx` — мигрирован на `useActiveProgram()` + `useActiveProgramState()`, передаёт реальный `currentDayIndex`
+- `workout/[templateId]/page.tsx` — мигрирован на `useTemplate()` хук
+- `services/history.ts` — добавлен `getLastExerciseSets(userId, exerciseId)`
+- `hooks/use-history.ts` — добавлен `useLastExerciseSets` хук
+- `active-workout.tsx` — Framer Motion свайпы (drag x), анимированный прогресс-бар, list-view с галочками, стрип "Предыдущий" из истории
+- `workout-summary.tsx` — анимированный Trophy, breakdown по упражнениям с max weight
 
 ### Фаза 6 — Прогресс
 - Тепловая карта активности (заглушка `activity-heatmap.tsx` есть)
@@ -165,12 +149,7 @@
 
 ## Известные технические долги
 
-| Файл | Проблема |
-|------|---------|
-| `app/(main)/workout/page.tsx` | Прямой вызов `getActiveProgram()`, не хук. `currentDayIndex` захардкожен как `0` |
-| `app/(main)/workout/[templateId]/page.tsx` | Прямой вызов `getTemplateById()` + `MOCK_USER` |
-| `store/workout-store.ts` | `restoreSession()` — stub, не реализован |
-| `components/screens/workout/active-workout.tsx` | List-view не реализован, нет поля "Предыдущий результат" из истории |
+_(Всё из Фаз 1-5 устранено)_
 
 ---
 
