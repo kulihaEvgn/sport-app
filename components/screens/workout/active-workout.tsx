@@ -207,12 +207,12 @@ function ExerciseInfoSheet({ te, onClose }: { te: WorkoutTemplateExercise; onClo
           {/* Name + muscle */}
           <div className="flex items-start gap-3">
             <div
-              className="w-12 h-12 rounded-2xl flex items-center justify-center text-[13px] font-bold flex-shrink-0"
+              className="w-12 h-12 rounded-2xl flex items-center justify-center text-[13px] font-bold shrink-0"
               style={{ background: `${color}20`, border: `1.5px solid ${color}50`, color, fontFamily: 'var(--font-mono)' }}
             >
               {te.exercise.name.slice(0, 2).toUpperCase()}
             </div>
-            <div>
+            <div className="flex-1 min-w-0">
               <p className="text-[18px] font-bold leading-tight" style={{ color: '#f9fafb' }}>{te.exercise.name}</p>
               <div className="flex items-center gap-2 mt-1">
                 <span className="text-[11px] font-semibold px-2 py-0.5 rounded-lg" style={{ background: `${color}20`, color }}>
@@ -221,6 +221,17 @@ function ExerciseInfoSheet({ te, onClose }: { te: WorkoutTemplateExercise; onClo
                 <span className="text-[12px]" style={{ color: '#6b7280' }}>{te.exercise.equipment}</span>
               </div>
             </div>
+            <button
+              onClick={() => { onClose(); router.push(`/library/exercises/${te.exerciseId}`) }}
+              className="w-8 h-8 flex items-center justify-center rounded-full shrink-0"
+              style={{
+                background: 'rgba(255,255,255,0.07)',
+                border: '1px solid rgba(255,255,255,0.12)',
+                cursor: 'pointer',
+              }}
+            >
+              <ArrowUpRight size={15} color="#9ca3af" />
+            </button>
           </div>
 
           {/* Plan */}
@@ -241,40 +252,24 @@ function ExerciseInfoSheet({ te, onClose }: { te: WorkoutTemplateExercise; onClo
             </p>
           )}
 
-          {/* Buttons row */}
-          <div className="flex gap-2">
-            {youtubeId && (
-              <button
-                onClick={() => setShowVideo(true)}
-                className="flex-1 flex items-center justify-center gap-2 rounded-2xl font-bold text-[15px]"
-                style={{
-                  height: 52,
-                  background: 'linear-gradient(135deg, #c0392b 0%, #ef4444 100%)',
-                  color: '#fff',
-                  border: 'none',
-                  cursor: 'pointer',
-                  boxShadow: '0 4px 20px rgba(239,68,68,0.35)',
-                }}
-              >
-                <Play size={18} fill="#fff" color="#fff" />
-                Видео
-              </button>
-            )}
+          {/* Video button */}
+          {youtubeId && (
             <button
-              onClick={() => { onClose(); router.push(`/library/exercises/${te.exerciseId}`) }}
-              className="flex-1 flex items-center justify-center gap-2 rounded-2xl font-semibold text-[15px]"
+              onClick={() => setShowVideo(true)}
+              className="w-full flex items-center justify-center gap-2.5 rounded-2xl font-bold text-[15px]"
               style={{
                 height: 52,
-                background: 'rgba(255,255,255,0.07)',
-                border: '1px solid rgba(255,255,255,0.12)',
-                color: '#f9fafb',
+                background: 'linear-gradient(135deg, #c0392b 0%, #ef4444 100%)',
+                color: '#fff',
+                border: 'none',
                 cursor: 'pointer',
+                boxShadow: '0 4px 20px rgba(239,68,68,0.35)',
               }}
             >
-              <ArrowUpRight size={17} />
-              Карточка
+              <Play size={18} fill="#fff" color="#fff" />
+              Смотреть видео
             </button>
-          </div>
+          )}
         </div>
       </BottomSheet>
 
