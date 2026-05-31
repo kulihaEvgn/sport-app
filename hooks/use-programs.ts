@@ -9,6 +9,15 @@ import {
   updateProgram,
   deleteProgram,
   getTemplateById,
+  addTemplate,
+  updateTemplate,
+  removeTemplate,
+  addExerciseToDay,
+  updateDayExercise,
+  removeExerciseFromDay,
+  type AddTemplateInput,
+  type DayExerciseInput,
+  type UpdateDayExerciseInput,
 } from '@/services/programs'
 
 export const programKeys = {
@@ -96,5 +105,90 @@ export function useDeleteProgram() {
   return useMutation({
     mutationFn: (id: string) => deleteProgram(id),
     onSuccess:  () => qc.invalidateQueries({ queryKey: programKeys.all() }),
+  })
+}
+
+export function useAddTemplate() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ programId, input }: { programId: string; input: AddTemplateInput }) =>
+      addTemplate(programId, input),
+    onSuccess: (_data, { programId }) => {
+      qc.invalidateQueries({ queryKey: programKeys.detail(programId) })
+      qc.invalidateQueries({ queryKey: programKeys.all() })
+    },
+  })
+}
+
+export function useUpdateTemplate() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ programId, templateId, input }: {
+      programId: string
+      templateId: string
+      input: Partial<Pick<Parameters<typeof updateTemplate>[2], never>> & Parameters<typeof updateTemplate>[2]
+    }) => updateTemplate(programId, templateId, input),
+    onSuccess: (_data, { programId, templateId }) => {
+      qc.invalidateQueries({ queryKey: programKeys.detail(programId) })
+      qc.invalidateQueries({ queryKey: programKeys.template(templateId) })
+    },
+  })
+}
+
+export function useRemoveTemplate() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ programId, templateId }: { programId: string; templateId: string }) =>
+      removeTemplate(programId, templateId),
+    onSuccess: (_data, { programId }) => {
+      qc.invalidateQueries({ queryKey: programKeys.detail(programId) })
+      qc.invalidateQueries({ queryKey: programKeys.all() })
+    },
+  })
+}
+
+export function useAddExerciseToDay() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ programId, templateId, input }: {
+      programId: string
+      templateId: string
+      input: DayExerciseInput
+    }) => addExerciseToDay(programId, templateId, input),
+    onSuccess: (_data, { programId, templateId }) => {
+      qc.invalidateQueries({ queryKey: programKeys.detail(programId) })
+      qc.invalidateQueries({ queryKey: programKeys.template(templateId) })
+    },
+  })
+}
+
+export function useUpdateDayExercise() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ programId, templateId, teId, input }: {
+      programId: string
+      templateId: string
+      teId: string
+      input: UpdateDayExerciseInput
+    }) => updateDayExercise(programId, templateId, teId, input),
+    onSuccess: (_data, { programId, templateId }) => {
+      qc.invalidateQueries({ queryKey: programKeys.detail(programId) })
+      qc.invalidateQueries({ queryKey: programKeys.template(templateId) })
+    },
+  })
+}
+
+export function useRemoveExerciseFromDay() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ programId, templateId, teId }: {
+      programId: string
+      templateId: string
+      teId: string
+    }) => removeExerciseFromDay(programId, templateId, teId),
+    onSuccess: (_data, { programId, templateId }) => {
+      qc.invalidateQueries({ queryKey: programKeys.detail(programId) })
+      qc.invalidateQueries({ queryKey: programKeys.template(templateId) })
+    },
   })
 }
