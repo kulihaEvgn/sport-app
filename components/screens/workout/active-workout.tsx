@@ -10,6 +10,7 @@ import {
 import { X, LayoutList, CreditCard, Check, ChevronRight, ChevronLeft, Play, RotateCcw, ArrowUpRight } from 'lucide-react'
 import { useWorkoutStore } from '@/store/workout-store'
 import { useLastExerciseSets } from '@/hooks/use-history'
+import { useExercise } from '@/hooks/use-exercises'
 import { MUSCLE_GROUP_COLORS, MUSCLE_GROUP_LABELS } from '@/lib/muscle-groups'
 import { ConfirmAlert } from '@/components/ui/confirm-alert'
 import { BottomSheet } from '@/components/ui/bottom-sheet'
@@ -194,11 +195,13 @@ function ExerciseListRow({
 function ExerciseInfoSheet({ te, onClose }: { te: WorkoutTemplateExercise; onClose: () => void }) {
   const [showVideo, setShowVideo] = useState(false)
   const router = useRouter()
-  const color     = MUSCLE_GROUP_COLORS[te.exercise.muscleGroup]
-  const youtubeId = te.exercise.videoUrl
-    ? te.exercise.videoUrl.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/|v\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/)?.[1] ?? null
+  const { data: liveExercise } = useExercise(te.exerciseId)
+  const exercise = liveExercise ?? te.exercise
+  const color     = MUSCLE_GROUP_COLORS[exercise.muscleGroup]
+  const youtubeId = exercise.videoUrl
+    ? exercise.videoUrl.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/|v\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/)?.[1] ?? null
     : null
-  const isShorts  = Boolean(te.exercise.videoUrl?.includes('/shorts/'))
+  const isShorts  = Boolean(exercise.videoUrl?.includes('/shorts/'))
 
   return (
     <>
@@ -210,15 +213,15 @@ function ExerciseInfoSheet({ te, onClose }: { te: WorkoutTemplateExercise; onClo
               className="w-12 h-12 rounded-2xl flex items-center justify-center text-[13px] font-bold shrink-0"
               style={{ background: `${color}20`, border: `1.5px solid ${color}50`, color, fontFamily: 'var(--font-mono)' }}
             >
-              {te.exercise.name.slice(0, 2).toUpperCase()}
+              {exercise.name.slice(0, 2).toUpperCase()}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-[18px] font-bold leading-tight" style={{ color: '#f9fafb' }}>{te.exercise.name}</p>
+              <p className="text-[18px] font-bold leading-tight" style={{ color: '#f9fafb' }}>{exercise.name}</p>
               <div className="flex items-center gap-2 mt-1">
                 <span className="text-[11px] font-semibold px-2 py-0.5 rounded-lg" style={{ background: `${color}20`, color }}>
-                  {MUSCLE_GROUP_LABELS[te.exercise.muscleGroup]}
+                  {MUSCLE_GROUP_LABELS[exercise.muscleGroup]}
                 </span>
-                <span className="text-[12px]" style={{ color: '#6b7280' }}>{te.exercise.equipment}</span>
+                <span className="text-[12px]" style={{ color: '#6b7280' }}>{exercise.equipment}</span>
               </div>
             </div>
             <button
@@ -246,9 +249,9 @@ function ExerciseInfoSheet({ te, onClose }: { te: WorkoutTemplateExercise; onClo
           </div>
 
           {/* Description */}
-          {te.exercise.description && (
+          {exercise.description && (
             <p className="text-[14px] leading-relaxed" style={{ color: '#9ca3af' }}>
-              {te.exercise.description}
+              {exercise.description}
             </p>
           )}
 
