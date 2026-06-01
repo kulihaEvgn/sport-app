@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { BookOpen, Zap, TrendingUp } from 'lucide-react'
+import { setNavDirection } from '@/lib/nav-direction'
 
 const TABS = [
   { href: '/library',  label: 'Библиотека', Icon: BookOpen   },
@@ -38,13 +39,15 @@ export default function BottomNav({ bottomInset = 0 }: Props) {
         }}
       >
         {TABS.map((tab, idx) => {
-          const isActive  = pathname.startsWith(tab.href)
-          const isCenter  = idx === 1 // Тренировка — центральная акцентная
+          const isActive    = pathname.startsWith(tab.href)
+          const isCenter    = idx === 1
+          const currentIdx  = TABS.findIndex(t => pathname.startsWith(t.href))
 
           return (
             <Link
               key={tab.href}
               href={tab.href}
+              onClick={() => { if (!isActive) setNavDirection(idx > currentIdx ? 'left' : 'right') }}
               className="flex items-center justify-center gap-1.5 transition-all duration-200 no-underline"
               style={{
                 flex: isCenter ? '0 0 auto' : '1 1 0',

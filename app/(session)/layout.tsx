@@ -1,16 +1,46 @@
 'use client'
 
+import { useRef } from 'react'
+import { usePathname } from 'next/navigation'
+import { AnimatePresence, motion } from 'framer-motion'
 import { useSafeAreaInsets } from '@/hooks/use-safe-area'
+import { useBackSwipe } from '@/hooks/use-back-swipe'
+import { getNavDirection } from '@/lib/nav-direction'
+
+const variants = {
+  enter:  (d: 'left' | 'right') => ({ x: d === 'left' ? '100%' : '-100%' }),
+  center: { x: 0 },
+  exit:   (d: 'left' | 'right') => ({ x: d === 'left' ? '-100%' : '100%' }),
+}
+
+const transition = { duration: 0.28, ease: [0.25, 0.1, 0.25, 1] as const }
 
 export default function SessionLayout({ children }: { children: React.ReactNode }) {
   const { top, bottom } = useSafeAreaInsets()
+  const pathname        = usePathname()
+  const containerRef    = useRef<HTMLDivElement>(null)
+  useBackSwipe(containerRef)
 
   return (
     <div
-      className="flex-1 flex flex-col overflow-hidden"
+      ref={containerRef}
+      className="flex-1 relative overflow-hidden"
       style={{ paddingTop: top, paddingBottom: bottom }}
     >
-      {children}
+      <AnimatePresence mode="sync" custom={getNavDirection()}>
+        <motion.div
+          key={pathname}
+          custom={getNavDirection()}
+          variants={variants}
+          initial="enter"
+          animate="center"
+          exit="exit"
+          transition={transition}
+          className="absolute inset-0 flex flex-col overflow-hidden"
+        >
+          {children}
+        </motion.div>
+      </AnimatePresence>
     </div>
   )
 }
