@@ -1,13 +1,11 @@
 'use client'
 
-import { useRef } from 'react'
 import { usePathname } from 'next/navigation'
 import { AnimatePresence, motion } from 'framer-motion'
 import Header from '@/components/nav/header'
 import BottomNav from '@/components/nav/bottom-nav'
 import TelegramBackButtonSync from '@/components/tma/telegram-back-button-sync'
 import { useSafeAreaInsets } from '@/hooks/use-safe-area'
-import { useTabSwipe } from '@/hooks/use-tab-swipe'
 import { getNavDirection } from '@/lib/nav-direction'
 
 const NAV_HEIGHT = 80
@@ -23,15 +21,13 @@ const transition = { duration: 0.28, ease: [0.25, 0.1, 0.25, 1] as const }
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   const { top, bottom } = useSafeAreaInsets()
   const pathname = usePathname()
-  const tabKey   = pathname.split('/')[1] // 'library' | 'workout' | 'progress'
-  const mainRef  = useRef<HTMLDivElement>(null)
-  useTabSwipe(mainRef)
+  const tabKey   = pathname.split('/')[1]
 
   return (
     <div className="flex flex-col flex-1 overflow-hidden" style={{ paddingTop: top }}>
       <TelegramBackButtonSync />
       <Header />
-      <div ref={mainRef} className="flex-1 relative overflow-hidden">
+      <div className="flex-1 relative overflow-hidden">
         <AnimatePresence mode="sync" custom={getNavDirection()}>
           <motion.div
             key={tabKey}

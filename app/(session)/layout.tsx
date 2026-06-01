@@ -25,7 +25,6 @@ export default function SessionLayout({ children }: { children: React.ReactNode 
     <div
       ref={containerRef}
       className="flex-1 relative overflow-hidden"
-      style={{ paddingTop: top, paddingBottom: bottom }}
     >
       <AnimatePresence mode="sync" custom={getNavDirection()}>
         <motion.div
@@ -37,6 +36,7 @@ export default function SessionLayout({ children }: { children: React.ReactNode 
           exit="exit"
           transition={transition}
           className="absolute inset-0 flex flex-col overflow-hidden"
+          style={{ paddingTop: top, paddingBottom: bottom }}
         >
           {children}
         </motion.div>
