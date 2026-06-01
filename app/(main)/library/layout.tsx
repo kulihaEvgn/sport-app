@@ -5,13 +5,13 @@ import { usePathname } from 'next/navigation'
 import { BookOpen, Dumbbell } from 'lucide-react'
 
 const TABS = [
-  { href: '/library/exercises', label: 'Упражнения', Icon: Dumbbell },
   { href: '/library/programs',  label: 'Программы',  Icon: BookOpen  },
+  { href: '/library/exercises', label: 'Упражнения', Icon: Dumbbell },
 ]
 
 export default function LibraryLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
-  const isTabRoot = pathname === '/library/exercises' || pathname === '/library/programs'
+  const isTabRoot = pathname === '/library/programs' || pathname === '/library/exercises'
 
   return (
     <div className="flex flex-col min-h-full">

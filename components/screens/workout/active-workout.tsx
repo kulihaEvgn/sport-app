@@ -182,7 +182,7 @@ function ExerciseListRow({
               }}
             >
               <Check size={16} strokeWidth={2.5} />
-              Выполнено
+              Готово
             </button>
           </div>
         </>
@@ -199,39 +199,68 @@ function WorkoutListView({
   actions: WorkoutActions
   onFinish: () => void
 }) {
-  const [infoTe, setInfoTe] = useState<WorkoutTemplateExercise | null>(null)
+  const [infoTe, setInfoTe]           = useState<WorkoutTemplateExercise | null>(null)
+  const [confirmFinish, setConfirmFinish] = useState(false)
   const allDone = exercises.length > 0 && actions.completedIds.size >= exercises.length
 
   return (
     <>
-    <div className="flex-1 overflow-y-auto px-4 flex flex-col gap-3 py-4">
-      {exercises.map((te, idx) => (
-        <ExerciseListRow key={te.id} te={te} idx={idx} actions={actions} onInfoClick={setInfoTe} />
-      ))}
+      <div className="flex-1 overflow-y-auto px-4 flex flex-col gap-3 py-4">
+        {exercises.map((te, idx) => (
+          <ExerciseListRow key={te.id} te={te} idx={idx} actions={actions} onInfoClick={setInfoTe} />
+        ))}
+      </div>
 
-      <AnimatePresence>
-        {allDone && (
-          <motion.button
-            initial={{ opacity: 0, y: 12, scale: 0.96 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            onClick={onFinish}
-            className="w-full h-14 rounded-2xl flex items-center justify-center gap-2 font-bold text-[16px]"
+      {/* Pinned footer */}
+      <div className="flex-shrink-0 px-4 pb-3 pt-2 flex flex-col gap-2">
+        <AnimatePresence>
+          {allDone && (
+            <motion.button
+              initial={{ opacity: 0, y: 8, scale: 0.96 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.96 }}
+              onClick={onFinish}
+              className="w-full h-14 rounded-2xl flex items-center justify-center gap-2 font-bold text-[16px]"
+              style={{
+                background: 'linear-gradient(135deg, #22c55e 0%, var(--color-app-accent) 100%)',
+                color: 'var(--color-app-accent-text)',
+                border: 'none',
+                cursor: 'pointer',
+                boxShadow: '0 4px 24px rgba(74,222,128,0.4)',
+              }}
+            >
+              <Check size={20} strokeWidth={3} />
+              Завершить тренировку
+            </motion.button>
+          )}
+        </AnimatePresence>
+
+        {!allDone && (
+          <button
+            onClick={() => setConfirmFinish(true)}
+            className="w-full h-11 rounded-2xl flex items-center justify-center font-semibold text-[14px]"
             style={{
-              background: 'linear-gradient(135deg, #22c55e 0%, var(--color-app-accent) 100%)',
-              color: 'var(--color-app-accent-text)',
-              border: 'none',
+              background: 'transparent',
+              border: '1px solid var(--color-app-surface3)',
+              color: 'var(--color-app-muted)',
               cursor: 'pointer',
-              boxShadow: '0 4px 24px rgba(74,222,128,0.4)',
             }}
           >
-            <Check size={20} strokeWidth={3} />
             Завершить тренировку
-          </motion.button>
+          </button>
         )}
-      </AnimatePresence>
-    </div>
+      </div>
 
-    {infoTe && <ExerciseInfoSheet te={infoTe} onClose={() => setInfoTe(null)} />}
+      <ConfirmAlert
+        open={confirmFinish}
+        title="Завершить тренировку?"
+        description="Не все упражнения отмечены. Тренировка будет засчитана как выполненная."
+        confirmLabel="Завершить"
+        onConfirm={() => { setConfirmFinish(false); onFinish() }}
+        onCancel={() => setConfirmFinish(false)}
+      />
+
+      {infoTe && <ExerciseInfoSheet te={infoTe} onClose={() => setInfoTe(null)} />}
     </>
   )
 }
@@ -426,6 +455,7 @@ function WorkoutTinderView({
   const te = exercises[tinderIdx % exercises.length]
   const [exitDir, setExitDir] = useState(0)
   const [showVideo, setShowVideo] = useState(false)
+  const [confirmFinish, setConfirmFinish] = useState(false)
   const { data: liveExercise } = useExercise(te.exerciseId)
   const exercise  = liveExercise ?? te.exercise
   const youtubeId = exercise.videoUrl ? (exercise.videoUrl.match(YT_REGEX)?.[1] ?? null) : null
@@ -572,12 +602,37 @@ function WorkoutTinderView({
                   : '0 0 20px rgba(74,222,128,0.15)',
               }}
             >
-              <Check size={18} strokeWidth={2.5} />
-              Выполнено
+              Сделано
+              <ChevronRight size={18} strokeWidth={2.5} />
             </motion.button>
+          </div>
+
+          {/* Finish workout */}
+          <div className="px-4 pb-2 flex-shrink-0">
+            <button
+              onClick={() => setConfirmFinish(true)}
+              className="w-full h-11 rounded-2xl flex items-center justify-center font-semibold text-[14px]"
+              style={{
+                background: 'transparent',
+                border: '1px solid var(--color-app-surface3)',
+                color: 'var(--color-app-muted)',
+                cursor: 'pointer',
+              }}
+            >
+              Завершить тренировку
+            </button>
           </div>
         </>
       )}
+
+      <ConfirmAlert
+        open={confirmFinish}
+        title="Завершить тренировку?"
+        description="Не все упражнения отмечены. Тренировка будет засчитана как выполненная."
+        confirmLabel="Завершить"
+        onConfirm={() => { setConfirmFinish(false); onFinish() }}
+        onCancel={() => setConfirmFinish(false)}
+      />
 
       {youtubeId && (
         <VideoModal
@@ -707,17 +762,37 @@ export default function ActiveWorkout({ onFinish, onDiscard }: Props) {
       </div>
 
       {/* Views */}
-      {viewMode === 'list' ? (
-        <WorkoutListView exercises={exercises} actions={actions} onFinish={handleFinish} />
-      ) : (
-        <WorkoutTinderView
-          exercises={exercises}
-          actions={actions}
-          tinderIdx={tinderIdx}
-          setTinderIdx={setTinderIdx}
-          onFinish={handleFinish}
-        />
-      )}
+      <AnimatePresence mode="wait" initial={false}>
+        {viewMode === 'list' ? (
+          <motion.div
+            key="list"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+            className="flex-1 flex flex-col min-h-0"
+          >
+            <WorkoutListView exercises={exercises} actions={actions} onFinish={handleFinish} />
+          </motion.div>
+        ) : (
+          <motion.div
+            key="cards"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+            className="flex-1 flex flex-col min-h-0"
+          >
+            <WorkoutTinderView
+              exercises={exercises}
+              actions={actions}
+              tinderIdx={tinderIdx}
+              setTinderIdx={setTinderIdx}
+              onFinish={handleFinish}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <ConfirmAlert
         open={showDiscard}

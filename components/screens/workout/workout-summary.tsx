@@ -27,7 +27,8 @@ export default function WorkoutSummary({ log, onClose }: Props) {
   const exerciseIds = Object.keys(exerciseGroups)
 
   return (
-    <div className="flex flex-col px-4 pt-8 pb-8 gap-5 min-h-full overflow-y-auto">
+    <div className="flex flex-col h-full">
+    <div className="flex flex-col px-4 pt-8 gap-5 flex-1 overflow-y-auto pb-4">
       {/* Trophy */}
       <motion.div
         initial={{ scale: 0.5, opacity: 0 }}
@@ -113,16 +114,20 @@ export default function WorkoutSummary({ log, onClose }: Props) {
         </motion.div>
       )}
 
+    </div>
+
+    <div className="flex-shrink-0 px-4 pb-4 pt-2">
       <motion.button
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.4 }}
         onClick={onClose}
-        className="w-full h-14 rounded-2xl text-[16px] font-bold mt-auto"
+        className="w-full h-14 rounded-2xl text-[16px] font-bold"
         style={{ background: 'var(--color-app-accent)', color: 'var(--color-app-on-accent)', border: 'none', cursor: 'pointer' }}
       >
         Готово
       </motion.button>
+    </div>
     </div>
   )
 }
