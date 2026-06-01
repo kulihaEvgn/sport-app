@@ -161,13 +161,6 @@
 
 ### Навигация (сверх фаз) ✅
 
-**Свайп между табами** (`hooks/use-tab-swipe.ts`):
-- Подключён в `(main)/layout.tsx` на `<div ref={mainRef}>`
-- Определяет доминирующую ось (горизонталь vs вертикаль) через `locked` state
-- Пороги: 72px горизонтального пути, 10px до фиксации оси
-- Отключён на путях с `/session` (тиндер-карточки)
-- Направление пишется в `lib/nav-direction.ts` перед `router.push`
-
 **Свайп назад** (`hooks/use-back-swipe.ts`):
 - Подключён в `(session)/layout.tsx` — работает на всех session экранах
 - Любой правый свайп > 80px (горизонталь > вертикаль) → `router.back()`
@@ -179,7 +172,8 @@
 - `(main)/layout.tsx` — ключ `tabKey` (первый сегмент пути), не полный pathname (иначе двойная анимация из-за редиректа `/library` → `/library/exercises`)
 - `(session)/layout.tsx` — ключ полный `pathname`
 - Слайд 280ms, ease `[0.25, 0.1, 0.25, 1]`
-- BottomNav тапы тоже устанавливают направление
+- BottomNav тапы устанавливают направление (left/right) перед навигацией
+- **Safe area в session layout**: `paddingTop/paddingBottom` на `motion.div`, НЕ на родителе — `absolute inset-0` игнорирует padding родителя
 
 ---
 
@@ -230,7 +224,8 @@
 9. Directional exit в AnimatePresence — только через `custom` prop pattern (не через state в `exit`).
 10. `useExercise(id)` в инфо-компонентах — получает живые данные поверх снапшота в Zustand.
 11. AnimatePresence в `(main)/layout.tsx` — ключ `tabKey` (первый сегмент пути), иначе двойная анимация на редиректах.
-12. Свайп-навигация: tab swipe отключён на `/session`, back swipe отключён на `/session` (тиндер).
+12. Back swipe отключён на `/session` путях (тиндер-карточки). Tab swipe убран — путал UX.
+13. Safe area в session layout: padding ставить на `motion.div`, а не на родителя — `absolute inset-0` игнорирует padding родителя.
 
 ---
 
@@ -270,7 +265,7 @@ components/
     profile/       — profile-screen
 
 hooks/             — use-exercises, use-programs, use-history, use-progress,
-                     use-safe-area, use-tab-swipe, use-back-swipe
+                     use-safe-area, use-back-swipe
 lib/               — muscle-groups.ts, nav-direction.ts
 services/          — exercises, programs, history, progress (все async mock)
 schemas/           — exercise, program, target-volume
