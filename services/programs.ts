@@ -51,6 +51,66 @@ export async function createProgram(input: {
   return program
 }
 
+export type AIGeneratedTemplate = {
+  name: string
+  exercises: Array<{
+    exerciseId: string
+    targetSets: number
+    targetVolume: import('@/types').TargetVolume
+    restSeconds: number
+    plannedWeight?: number
+  }>
+}
+
+export async function createFullProgram(input: {
+  name: string
+  description?: string
+  daysPerWeek: number
+  templates: AIGeneratedTemplate[]
+}): Promise<Program> {
+  const now = Date.now()
+  const templates: WorkoutTemplate[] = await Promise.all(
+    input.templates.map(async (t, dayIdx) => {
+      const exercises: WorkoutTemplateExercise[] = await Promise.all(
+        t.exercises.map(async (e, exIdx) => {
+          const exercise = await getExercise(e.exerciseId)
+          if (!exercise) throw new Error(`Exercise not found: ${e.exerciseId}`)
+          return {
+            id: `te-${now}-${dayIdx}-${exIdx}`,
+            exerciseId: e.exerciseId,
+            exercise,
+            order: exIdx + 1,
+            targetSets: e.targetSets,
+            targetVolume: e.targetVolume,
+            restSeconds: e.restSeconds,
+            plannedWeight: e.plannedWeight,
+          }
+        }),
+      )
+      return {
+        id: `tmpl-${now}-${dayIdx}`,
+        programId: `prog-${now}`,
+        order: dayIdx,
+        name: t.name,
+        exercises,
+      }
+    }),
+  )
+
+  const program: Program = {
+    id: `prog-${now}`,
+    name: input.name,
+    description: input.description,
+    daysPerWeek: input.daysPerWeek,
+    cycleLength: templates.length,
+    isActive: false,
+    templates,
+    createdAt: new Date(),
+  }
+  programs = [program, ...programs]
+  return program
+}
+
 export async function getActiveProgramState(): Promise<UserProgramState | null> {
   const active = programs.find(p => p.isActive)
   if (!active) return null

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Plus, Download, ChevronRight, ArrowLeft } from 'lucide-react'
+import { Plus, Download, ChevronRight, ArrowLeft, Sparkles } from 'lucide-react'
 import { BottomSheet } from '@/components/ui/bottom-sheet'
 
 type Context = 'exercises' | 'programs'
@@ -59,9 +59,10 @@ interface Props {
   context: Context
   onClose: () => void
   onCreate: () => void
+  onGenerate?: () => void
 }
 
-export default function AddLibrarySheet({ open, context, onClose, onCreate }: Props) {
+export default function AddLibrarySheet({ open, context, onClose, onCreate, onGenerate }: Props) {
   const [view, setView] = useState<View>('options')
 
   function handleClose() {
@@ -93,6 +94,15 @@ export default function AddLibrarySheet({ open, context, onClose, onCreate }: Pr
             subtitle={isExercises ? 'Из базы готовых упражнений' : 'Из базы готовых программ'}
             onClick={() => setView('import')}
           />
+          {!isExercises && onGenerate && (
+            <SheetRow
+              icon={<Sparkles size={20} color="#fff" strokeWidth={2} />}
+              iconBg="#7c3aed"
+              title="Сгенерировать"
+              subtitle="Claude составит программу под твои параметры"
+              onClick={() => { handleClose(); onGenerate() }}
+            />
+          )}
         </div>
       ) : (
         <div className="px-4 pt-4 pb-8 flex flex-col gap-3">

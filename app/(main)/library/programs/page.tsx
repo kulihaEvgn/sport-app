@@ -5,11 +5,13 @@ import { useRouter } from 'next/navigation'
 import { Plus, CheckCircle2, ChevronRight, Dumbbell } from 'lucide-react'
 import { usePrograms } from '@/hooks/use-programs'
 import AddLibrarySheet from '@/components/screens/library/add-library-sheet'
+import AIProgramSheet from '@/components/screens/library/ai-program-sheet'
 
 export default function ProgramsPage() {
   const router = useRouter()
   const { data: programs = [] } = usePrograms()
-  const [showAddSheet, setShowAddSheet] = React.useState(false)
+  const [showAddSheet, setShowAddSheet]  = React.useState(false)
+  const [showAISheet, setShowAISheet]    = React.useState(false)
 
   return (
     <div className="flex flex-col px-4 pt-4 gap-3">
@@ -80,7 +82,9 @@ export default function ProgramsPage() {
         context="programs"
         onClose={() => setShowAddSheet(false)}
         onCreate={() => { setShowAddSheet(false); router.push('/library/programs/new') }}
+        onGenerate={() => setShowAISheet(true)}
       />
+      <AIProgramSheet open={showAISheet} onClose={() => setShowAISheet(false)} />
 
       {/* Invisible spacer for FAB */}
       <div className="h-20" />

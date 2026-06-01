@@ -9,6 +9,7 @@ export const exerciseSchema = z.object({
   equipment: z.string().min(1, 'Обязательное поле'),
   videoUrl: z.string().url('Некорректная ссылка').optional().or(z.literal('')),
   description: z.string().optional(),
+  imageUrl: z.string().url().optional().or(z.literal('')),
 })
 
 export type ExerciseInput = z.infer<typeof exerciseSchema>

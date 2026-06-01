@@ -6,11 +6,12 @@ import {
   useMotionValue, useTransform,
   type PanInfo,
 } from 'framer-motion'
-import { X, LayoutList, CreditCard, Check, ChevronRight, ChevronLeft, RotateCcw, Play } from 'lucide-react'
+import { X, LayoutList, CreditCard, Check, ChevronRight, ChevronLeft, RotateCcw, Play, TrendingUp } from 'lucide-react'
 import { useWorkoutStore } from '@/store/workout-store'
-import { useLastExerciseSets } from '@/hooks/use-history'
+import { useLastExerciseSets, useLastNExerciseSessions } from '@/hooks/use-history'
 import { useExercise } from '@/hooks/use-exercises'
 import { MUSCLE_GROUP_COLORS, MUSCLE_GROUP_LABELS } from '@/lib/muscle-groups'
+import { shouldSuggestProgression } from '@/lib/progression'
 import { ConfirmAlert } from '@/components/ui/confirm-alert'
 import { ExerciseInfoSheet } from '@/components/ui/exercise-info-sheet'
 import { VideoModal } from '@/components/ui/video-modal'
@@ -53,6 +54,26 @@ function PrevResult({ userId, exerciseId }: { userId: string; exerciseId: string
       </span>
       <span className="text-[13px] font-bold" style={{ color: 'var(--color-app-text)', fontFamily: 'var(--font-mono)' }}>
         {maxWeight} кг · {prevSets.length}×{Math.round(totalReps / prevSets.length)} повт.
+      </span>
+    </div>
+  )
+}
+
+// ─────────────────────────────────────────────────────────────────
+// ProgressionHint chip
+// ─────────────────────────────────────────────────────────────────
+
+function ProgressionHint({ userId, te }: { userId: string; te: WorkoutTemplateExercise }) {
+  const { data: sessions = [] } = useLastNExerciseSessions(userId, te.exerciseId, 3)
+  if (!shouldSuggestProgression(sessions, te.targetVolume)) return null
+  return (
+    <div
+      className="flex items-center gap-2 px-3 py-2 rounded-xl"
+      style={{ background: 'rgba(74,222,128,0.08)', border: '1px solid rgba(74,222,128,0.25)' }}
+    >
+      <TrendingUp size={13} color="var(--color-app-accent)" />
+      <span className="text-[11px] font-medium" style={{ color: 'var(--color-app-accent)' }}>
+        Попробуй добавить вес на этой тренировке
       </span>
     </div>
   )
@@ -154,6 +175,7 @@ function ExerciseListRow({
       {!isDone && (
         <>
           {userId && <PrevResult userId={userId} exerciseId={te.exerciseId} />}
+          {userId && <ProgressionHint userId={userId} te={te} />}
           <div className="flex items-end gap-3" onClick={e => e.stopPropagation()}>
             <div className="flex flex-col gap-1">
               <span className="text-[10px] font-medium" style={{ color: 'var(--color-app-muted)' }}>Вес, кг</span>
@@ -397,6 +419,7 @@ function TinderCard({
 
         {/* Prev result */}
         {userId && <PrevResult userId={userId} exerciseId={te.exerciseId} />}
+        {userId && <ProgressionHint userId={userId} te={te} />}
 
         {/* Weight input */}
         {!isDone && (

@@ -9,6 +9,7 @@ export type CreateExerciseInput = {
   equipment: string
   videoUrl?: string
   description?: string
+  imageUrl?: string
 }
 
 export async function getExercises(): Promise<Exercise[]> {

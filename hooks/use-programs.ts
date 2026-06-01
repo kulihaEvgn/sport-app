@@ -6,6 +6,7 @@ import {
   getActiveProgramState,
   setActiveProgram,
   createProgram,
+  createFullProgram,
   updateProgram,
   deleteProgram,
   getTemplateById,
@@ -83,6 +84,14 @@ export function useCreateProgram() {
   return useMutation({
     mutationFn: (input: { name: string; description?: string; daysPerWeek: number }) =>
       createProgram(input),
+    onSuccess: () => qc.invalidateQueries({ queryKey: programKeys.all() }),
+  })
+}
+
+export function useCreateFullProgram() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (input: Parameters<typeof createFullProgram>[0]) => createFullProgram(input),
     onSuccess: () => qc.invalidateQueries({ queryKey: programKeys.all() }),
   })
 }

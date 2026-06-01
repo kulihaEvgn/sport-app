@@ -2,12 +2,15 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Play, ArrowUpRight, X } from 'lucide-react'
+import { Play, ArrowUpRight, X, TrendingUp } from 'lucide-react'
 import type { WorkoutTemplateExercise } from '@/types'
 import { MUSCLE_GROUP_COLORS, MUSCLE_GROUP_LABELS } from '@/lib/muscle-groups'
 import { useExercise } from '@/hooks/use-exercises'
+import { useLastNExerciseSessions } from '@/hooks/use-history'
+import { useWorkoutStore } from '@/store/workout-store'
 import { BottomSheet } from '@/components/ui/bottom-sheet'
 import { VideoModal } from '@/components/ui/video-modal'
+import { shouldSuggestProgression } from '@/lib/progression'
 
 function setsLabel(te: WorkoutTemplateExercise) {
   const vol = te.targetVolume
@@ -32,6 +35,10 @@ export function ExerciseInfoSheet({ te, onClose }: Props) {
   const color     = MUSCLE_GROUP_COLORS[exercise.muscleGroup]
   const youtubeId = exercise.videoUrl ? (exercise.videoUrl.match(YT_REGEX)?.[1] ?? null) : null
   const isShorts  = Boolean(exercise.videoUrl?.includes('/shorts/'))
+
+  const userId = useWorkoutStore(s => s.activeWorkout?.userId ?? '')
+  const { data: sessions = [] } = useLastNExerciseSessions(userId, te.exerciseId, 3)
+  const showHint = shouldSuggestProgression(sessions, te.targetVolume)
 
   return (
     <>
@@ -77,6 +84,19 @@ export function ExerciseInfoSheet({ te, onClose }: Props) {
               {setsLabel(te)}{te.plannedWeight ? ` · ${te.plannedWeight} кг` : ''}
             </span>
           </div>
+
+          {/* Progression hint */}
+          {showHint && (
+            <div
+              className="flex items-center gap-2.5 px-3 py-2.5 rounded-2xl"
+              style={{ background: 'rgba(74,222,128,0.08)', border: '1px solid rgba(74,222,128,0.25)' }}
+            >
+              <TrendingUp size={16} color="var(--color-app-accent)" />
+              <p className="text-[13px] font-medium" style={{ color: 'var(--color-app-accent)' }}>
+                Отличный прогресс! Попробуй добавить вес на следующей тренировке.
+              </p>
+            </div>
+          )}
 
           {/* Description */}
           {exercise.description && (
