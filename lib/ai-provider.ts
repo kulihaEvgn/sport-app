@@ -13,6 +13,27 @@ async function callAnthropic(prompt: string): Promise<string> {
   return block.text
 }
 
+async function callGemini(prompt: string): Promise<string> {
+  const key = process.env.GEMINI_API_KEY
+  const res = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: { maxOutputTokens: 1024 },
+      }),
+    },
+  )
+  if (!res.ok) {
+    const text = await res.text()
+    throw new Error(`Gemini error: ${text}`)
+  }
+  const data = await res.json() as { candidates: { content: { parts: { text: string }[] } }[] }
+  return data.candidates[0].content.parts[0].text
+}
+
 async function callOpenAI(prompt: string): Promise<string> {
   const res = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
@@ -34,11 +55,13 @@ async function callOpenAI(prompt: string): Promise<string> {
   return data.choices[0].message.content
 }
 
-// Switch provider via AI_TEXT_PROVIDER env var: "openai" | "anthropic" (default)
+// Switch provider via AI_TEXT_PROVIDER env var: "gemini" | "openai" | "anthropic" (default)
 export async function callTextModel(prompt: string): Promise<string> {
-  return process.env.AI_TEXT_PROVIDER === 'openai'
-    ? callOpenAI(prompt)
-    : callAnthropic(prompt)
+  switch (process.env.AI_TEXT_PROVIDER) {
+    case 'gemini':  return callGemini(prompt)
+    case 'openai':  return callOpenAI(prompt)
+    default:        return callAnthropic(prompt)
+  }
 }
 
 export async function callImageModel(prompt: string): Promise<string> {
