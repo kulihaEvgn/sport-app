@@ -7,6 +7,7 @@ import type { Exercise, MuscleGroup } from '@/types'
 import { getExercises } from '@/services/exercises'
 import { MUSCLE_GROUP_LABELS, MUSCLE_GROUP_COLORS, ALL_MUSCLE_GROUPS } from '@/lib/muscle-groups'
 import ExerciseCard from '@/components/screens/library/exercise-card'
+import AddLibrarySheet from '@/components/screens/library/add-library-sheet'
 
 export default function ExercisesPage() {
   const router = useRouter()
@@ -14,6 +15,7 @@ export default function ExercisesPage() {
   const [search, setSearch]           = useState('')
   const [filterMg, setFilterMg]       = useState<MuscleGroup | null>(null)
   const [showFilter, setShowFilter]   = useState(false)
+  const [showAddSheet, setShowAddSheet] = useState(false)
 
   useEffect(() => {
     getExercises().then(setExercises)
@@ -158,7 +160,7 @@ export default function ExercisesPage() {
 
       {/* FAB */}
       <button
-        onClick={() => router.push('/library/exercises/new')}
+        onClick={() => setShowAddSheet(true)}
         className="fixed flex items-center justify-center rounded-full shadow-lg"
         style={{
           bottom: 88, right: 20,
@@ -172,6 +174,13 @@ export default function ExercisesPage() {
       >
         <Plus size={24} color="var(--color-app-on-accent)" strokeWidth={2.5} />
       </button>
+
+      <AddLibrarySheet
+        open={showAddSheet}
+        context="exercises"
+        onClose={() => setShowAddSheet(false)}
+        onCreate={() => { setShowAddSheet(false); router.push('/library/exercises/new') }}
+      />
     </div>
   )
 }

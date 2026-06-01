@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Play, ArrowUpRight } from 'lucide-react'
+import { Play, ArrowUpRight, X } from 'lucide-react'
 import type { WorkoutTemplateExercise } from '@/types'
 import { MUSCLE_GROUP_COLORS, MUSCLE_GROUP_LABELS } from '@/lib/muscle-groups'
 import { useExercise } from '@/hooks/use-exercises'
@@ -55,7 +55,7 @@ export function ExerciseInfoSheet({ te, onClose }: Props) {
               </div>
             </div>
             <button
-              onClick={() => { onClose(); router.push(`/library/exercises/${te.exerciseId}`) }}
+              onClick={onClose}
               className="w-8 h-8 flex items-center justify-center rounded-full shrink-0"
               style={{
                 background: 'var(--color-app-surface)',
@@ -63,7 +63,7 @@ export function ExerciseInfoSheet({ te, onClose }: Props) {
                 cursor: 'pointer',
               }}
             >
-              <ArrowUpRight size={15} color="#9ca3af" />
+              <X size={15} color="#9ca3af" />
             </button>
           </div>
 
@@ -103,6 +103,16 @@ export function ExerciseInfoSheet({ te, onClose }: Props) {
               Смотреть видео
             </button>
           )}
+
+          {/* Open full exercise */}
+          <button
+            onClick={() => { onClose(); router.push(`/library/exercises/${te.exerciseId}`) }}
+            className="w-full flex items-center justify-center gap-2 text-[13px] font-medium"
+            style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-app-muted)' }}
+          >
+            <ArrowUpRight size={14} />
+            Открыть упражнение
+          </button>
         </div>
       </BottomSheet>
 

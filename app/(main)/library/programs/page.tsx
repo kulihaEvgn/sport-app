@@ -1,12 +1,15 @@
 'use client'
 
+import React from 'react'
 import { useRouter } from 'next/navigation'
 import { Plus, CheckCircle2, ChevronRight, Dumbbell } from 'lucide-react'
 import { usePrograms } from '@/hooks/use-programs'
+import AddLibrarySheet from '@/components/screens/library/add-library-sheet'
 
 export default function ProgramsPage() {
   const router = useRouter()
   const { data: programs = [] } = usePrograms()
+  const [showAddSheet, setShowAddSheet] = React.useState(false)
 
   return (
     <div className="flex flex-col px-4 pt-4 gap-3">
@@ -57,7 +60,7 @@ export default function ProgramsPage() {
 
       {/* FAB */}
       <button
-        onClick={() => router.push('/library/programs/new')}
+        onClick={() => setShowAddSheet(true)}
         className="fixed flex items-center justify-center rounded-full"
         style={{
           bottom: 88, right: 20,
@@ -71,6 +74,13 @@ export default function ProgramsPage() {
       >
         <Plus size={24} color="var(--color-app-on-accent)" strokeWidth={2.5} />
       </button>
+
+      <AddLibrarySheet
+        open={showAddSheet}
+        context="programs"
+        onClose={() => setShowAddSheet(false)}
+        onCreate={() => { setShowAddSheet(false); router.push('/library/programs/new') }}
+      />
 
       {/* Invisible spacer for FAB */}
       <div className="h-20" />
