@@ -5,7 +5,7 @@
 
 ---
 
-## Текущее состояние: Фазы 1–7 завершены, Фаза 8 следующая
+## Текущее состояние: Фазы 1–8 завершены, Фаза 9 следующая
 
 ---
 
@@ -41,8 +41,8 @@
 
 **Хуки** (`hooks/`):
 - `use-exercises.ts` — `useExercises`, `useExercise`, `useCreateExercise`, `useUpdateExercise`, `useDeleteExercise`
-- `use-programs.ts` — `usePrograms`, `useProgram`, `useActiveProgram`, `useActiveProgramState`, `useTemplate`, `useSetActiveProgram`, `useCreateProgram`, `useUpdateProgram`, `useDeleteProgram`, `useAddTemplate`, `useUpdateTemplate`, `useRemoveTemplate`, `useAddExerciseToDay`, `useUpdateDayExercise`, `useRemoveExerciseFromDay`, `useReorderExercises`
-- `use-history.ts` — `useWorkoutHistory`, `useWorkoutLog`, `useSaveWorkoutLog`, `useLastExerciseSets`
+- `use-programs.ts` — `usePrograms`, `useProgram`, `useActiveProgram`, `useActiveProgramState`, `useTemplate`, `useSetActiveProgram`, `useCreateProgram`, `useCreateFullProgram`, `useUpdateProgram`, `useDeleteProgram`, `useAddTemplate`, `useUpdateTemplate`, `useRemoveTemplate`, `useAddExerciseToDay`, `useUpdateDayExercise`, `useRemoveExerciseFromDay`, `useReorderExercises`
+- `use-history.ts` — `useWorkoutHistory`, `useWorkoutLog`, `useSaveWorkoutLog`, `useLastExerciseSets`, `useLastNExerciseSessions`
 - `use-progress.ts` — `useExerciseProgress`, `useStreak`, `useMonthStats`, `useFavoriteMuscleGroup`
 - `use-safe-area.ts` — `useSafeAreaInsets()` → `{ top, bottom }` из Telegram SDK
 
@@ -145,6 +145,46 @@
 - PR карточка (личный рекорд с датой)
 - Всё через `useStreak`, `useMonthStats`, `useExerciseProgress` хуки
 
+### Фаза 8 — ИИ фичи ✅
+
+**AI-провайдер** (`lib/ai-provider.ts`):
+- `callTextModel(prompt)` — Anthropic Haiku (`claude-haiku-4-5-20251001`)
+- `callImageModel(prompt)` — Together AI Flux Schnell Free (REST, без SDK)
+- Смена провайдера — только в этом файле
+
+**API routes** (`app/api/ai/`):
+- `generate-exercise` — `{ name, muscleGroup, equipment }` → `{ description, technique, commonMistakes }`
+- `generate-image` — `{ name, muscleGroup, equipment }` → `{ imageUrl }`
+- `generate-program` — `{ daysPerWeek, goal, level, availableExercises[] }` → `{ program }`
+- Ключи только серверные (`ANTHROPIC_API_KEY`, `TOGETHER_API_KEY`), никогда в браузере
+
+**`services/ai.ts`** — клиентский fetch к `/api/ai/*`, 3 функции: `generateExerciseDescription`, `generateExerciseImage`, `generateProgram`
+
+**`exercise-form.tsx`** — обе кнопки «ИИ» (описание + картинка) подключены к реальным API; поле `imageUrl` добавлено в схему и форму, preview показывает сгенерированную картинку
+
+**`add-library-sheet.tsx`** — третий пункт «Сгенерировать» (только в context=programs), принимает `onGenerate?` prop
+
+**`ai-program-sheet.tsx`** — шит с параметрами: цель (масса/сила/выносливость/похудение), уровень, дней/нед → вызов API → `createFullProgram` → редирект на программу
+
+**`services/programs.ts`** — добавлена `createFullProgram()` — принимает AI-ответ, генерирует IDs, сохраняет полную программу с шаблонами
+
+**`services/history.ts`** — добавлена `getLastNExerciseSessions(userId, exerciseId, n)` — последние N сессий по упражнению (массив массивов SetLog)
+
+**Подсказка прогрессии** (`lib/progression.ts`):
+- `shouldSuggestProgression(sessions, targetVolume)` — чистая функция
+- Условие: ≥3 сессии, вес стабильный, повторения ≥ `targetVolume.max`
+- Подключена в `exercise-info-sheet.tsx` (info sheet тренировки) и `active-workout.tsx` (list + tinder view)
+
+**Новые хуки**:
+- `useLastNExerciseSessions(userId, exerciseId, n)` в `use-history.ts`
+- `useCreateFullProgram()` в `use-programs.ts`
+
+**⚠️ Требует заполнения** `.env.local` перед деплоем:
+```
+ANTHROPIC_API_KEY=sk-ant-...
+TOGETHER_API_KEY=...
+```
+
 ### Фаза 7 — Профиль + Тема ✅
 
 **Профиль** (`components/screens/profile/profile-screen.tsx`):
@@ -190,16 +230,9 @@
 
 ---
 
-## Что НЕ сделано (Фазы 8–10)
+## Что НЕ сделано (Фазы 9–10)
 
-### Фаза 8 — ИИ фичи ⏳ СЛЕДУЮЩАЯ
-- Генерация описания упражнения — заглушка `handleGenerate` уже есть в `exercise-form.tsx`, нужно заменить на `POST /api/ai/generate-exercise`
-- Генерация картинки — `POST /api/ai/generate-image`
-- Подсказки прогрессии весов — `POST /api/ai/progression`
-- Импортеры в `AddLibrarySheet`: Notion / Obsidian / Excel / CSV — сейчас заглушки
-- Все ключи только серверные (env), клиентский код ходит в `/api/ai/*`
-
-### Фаза 9 — Бэкенд
+### Фаза 9 — Бэкенд ⏳ СЛЕДУЮЩАЯ
 - Neon (Postgres serverless) + Prisma schema
 - API routes под каждый сервис
 - Замена тел mock-функций в `services/*` на `fetch('/api/...')`
@@ -259,15 +292,15 @@ components/
   nav/             — header.tsx, bottom-nav.tsx (устанавливает nav direction при тапе)
   screens/
     library/       — exercise-card, exercise-detail, exercise-form, exercise-picker,
-                     program-detail, program-form, add-library-sheet
+                     program-detail, program-form, add-library-sheet, ai-program-sheet
     workout/       — active-workout, day-preview, no-program-view, program-overview, workout-summary
     progress/      — activity-heatmap, exercise-picker, progress-chart, progress-screen
     profile/       — profile-screen
 
 hooks/             — use-exercises, use-programs, use-history, use-progress,
                      use-safe-area, use-back-swipe
-lib/               — muscle-groups.ts, nav-direction.ts
-services/          — exercises, programs, history, progress (все async mock)
+lib/               — muscle-groups.ts, nav-direction.ts, ai-provider.ts, progression.ts
+services/          — exercises, programs, history, progress, ai (все async mock / fetch)
 schemas/           — exercise, program, target-volume
 store/             — workout-store.ts (Zustand + persist), theme-store.ts
 types/             — index.ts (все типы)
