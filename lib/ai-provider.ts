@@ -2,7 +2,7 @@ import Anthropic from '@anthropic-ai/sdk'
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
-export async function callTextModel(prompt: string): Promise<string> {
+async function callAnthropic(prompt: string): Promise<string> {
   const response = await anthropic.messages.create({
     model: 'claude-haiku-4-5-20251001',
     max_tokens: 1024,
@@ -11,6 +11,34 @@ export async function callTextModel(prompt: string): Promise<string> {
   const block = response.content[0]
   if (block.type !== 'text') throw new Error('Unexpected response type')
   return block.text
+}
+
+async function callOpenAI(prompt: string): Promise<string> {
+  const res = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: 'gpt-4o-mini',
+      max_tokens: 1024,
+      messages: [{ role: 'user', content: prompt }],
+    }),
+  })
+  if (!res.ok) {
+    const text = await res.text()
+    throw new Error(`OpenAI error: ${text}`)
+  }
+  const data = await res.json() as { choices: { message: { content: string } }[] }
+  return data.choices[0].message.content
+}
+
+// Switch provider via AI_TEXT_PROVIDER env var: "openai" | "anthropic" (default)
+export async function callTextModel(prompt: string): Promise<string> {
+  return process.env.AI_TEXT_PROVIDER === 'openai'
+    ? callOpenAI(prompt)
+    : callAnthropic(prompt)
 }
 
 export async function callImageModel(prompt: string): Promise<string> {
