@@ -16,7 +16,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
       <Header />
       <main
         className="flex-1 overflow-y-auto"
-        style={{ paddingBottom: NAV_HEIGHT + bottom }}
+        style={{ paddingBottom: NAV_HEIGHT + bottom, overscrollBehaviorY: 'contain', WebkitOverflowScrolling: 'touch' }}
       >
         {children}
       </main>

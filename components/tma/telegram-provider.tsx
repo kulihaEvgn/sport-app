@@ -8,6 +8,9 @@ import {
   mountViewport,
   isViewportMounted,
   isViewportMounting,
+  mountSwipeBehavior,
+  isSwipeBehaviorMounted,
+  disableVerticalSwipes,
 } from "@telegram-apps/sdk-react";
 import { useEffect, useState, type ReactNode } from "react";
 
@@ -32,6 +35,12 @@ function mountTelegramUi() {
   }
   if (mountViewport.isAvailable() && !isViewportMounted() && !isViewportMounting()) {
     mountViewport().catch(console.error);
+  }
+  if (mountSwipeBehavior.isAvailable() && !isSwipeBehaviorMounted()) {
+    mountSwipeBehavior();
+  }
+  if (disableVerticalSwipes.isAvailable()) {
+    disableVerticalSwipes();
   }
 }
 
