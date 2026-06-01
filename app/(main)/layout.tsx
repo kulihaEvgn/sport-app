@@ -23,6 +23,7 @@ const transition = { duration: 0.28, ease: [0.25, 0.1, 0.25, 1] as const }
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   const { top, bottom } = useSafeAreaInsets()
   const pathname = usePathname()
+  const tabKey   = pathname.split('/')[1] // 'library' | 'workout' | 'progress'
   const mainRef  = useRef<HTMLDivElement>(null)
   useTabSwipe(mainRef)
 
@@ -33,7 +34,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
       <div ref={mainRef} className="flex-1 relative overflow-hidden">
         <AnimatePresence mode="sync" custom={getNavDirection()}>
           <motion.div
-            key={pathname}
+            key={tabKey}
             custom={getNavDirection()}
             variants={variants}
             initial="enter"
