@@ -6,12 +6,12 @@ import { setNavDirection } from '@/lib/nav-direction'
 
 const SWIPE_MIN  = 80  // px horizontal travel to trigger
 
-export function useBackSwipe(ref: React.RefObject<HTMLElement | null>) {
+export function useBackSwipe(ref: React.RefObject<HTMLElement | null>, disabled = false) {
   const router = useRouter()
 
   useEffect(() => {
     const el = ref.current
-    if (!el) return
+    if (!el || disabled) return
 
     let startX  = 0
     let startY  = 0
@@ -34,5 +34,5 @@ export function useBackSwipe(ref: React.RefObject<HTMLElement | null>) {
       el.removeEventListener('touchstart', onTouchStart)
       el.removeEventListener('touchend',   onTouchEnd)
     }
-  }, [ref, router])
+  }, [ref, router, disabled])
 }

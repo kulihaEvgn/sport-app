@@ -19,7 +19,7 @@ export default function SessionLayout({ children }: { children: React.ReactNode 
   const { top, bottom } = useSafeAreaInsets()
   const pathname        = usePathname()
   const containerRef    = useRef<HTMLDivElement>(null)
-  useBackSwipe(containerRef)
+  useBackSwipe(containerRef, pathname.includes('/session'))
 
   return (
     <div
