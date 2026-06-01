@@ -5,6 +5,9 @@ import {
   isUnknownEnvError,
   miniApp,
   themeParams,
+  mountViewport,
+  isViewportMounted,
+  isViewportMounting,
 } from "@telegram-apps/sdk-react";
 import { useEffect, useState, type ReactNode } from "react";
 
@@ -26,6 +29,9 @@ function mountTelegramUi() {
     !themeParams.isCssVarsBound()
   ) {
     themeParams.bindCssVars();
+  }
+  if (mountViewport.isAvailable() && !isViewportMounted() && !isViewportMounting()) {
+    mountViewport().catch(console.error);
   }
 }
 
