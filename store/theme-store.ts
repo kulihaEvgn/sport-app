@@ -27,7 +27,7 @@ export const useThemeStore = create<ThemeStore>()(
       name: 'gym-theme',
       storage: createJSONStorage(() => localStorage),
       onRehydrateStorage: () => (state) => {
-        if (state) applyTheme(state.theme)
+        applyTheme(state?.theme ?? 'dark')
       },
     },
   ),

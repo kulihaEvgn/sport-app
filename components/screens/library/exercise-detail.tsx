@@ -34,29 +34,29 @@ export default function ExerciseDetail({ exercise, onBack, onEdit, onDeleted }: 
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 pt-4 pb-3 flex-shrink-0" style={{ borderBottom: '1px solid rgba(255,255,255,0.09)' }}>
+      <div className="flex items-center justify-between px-4 pt-4 pb-3 flex-shrink-0" style={{ borderBottom: '1px solid var(--color-app-border)' }}>
         <button
           onClick={onBack}
           className="flex items-center gap-2 text-[14px] font-medium"
-          style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#4ade80' }}
+          style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-app-accent)' }}
         >
-          <ArrowLeft size={18} color="#4ade80" />
+          <ArrowLeft size={18} color="var(--color-app-accent)" />
           Назад
         </button>
         <div className="flex gap-2">
           <button
             onClick={() => onEdit(exercise)}
             className="w-8 h-8 flex items-center justify-center rounded-full"
-            style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.09)', cursor: 'pointer' }}
+            style={{ background: 'var(--color-app-surface)', border: '1px solid var(--color-app-border)', cursor: 'pointer' }}
           >
-            <Edit2 size={14} color="#6b7280" />
+            <Edit2 size={14} color="var(--color-app-muted)" />
           </button>
           <button
             onClick={() => setConfirmDelete(true)}
             className="w-8 h-8 flex items-center justify-center rounded-full"
             style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', cursor: 'pointer' }}
           >
-            <Trash2 size={14} color="#ef4444" />
+            <Trash2 size={14} color="var(--color-app-red)" />
           </button>
         </div>
       </div>
@@ -77,7 +77,7 @@ export default function ExerciseDetail({ exercise, onBack, onEdit, onDeleted }: 
             {abbr}
           </div>
           <div>
-            <h1 className="text-[20px] font-bold leading-tight" style={{ color: '#f9fafb' }}>
+            <h1 className="text-[20px] font-bold leading-tight" style={{ color: 'var(--color-app-text)' }}>
               {exercise.name}
             </h1>
             <div className="flex items-center gap-2 mt-1">
@@ -87,7 +87,7 @@ export default function ExerciseDetail({ exercise, onBack, onEdit, onDeleted }: 
               >
                 {MUSCLE_GROUP_LABELS[exercise.muscleGroup]}
               </span>
-              <span className="text-[12px]" style={{ color: '#6b7280' }}>
+              <span className="text-[12px]" style={{ color: 'var(--color-app-muted)' }}>
                 {exercise.equipment}
               </span>
             </div>
@@ -97,9 +97,9 @@ export default function ExerciseDetail({ exercise, onBack, onEdit, onDeleted }: 
         {/* Equipment row */}
         <div
           className="flex items-center gap-3 px-4 py-3 rounded-2xl"
-          style={{ background: 'rgba(255,255,255,0.06)', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)', border: '1px solid rgba(255,255,255,0.09)', boxShadow: '0 4px 24px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06)' }}
+          style={{ background: 'var(--color-app-surface)', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)', border: '1px solid var(--color-app-border)', boxShadow: '0 4px 24px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06)' }}
         >
-          <span className="text-[12px] font-medium" style={{ color: '#6b7280' }}>Инвентарь</span>
+          <span className="text-[12px] font-medium" style={{ color: 'var(--color-app-muted)' }}>Инвентарь</span>
           <span className="text-[12px] font-semibold ml-auto" style={{ color }}>
             {exercise.equipment}
           </span>
@@ -108,10 +108,10 @@ export default function ExerciseDetail({ exercise, onBack, onEdit, onDeleted }: 
         {/* Description */}
         {exercise.description && (
           <div className="flex flex-col gap-2">
-            <span className="text-[11px] font-bold tracking-widest uppercase" style={{ color: '#6b7280', fontFamily: 'var(--font-mono)' }}>
+            <span className="text-[11px] font-bold tracking-widest uppercase" style={{ color: 'var(--color-app-muted)', fontFamily: 'var(--font-mono)' }}>
               ОПИСАНИЕ
             </span>
-            <p className="text-[14px] leading-relaxed" style={{ color: '#d1d5db' }}>
+            <p className="text-[14px] leading-relaxed" style={{ color: 'var(--color-app-text-secondary)' }}>
               {exercise.description}
             </p>
           </div>

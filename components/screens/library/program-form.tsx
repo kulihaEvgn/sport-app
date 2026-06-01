@@ -36,23 +36,23 @@ export default function ProgramForm({ initial, onSave, onClose }: Props) {
     <form
       onSubmit={handleSubmit(onSave)}
       className="fixed inset-0 z-50 flex flex-col"
-      style={{ background: '#07070e' }}
+      style={{ background: 'var(--color-app-bg)' }}
     >
       {/* Header */}
       <div
         className="flex items-center justify-between px-4 pt-4 pb-3 flex-shrink-0"
-        style={{ borderBottom: '1px solid rgba(255,255,255,0.09)' }}
+        style={{ borderBottom: '1px solid var(--color-app-border)' }}
       >
-        <span className="text-[16px] font-semibold" style={{ color: '#f9fafb' }}>
+        <span className="text-[16px] font-semibold" style={{ color: 'var(--color-app-text)' }}>
           {initial ? 'Редактировать программу' : 'Новая программа'}
         </span>
         <button
           type="button"
           onClick={onClose}
           className="w-8 h-8 flex items-center justify-center rounded-full"
-          style={{ background: 'rgba(255,255,255,0.1)', cursor: 'pointer' }}
+          style={{ background: 'var(--color-app-surface3)', cursor: 'pointer' }}
         >
-          <X size={16} color="#f9fafb" />
+          <X size={16} color="var(--color-app-text)" />
         </button>
       </div>
 
@@ -63,7 +63,7 @@ export default function ProgramForm({ initial, onSave, onClose }: Props) {
         <div className="flex flex-col gap-1.5">
           <label
             className="text-[12px] font-semibold tracking-widest uppercase"
-            style={{ color: '#6b7280', fontFamily: 'var(--font-mono)' }}
+            style={{ color: 'var(--color-app-muted)', fontFamily: 'var(--font-mono)' }}
           >
             Название
           </label>
@@ -72,13 +72,13 @@ export default function ProgramForm({ initial, onSave, onClose }: Props) {
             placeholder="Full Body / Сила / Масса"
             className="px-3 py-2.5 rounded-xl text-[14px] outline-none"
             style={{
-              background: 'rgba(255,255,255,0.05)',
-              border: `1px solid ${errors.name ? '#f87171' : 'rgba(255,255,255,0.09)'}`,
-              color: '#f9fafb',
+              background: 'var(--color-app-surface2)',
+              border: `1px solid ${errors.name ? 'var(--color-app-error)' : 'var(--color-app-border)'}`,
+              color: 'var(--color-app-text)',
             }}
           />
           {errors.name && (
-            <span className="text-[11px]" style={{ color: '#f87171' }}>{errors.name.message}</span>
+            <span className="text-[11px]" style={{ color: 'var(--color-app-error)' }}>{errors.name.message}</span>
           )}
         </div>
 
@@ -86,7 +86,7 @@ export default function ProgramForm({ initial, onSave, onClose }: Props) {
         <div className="flex flex-col gap-1.5">
           <label
             className="text-[12px] font-semibold tracking-widest uppercase"
-            style={{ color: '#6b7280', fontFamily: 'var(--font-mono)' }}
+            style={{ color: 'var(--color-app-muted)', fontFamily: 'var(--font-mono)' }}
           >
             Дней в неделю
           </label>
@@ -98,9 +98,9 @@ export default function ProgramForm({ initial, onSave, onClose }: Props) {
                 onClick={() => setValue('daysPerWeek', d)}
                 className="w-10 h-10 rounded-xl text-[14px] font-bold transition-all flex-shrink-0"
                 style={{
-                  background: daysPerWeek === d ? 'rgba(74,222,128,0.15)' : 'rgba(255,255,255,0.05)',
-                  border: `1px solid ${daysPerWeek === d ? '#4ade80' : 'rgba(255,255,255,0.09)'}`,
-                  color: daysPerWeek === d ? '#4ade80' : '#6b7280',
+                  background: daysPerWeek === d ? 'var(--color-app-accent-soft)' : 'var(--color-app-surface2)',
+                  border: `1px solid ${daysPerWeek === d ? 'var(--color-app-accent)' : 'var(--color-app-border)'}`,
+                  color: daysPerWeek === d ? 'var(--color-app-accent)' : 'var(--color-app-muted)',
                   cursor: 'pointer',
                 }}
               >
@@ -114,7 +114,7 @@ export default function ProgramForm({ initial, onSave, onClose }: Props) {
         <div className="flex flex-col gap-1.5">
           <label
             className="text-[12px] font-semibold tracking-widest uppercase"
-            style={{ color: '#6b7280', fontFamily: 'var(--font-mono)' }}
+            style={{ color: 'var(--color-app-muted)', fontFamily: 'var(--font-mono)' }}
           >
             Описание (опционально)
           </label>
@@ -123,7 +123,7 @@ export default function ProgramForm({ initial, onSave, onClose }: Props) {
             placeholder="Цель программы, особенности..."
             rows={3}
             className="px-3 py-2.5 rounded-xl text-[13px] outline-none resize-none"
-            style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.09)', color: '#f9fafb' }}
+            style={{ background: 'var(--color-app-surface2)', border: '1px solid var(--color-app-border)', color: 'var(--color-app-text)' }}
           />
         </div>
 
@@ -134,8 +134,8 @@ export default function ProgramForm({ initial, onSave, onClose }: Props) {
             disabled={isSubmitting}
             className="w-full h-12 rounded-2xl text-[15px] font-bold transition-all"
             style={{
-              background: isSubmitting ? 'rgba(255,255,255,0.09)' : '#4ade80',
-              color: isSubmitting ? '#6b7280' : '#0f172a',
+              background: isSubmitting ? 'var(--color-app-border)' : 'var(--color-app-accent)',
+              color: isSubmitting ? 'var(--color-app-muted)' : 'var(--color-app-on-accent)',
               cursor: isSubmitting ? 'not-allowed' : 'pointer',
             }}
           >

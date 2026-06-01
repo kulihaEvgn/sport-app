@@ -12,8 +12,8 @@ export default function ProgramsPage() {
     <div className="flex flex-col px-4 pt-4 gap-3">
       {programs.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 gap-3">
-          <Dumbbell size={48} color="#2d2d4e" />
-          <p className="text-[14px]" style={{ color: '#6b7280' }}>Нет программ</p>
+          <Dumbbell size={48} color="var(--color-app-card-border)" />
+          <p className="text-[14px]" style={{ color: 'var(--color-app-muted)' }}>Нет программ</p>
         </div>
       ) : (
         programs.map(program => (
@@ -22,35 +22,35 @@ export default function ProgramsPage() {
             onClick={() => router.push(`/library/programs/${program.id}`)}
             className="w-full text-left rounded-2xl px-4 py-4 flex items-center gap-3 transition-all active:opacity-80"
             style={{
-              background: program.isActive ? 'rgba(74,222,128,0.08)' : '#1a1a2e',
-              border: `1px solid ${program.isActive ? 'rgba(74,222,128,0.4)' : '#2d2d4e'}`,
+              background: program.isActive ? 'var(--color-app-accent-subtle)' : 'var(--color-app-card)',
+              border: `1px solid ${program.isActive ? 'var(--color-app-accent-border-3)' : 'var(--color-app-card-border)'}`,
               cursor: 'pointer',
             }}
           >
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
-                <span className="text-[15px] font-semibold truncate" style={{ color: '#f9fafb' }}>
+                <span className="text-[15px] font-semibold truncate" style={{ color: 'var(--color-app-text)' }}>
                   {program.name}
                 </span>
                 {program.isActive && (
-                  <CheckCircle2 size={14} color="#4ade80" className="flex-shrink-0" />
+                  <CheckCircle2 size={14} color="var(--color-app-accent)" className="flex-shrink-0" />
                 )}
               </div>
               <div className="flex items-center gap-3 mt-1">
-                <span className="text-[12px]" style={{ color: '#6b7280' }}>
+                <span className="text-[12px]" style={{ color: 'var(--color-app-muted)' }}>
                   {program.daysPerWeek} дн/нед
                 </span>
-                <span className="text-[12px]" style={{ color: '#6b7280' }}>
+                <span className="text-[12px]" style={{ color: 'var(--color-app-muted)' }}>
                   {program.templates.length} тренировок
                 </span>
               </div>
               {program.description && (
-                <p className="text-[12px] mt-1.5 truncate" style={{ color: '#6b7280' }}>
+                <p className="text-[12px] mt-1.5 truncate" style={{ color: 'var(--color-app-muted)' }}>
                   {program.description}
                 </p>
               )}
             </div>
-            <ChevronRight size={16} color="#6b7280" />
+            <ChevronRight size={16} color="var(--color-app-muted)" />
           </button>
         ))
       )}
@@ -62,14 +62,14 @@ export default function ProgramsPage() {
         style={{
           bottom: 88, right: 20,
           width: 52, height: 52,
-          background: '#4ade80',
+          background: 'var(--color-app-accent)',
           border: 'none',
           cursor: 'pointer',
           zIndex: 50,
           boxShadow: '0 4px 24px rgba(74,222,128,0.4)',
         }}
       >
-        <Plus size={24} color="#0f172a" strokeWidth={2.5} />
+        <Plus size={24} color="var(--color-app-on-accent)" strokeWidth={2.5} />
       </button>
 
       {/* Invisible spacer for FAB */}

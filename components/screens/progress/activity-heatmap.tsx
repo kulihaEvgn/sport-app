@@ -29,8 +29,8 @@ export default function ActivityHeatmap({ workoutDates }: Props) {
               key={di}
               className="w-[9px] h-[9px] rounded-sm"
               style={{
-                background: cell.count > 0 ? '#4ade80' : '#1a1a2e',
-                border: `1px solid ${cell.count > 0 ? 'rgba(74,222,128,0.4)' : '#2d2d4e'}`,
+                background: cell.count > 0 ? 'var(--color-app-accent)' : 'var(--color-app-card)',
+                border: `1px solid ${cell.count > 0 ? 'var(--color-app-accent-border-3)' : 'var(--color-app-card-border)'}`,
               }}
             />
           ))}

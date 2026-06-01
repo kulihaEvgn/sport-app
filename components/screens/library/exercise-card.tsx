@@ -34,11 +34,11 @@ export default function ExerciseCard({ exercise, onClick }: Props) {
 
       {/* Info */}
       <div className="flex-1 min-w-0">
-        <div className="text-[14px] font-semibold truncate" style={{ color: '#f9fafb' }}>
+        <div className="text-[14px] font-semibold truncate" style={{ color: 'var(--color-app-text)' }}>
           {exercise.name}
         </div>
         <div className="flex items-center gap-2 mt-0.5">
-          <span className="text-[11px]" style={{ color: '#6b7280' }}>
+          <span className="text-[11px]" style={{ color: 'var(--color-app-muted)' }}>
             {exercise.equipment}
           </span>
         </div>

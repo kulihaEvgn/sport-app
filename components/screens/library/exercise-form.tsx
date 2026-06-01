@@ -49,18 +49,18 @@ export default function ExerciseForm({ initial, onSave, onClose }: Props) {
     <form
       onSubmit={handleSubmit(onSave)}
       className="fixed inset-0 z-50 flex flex-col"
-      style={{ background: '#07070e' }}
+      style={{ background: 'var(--color-app-bg)' }}
     >
       {/* Header */}
       <div className="flex items-center justify-between px-4 pt-4 pb-3 flex-shrink-0"
-        style={{ borderBottom: '1px solid rgba(255,255,255,0.09)' }}>
-        <span className="text-[16px] font-semibold" style={{ color: '#f9fafb' }}>
+        style={{ borderBottom: '1px solid var(--color-app-border)' }}>
+        <span className="text-[16px] font-semibold" style={{ color: 'var(--color-app-text)' }}>
           {initial ? 'Редактировать' : 'Новое упражнение'}
         </span>
         <button type="button" onClick={onClose}
           className="w-8 h-8 flex items-center justify-center rounded-full"
-          style={{ background: 'rgba(255,255,255,0.1)', cursor: 'pointer' }}>
-          <X size={16} color="#f9fafb" />
+          style={{ background: 'var(--color-app-surface3)', cursor: 'pointer' }}>
+          <X size={16} color="var(--color-app-text)" />
         </button>
       </div>
 
@@ -70,24 +70,24 @@ export default function ExerciseForm({ initial, onSave, onClose }: Props) {
         {/* Name */}
         <div className="flex flex-col gap-1.5">
           <label className="text-[12px] font-semibold tracking-widest uppercase"
-            style={{ color: '#6b7280', fontFamily: 'var(--font-mono)' }}>
+            style={{ color: 'var(--color-app-muted)', fontFamily: 'var(--font-mono)' }}>
             Название
           </label>
           <input
             {...register('name')}
             placeholder="Жим штанги лёжа"
             className="px-3 py-2.5 rounded-xl text-[14px] outline-none"
-            style={{ background: 'rgba(255,255,255,0.05)', border: `1px solid ${errors.name ? '#f87171' : 'rgba(255,255,255,0.09)'}`, color: '#f9fafb' }}
+            style={{ background: 'var(--color-app-surface2)', border: `1px solid ${errors.name ? 'var(--color-app-error)' : 'var(--color-app-border)'}`, color: 'var(--color-app-text)' }}
           />
           {errors.name && (
-            <span className="text-[11px]" style={{ color: '#f87171' }}>{errors.name.message}</span>
+            <span className="text-[11px]" style={{ color: 'var(--color-app-error)' }}>{errors.name.message}</span>
           )}
         </div>
 
         {/* Muscle group */}
         <div className="flex flex-col gap-1.5">
           <label className="text-[12px] font-semibold tracking-widest uppercase"
-            style={{ color: '#6b7280', fontFamily: 'var(--font-mono)' }}>
+            style={{ color: 'var(--color-app-muted)', fontFamily: 'var(--font-mono)' }}>
             Группа мышц
           </label>
           <Controller name="muscleGroup" control={control} render={({ field }) => (
@@ -99,9 +99,9 @@ export default function ExerciseForm({ initial, onSave, onClose }: Props) {
                   <button key={mg} type="button" onClick={() => field.onChange(mg)}
                     className="px-3 py-1.5 rounded-xl text-[12px] font-medium transition-all"
                     style={{
-                      background: active ? `${color}20` : 'rgba(255,255,255,0.05)',
-                      border: `1px solid ${active ? color : 'rgba(255,255,255,0.09)'}`,
-                      color: active ? color : '#6b7280',
+                      background: active ? `${color}20` : 'var(--color-app-surface2)',
+                      border: `1px solid ${active ? color : 'var(--color-app-border)'}`,
+                      color: active ? color : 'var(--color-app-muted)',
                       cursor: 'pointer',
                     }}>
                     {MUSCLE_GROUP_LABELS[mg]}
@@ -115,7 +115,7 @@ export default function ExerciseForm({ initial, onSave, onClose }: Props) {
         {/* Equipment */}
         <div className="flex flex-col gap-1.5">
           <label className="text-[12px] font-semibold tracking-widest uppercase"
-            style={{ color: '#6b7280', fontFamily: 'var(--font-mono)' }}>
+            style={{ color: 'var(--color-app-muted)', fontFamily: 'var(--font-mono)' }}>
             Инвентарь
           </label>
           <Controller name="equipment" control={control} render={({ field }) => (
@@ -124,9 +124,9 @@ export default function ExerciseForm({ initial, onSave, onClose }: Props) {
                 <button key={eq} type="button" onClick={() => field.onChange(eq)}
                   className="px-3 py-1.5 rounded-xl text-[12px] font-medium transition-all"
                   style={{
-                    background: field.value === eq ? 'rgba(34,211,238,0.12)' : 'rgba(255,255,255,0.05)',
-                    border: `1px solid ${field.value === eq ? '#22d3ee' : 'rgba(255,255,255,0.09)'}`,
-                    color: field.value === eq ? '#22d3ee' : '#6b7280',
+                    background: field.value === eq ? 'rgba(34,211,238,0.12)' : 'var(--color-app-surface2)',
+                    border: `1px solid ${field.value === eq ? 'var(--color-app-cyan)' : 'var(--color-app-border)'}`,
+                    color: field.value === eq ? 'var(--color-app-cyan)' : 'var(--color-app-muted)',
                     cursor: 'pointer',
                   }}>
                   {eq}
@@ -135,24 +135,24 @@ export default function ExerciseForm({ initial, onSave, onClose }: Props) {
             </div>
           )} />
           {errors.equipment && (
-            <span className="text-[11px]" style={{ color: '#f87171' }}>{errors.equipment.message}</span>
+            <span className="text-[11px]" style={{ color: 'var(--color-app-error)' }}>{errors.equipment.message}</span>
           )}
         </div>
 
         {/* YouTube */}
         <div className="flex flex-col gap-1.5">
           <label className="text-[12px] font-semibold tracking-widest uppercase"
-            style={{ color: '#6b7280', fontFamily: 'var(--font-mono)' }}>
+            style={{ color: 'var(--color-app-muted)', fontFamily: 'var(--font-mono)' }}>
             YouTube (опционально)
           </label>
           <input
             {...register('videoUrl')}
             placeholder="https://youtube.com/watch?v=..."
             className="px-3 py-2.5 rounded-xl text-[13px] outline-none"
-            style={{ background: 'rgba(255,255,255,0.05)', border: `1px solid ${errors.videoUrl ? '#f87171' : 'rgba(255,255,255,0.09)'}`, color: '#f9fafb' }}
+            style={{ background: 'var(--color-app-surface2)', border: `1px solid ${errors.videoUrl ? 'var(--color-app-error)' : 'var(--color-app-border)'}`, color: 'var(--color-app-text)' }}
           />
           {errors.videoUrl && (
-            <span className="text-[11px]" style={{ color: '#f87171' }}>{errors.videoUrl.message}</span>
+            <span className="text-[11px]" style={{ color: 'var(--color-app-error)' }}>{errors.videoUrl.message}</span>
           )}
         </div>
 
@@ -160,15 +160,15 @@ export default function ExerciseForm({ initial, onSave, onClose }: Props) {
         <div className="flex flex-col gap-1.5">
           <div className="flex items-center justify-between">
             <label className="text-[12px] font-semibold tracking-widest uppercase"
-              style={{ color: '#6b7280', fontFamily: 'var(--font-mono)' }}>
+              style={{ color: 'var(--color-app-muted)', fontFamily: 'var(--font-mono)' }}>
               Описание
             </label>
             <button type="button" onClick={handleGenerate} disabled={!name.trim()}
               className="flex items-center gap-1 px-2 py-1 rounded-lg text-[11px] font-semibold transition-all"
               style={{
-                background: 'rgba(74,222,128,0.12)',
-                border: '1px solid rgba(74,222,128,0.3)',
-                color: '#4ade80',
+                background: 'var(--color-app-accent-dim)',
+                border: '1px solid var(--color-app-accent-border-2)',
+                color: 'var(--color-app-accent)',
                 cursor: name.trim() ? 'pointer' : 'not-allowed',
                 opacity: name.trim() ? 1 : 0.5,
               }}>
@@ -181,7 +181,7 @@ export default function ExerciseForm({ initial, onSave, onClose }: Props) {
             placeholder="Техника выполнения..."
             rows={4}
             className="px-3 py-2.5 rounded-xl text-[13px] outline-none resize-none"
-            style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.09)', color: '#f9fafb' }}
+            style={{ background: 'var(--color-app-surface2)', border: '1px solid var(--color-app-border)', color: 'var(--color-app-text)' }}
           />
         </div>
 
@@ -190,8 +190,8 @@ export default function ExerciseForm({ initial, onSave, onClose }: Props) {
           <button type="submit" disabled={isSubmitting}
             className="w-full h-12 rounded-2xl text-[15px] font-bold transition-all"
             style={{
-              background: isSubmitting ? 'rgba(255,255,255,0.09)' : '#4ade80',
-              color: isSubmitting ? '#6b7280' : '#0f172a',
+              background: isSubmitting ? 'var(--color-app-border)' : 'var(--color-app-accent)',
+              color: isSubmitting ? 'var(--color-app-muted)' : 'var(--color-app-on-accent)',
               cursor: isSubmitting ? 'not-allowed' : 'pointer',
             }}>
             {isSubmitting ? 'Сохраняю...' : (initial ? 'Сохранить' : 'Создать')}

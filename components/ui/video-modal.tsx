@@ -21,7 +21,7 @@ export function VideoModal({ open, youtubeId, isShorts = false, title, onClose }
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
           className="fixed inset-0 flex flex-col items-center justify-center px-4"
-          style={{ zIndex: 110, background: 'rgba(0,0,0,0.88)' }}
+          style={{ zIndex: 110, background: 'var(--color-app-overlay-dark)' }}
           onClick={onClose}
         >
           <motion.div
@@ -36,7 +36,7 @@ export function VideoModal({ open, youtubeId, isShorts = false, title, onClose }
             {/* Header */}
             <div className="flex items-center justify-between px-1">
               {title && (
-                <p className="text-[15px] font-semibold truncate pr-3" style={{ color: '#f9fafb' }}>
+                <p className="text-[15px] font-semibold truncate pr-3" style={{ color: 'var(--color-app-text)' }}>
                   {title}
                 </p>
               )}
@@ -44,8 +44,8 @@ export function VideoModal({ open, youtubeId, isShorts = false, title, onClose }
                 onClick={onClose}
                 className="ml-auto w-8 h-8 flex items-center justify-center rounded-full flex-shrink-0"
                 style={{
-                  background: 'rgba(255,255,255,0.1)',
-                  border: '1px solid rgba(255,255,255,0.12)',
+                  background: 'var(--color-app-surface3)',
+                  border: '1px solid var(--color-app-surface3)',
                   cursor: 'pointer',
                 }}
               >
@@ -60,7 +60,7 @@ export function VideoModal({ open, youtubeId, isShorts = false, title, onClose }
                 aspectRatio: isShorts ? '9/16' : '16/9',
                 background: '#000',
                 boxShadow: '0 24px 64px rgba(0,0,0,0.7)',
-                border: '1px solid rgba(255,255,255,0.08)',
+                border: '1px solid var(--color-app-surface3)',
               }}
             >
               <iframe

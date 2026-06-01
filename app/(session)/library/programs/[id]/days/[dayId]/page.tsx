@@ -159,29 +159,29 @@ export default function DayEditorPage({
       {/* Header */}
       <div
         className="flex items-center justify-between px-4 pt-4 pb-3 flex-shrink-0"
-        style={{ borderBottom: '1px solid rgba(255,255,255,0.09)' }}
+        style={{ borderBottom: '1px solid var(--color-app-border)' }}
       >
         <button
           onClick={() => router.back()}
           className="flex items-center gap-2 text-[14px] font-medium"
-          style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#4ade80' }}
+          style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-app-accent)' }}
         >
-          <ArrowLeft size={18} color="#4ade80" />
+          <ArrowLeft size={18} color="var(--color-app-accent)" />
           Назад
         </button>
-        <span className="text-[16px] font-semibold" style={{ color: '#f9fafb' }}>
+        <span className="text-[16px] font-semibold" style={{ color: 'var(--color-app-text)' }}>
           {template.name}
         </span>
         <button
           onClick={() => setShowPicker(true)}
           className="w-8 h-8 flex items-center justify-center rounded-full"
           style={{
-            background: 'rgba(74,222,128,0.1)',
-            border: '1px solid rgba(74,222,128,0.3)',
+            background: 'var(--color-app-accent-subtle)',
+            border: '1px solid var(--color-app-accent-border-2)',
             cursor: 'pointer',
           }}
         >
-          <Plus size={16} color="#4ade80" />
+          <Plus size={16} color="var(--color-app-accent)" />
         </button>
       </div>
 
@@ -189,14 +189,14 @@ export default function DayEditorPage({
       <div className="flex-1 overflow-y-auto px-4 py-4">
         {exercises.length === 0 && (
           <div className="flex flex-col items-center justify-center py-20 gap-3">
-            <p className="text-[14px]" style={{ color: '#6b7280' }}>Добавьте упражнения</p>
+            <p className="text-[14px]" style={{ color: 'var(--color-app-muted)' }}>Добавьте упражнения</p>
             <button
               onClick={() => setShowPicker(true)}
               className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-[14px] font-semibold"
               style={{
-                background: 'rgba(74,222,128,0.1)',
-                border: '1px solid rgba(74,222,128,0.3)',
-                color: '#4ade80',
+                background: 'var(--color-app-accent-subtle)',
+                border: '1px solid var(--color-app-accent-border-2)',
+                color: 'var(--color-app-accent)',
                 cursor: 'pointer',
               }}
             >
@@ -306,8 +306,8 @@ function ExerciseRow({
       onDragEnd={onDragEnd}
       className="rounded-2xl px-4 py-3 flex items-center gap-3"
       style={{
-        background: 'rgba(255,255,255,0.06)',
-        border: '1px solid rgba(255,255,255,0.09)',
+        background: 'var(--color-app-surface)',
+        border: '1px solid var(--color-app-border)',
         backdropFilter: 'blur(14px)',
         WebkitBackdropFilter: 'blur(14px)',
         boxShadow: '0 4px 24px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06)',
@@ -338,19 +338,19 @@ function ExerciseRow({
           >
             {MUSCLE_GROUP_LABELS[te.exercise.muscleGroup].slice(0, 2).toUpperCase()}
           </span>
-          <span className="text-[14px] font-semibold truncate" style={{ color: '#f9fafb' }}>
+          <span className="text-[14px] font-semibold truncate" style={{ color: 'var(--color-app-text)' }}>
             {te.exercise.name}
           </span>
         </div>
         <div className="flex gap-3 mt-0.5">
-          <span className="text-[12px]" style={{ color: '#6b7280' }}>
+          <span className="text-[12px]" style={{ color: 'var(--color-app-muted)' }}>
             {te.targetSets} × {formatVolume(te.targetVolume)}
           </span>
-          <span className="text-[12px]" style={{ color: '#6b7280' }}>
+          <span className="text-[12px]" style={{ color: 'var(--color-app-muted)' }}>
             {te.restSeconds}с отдых
           </span>
           {te.plannedWeight && (
-            <span className="text-[12px]" style={{ color: '#6b7280' }}>
+            <span className="text-[12px]" style={{ color: 'var(--color-app-muted)' }}>
               {te.plannedWeight} кг
             </span>
           )}
@@ -361,18 +361,18 @@ function ExerciseRow({
       <button
         onClick={onEdit}
         className="w-8 h-8 flex items-center justify-center rounded-lg shrink-0"
-        style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.09)', cursor: 'pointer' }}
+        style={{ background: 'var(--color-app-surface2)', border: '1px solid var(--color-app-border)', cursor: 'pointer' }}
       >
-        <Pencil size={13} color="#9ca3af" />
+        <Pencil size={13} color="var(--color-app-muted-2)" />
       </button>
 
       {/* Delete */}
       <button
         onClick={onDelete}
         className="w-8 h-8 flex items-center justify-center rounded-lg shrink-0"
-        style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.09)', cursor: 'pointer' }}
+        style={{ background: 'var(--color-app-surface2)', border: '1px solid var(--color-app-border)', cursor: 'pointer' }}
       >
-        <Trash2 size={14} color="#f87171" />
+        <Trash2 size={14} color="var(--color-app-error)" />
       </button>
     </Reorder.Item>
   )
@@ -412,19 +412,19 @@ function NumberPad({
 }) {
   return (
     <div className="flex flex-col gap-1">
-      <span className="text-[11px]" style={{ color: '#6b7280' }}>{label}</span>
+      <span className="text-[11px]" style={{ color: 'var(--color-app-muted)' }}>{label}</span>
       <div className="flex items-center gap-2">
         <button
           type="button"
           onClick={() => onChange(Math.max(min, value - step))}
           className="w-8 h-8 rounded-lg text-[18px] font-bold flex items-center justify-center"
-          style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.09)', color: '#f9fafb', cursor: 'pointer' }}
+          style={{ background: 'var(--color-app-surface2)', border: '1px solid var(--color-app-border)', color: 'var(--color-app-text)', cursor: 'pointer' }}
         >
           −
         </button>
         <span
           className="w-10 text-center text-[16px] font-bold"
-          style={{ color: '#f9fafb', fontFamily: 'var(--font-mono)' }}
+          style={{ color: 'var(--color-app-text)', fontFamily: 'var(--font-mono)' }}
         >
           {value}
         </span>
@@ -432,7 +432,7 @@ function NumberPad({
           type="button"
           onClick={() => onChange(value + step)}
           className="w-8 h-8 rounded-lg text-[18px] font-bold flex items-center justify-center"
-          style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.09)', color: '#f9fafb', cursor: 'pointer' }}
+          style={{ background: 'var(--color-app-surface2)', border: '1px solid var(--color-app-border)', color: 'var(--color-app-text)', cursor: 'pointer' }}
         >
           +
         </button>
@@ -448,13 +448,13 @@ function ConfigSheet({
   return (
     <BottomSheet open onClose={onClose}>
       <div className="px-4 pb-8 pt-4 flex flex-col gap-4 overflow-y-auto">
-        <h3 className="text-[15px] font-bold truncate" style={{ color: '#f9fafb' }}>{title}</h3>
+        <h3 className="text-[15px] font-bold truncate" style={{ color: 'var(--color-app-text)' }}>{title}</h3>
 
         <NumberPad label="Подходы" value={targetSets} onChange={v => onChange({ targetSets: v })} />
 
         {/* Volume type */}
         <div className="flex flex-col gap-2">
-          <span className="text-[11px]" style={{ color: '#6b7280' }}>Тип объёма</span>
+          <span className="text-[11px]" style={{ color: 'var(--color-app-muted)' }}>Тип объёма</span>
           <div className="flex gap-2">
             {(['reps', 'time'] as const).map(t => (
               <button
@@ -463,9 +463,9 @@ function ConfigSheet({
                 onClick={() => onChange({ volumeType: t })}
                 className="flex-1 h-9 rounded-xl text-[13px] font-semibold"
                 style={{
-                  background: volumeType === t ? 'rgba(74,222,128,0.15)' : 'rgba(255,255,255,0.05)',
-                  border: `1px solid ${volumeType === t ? '#4ade80' : 'rgba(255,255,255,0.09)'}`,
-                  color: volumeType === t ? '#4ade80' : '#6b7280',
+                  background: volumeType === t ? 'var(--color-app-accent-soft)' : 'var(--color-app-surface2)',
+                  border: `1px solid ${volumeType === t ? 'var(--color-app-accent)' : 'var(--color-app-border)'}`,
+                  color: volumeType === t ? 'var(--color-app-accent)' : 'var(--color-app-muted)',
                   cursor: 'pointer',
                 }}
               >
@@ -487,14 +487,14 @@ function ConfigSheet({
         <NumberPad label="Отдых (сек)" value={restSeconds} min={10} step={10} onChange={v => onChange({ restSeconds: v })} />
 
         <div className="flex flex-col gap-1">
-          <span className="text-[11px]" style={{ color: '#6b7280' }}>Плановый вес (кг, опционально)</span>
+          <span className="text-[11px]" style={{ color: 'var(--color-app-muted)' }}>Плановый вес (кг, опционально)</span>
           <input
             value={plannedWeight}
             onChange={e => onChange({ plannedWeight: e.target.value })}
             placeholder="60"
             inputMode="decimal"
             className="px-3 py-2.5 rounded-xl text-[14px] outline-none"
-            style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.09)', color: '#f9fafb' }}
+            style={{ background: 'var(--color-app-surface2)', border: '1px solid var(--color-app-border)', color: 'var(--color-app-text)' }}
           />
         </div>
 
@@ -503,8 +503,8 @@ function ConfigSheet({
           disabled={saving}
           className="w-full h-12 rounded-2xl font-bold text-[15px] mt-2"
           style={{
-            background: saving ? 'rgba(255,255,255,0.09)' : '#4ade80',
-            color: saving ? '#6b7280' : '#052e16',
+            background: saving ? 'var(--color-app-border)' : 'var(--color-app-accent)',
+            color: saving ? 'var(--color-app-muted)' : 'var(--color-app-accent-text)',
             border: 'none',
             cursor: saving ? 'not-allowed' : 'pointer',
           }}

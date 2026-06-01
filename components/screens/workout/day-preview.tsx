@@ -19,26 +19,26 @@ export default function DayPreview({ template, onStart, onBack }: Props) {
 
   return (
     <div className="flex flex-col min-h-full">
-      <div className="flex items-center px-4 pt-4 pb-3" style={{ borderBottom: '1px solid rgba(255,255,255,0.09)' }}>
+      <div className="flex items-center px-4 pt-4 pb-3" style={{ borderBottom: '1px solid var(--color-app-border)' }}>
         <button onClick={onBack} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
-          <ChevronLeft size={24} color="#4ade80" />
+          <ChevronLeft size={24} color="var(--color-app-accent)" />
         </button>
-        <span className="text-[16px] font-semibold ml-2" style={{ color: '#f9fafb' }}>{template.name}</span>
+        <span className="text-[16px] font-semibold ml-2" style={{ color: 'var(--color-app-text)' }}>{template.name}</span>
       </div>
 
       <div className="px-4 py-5 flex flex-col gap-5 flex-1">
         {/* Stats banner */}
         <div
           className="rounded-2xl px-4 py-4 flex gap-6"
-          style={{ background: 'rgba(74,222,128,0.08)', border: '1px solid rgba(74,222,128,0.25)' }}
+          style={{ background: 'var(--color-app-accent-subtle)', border: '1px solid var(--color-app-accent-border)' }}
         >
           <div>
-            <div className="text-[22px] font-bold" style={{ color: '#4ade80' }}>{template.exercises.length}</div>
-            <div className="text-[11px]" style={{ color: '#6b7280' }}>упражнений</div>
+            <div className="text-[22px] font-bold" style={{ color: 'var(--color-app-accent)' }}>{template.exercises.length}</div>
+            <div className="text-[11px]" style={{ color: 'var(--color-app-muted)' }}>упражнений</div>
           </div>
           <div>
-            <div className="text-[22px] font-bold" style={{ color: '#4ade80' }}>{totalSets}</div>
-            <div className="text-[11px]" style={{ color: '#6b7280' }}>подходов</div>
+            <div className="text-[22px] font-bold" style={{ color: 'var(--color-app-accent)' }}>{totalSets}</div>
+            <div className="text-[11px]" style={{ color: 'var(--color-app-muted)' }}>подходов</div>
           </div>
           <div className="flex flex-wrap gap-1 flex-1 content-center">
             {muscleGroups.map(mg => (
@@ -55,7 +55,7 @@ export default function DayPreview({ template, onStart, onBack }: Props) {
 
         {/* Exercise list */}
         <div className="flex flex-col gap-2">
-          <span className="text-[11px] font-bold tracking-widest uppercase" style={{ color: '#6b7280', fontFamily: 'var(--font-mono)' }}>
+          <span className="text-[11px] font-bold tracking-widest uppercase" style={{ color: 'var(--color-app-muted)', fontFamily: 'var(--font-mono)' }}>
             УПРАЖНЕНИЯ
           </span>
           {template.exercises.map((te, idx) => (
@@ -63,14 +63,14 @@ export default function DayPreview({ template, onStart, onBack }: Props) {
               key={te.id}
               onClick={() => setInfoTe(te)}
               className="rounded-2xl px-4 py-3 flex items-center gap-3 w-full text-left"
-              style={{ background: 'rgba(255,255,255,0.06)', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)', border: '1px solid rgba(255,255,255,0.09)', boxShadow: '0 4px 24px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06)', cursor: 'pointer' }}
+              style={{ background: 'var(--color-app-surface)', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)', border: '1px solid var(--color-app-border)', boxShadow: '0 4px 24px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06)', cursor: 'pointer' }}
             >
-              <span className="text-[13px] font-bold w-5 shrink-0" style={{ color: '#6b7280', fontFamily: 'var(--font-mono)' }}>
+              <span className="text-[13px] font-bold w-5 shrink-0" style={{ color: 'var(--color-app-muted)', fontFamily: 'var(--font-mono)' }}>
                 {idx + 1}
               </span>
               <div className="flex-1 min-w-0">
-                <div className="text-[14px] font-semibold" style={{ color: '#f9fafb' }}>{te.exercise.name}</div>
-                <div className="text-[12px] mt-0.5" style={{ color: '#6b7280' }}>
+                <div className="text-[14px] font-semibold" style={{ color: 'var(--color-app-text)' }}>{te.exercise.name}</div>
+                <div className="text-[12px] mt-0.5" style={{ color: 'var(--color-app-muted)' }}>
                   {te.targetSets} ×{' '}
                   {te.targetVolume.type === 'reps'
                     ? te.targetVolume.max
@@ -98,9 +98,9 @@ export default function DayPreview({ template, onStart, onBack }: Props) {
         <button
           onClick={onStart}
           className="w-full h-14 rounded-2xl flex items-center justify-center gap-2 text-[16px] font-bold"
-          style={{ background: '#4ade80', color: '#0f172a', border: 'none', cursor: 'pointer' }}
+          style={{ background: 'var(--color-app-accent)', color: 'var(--color-app-on-accent)', border: 'none', cursor: 'pointer' }}
         >
-          <Zap size={20} fill="#0f172a" />
+          <Zap size={20} fill="var(--color-app-on-accent)" />
           Начать тренировку
         </button>
       </div>

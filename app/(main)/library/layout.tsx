@@ -17,10 +17,10 @@ export default function LibraryLayout({ children }: { children: React.ReactNode 
     <div className="flex flex-col min-h-full">
       {isTabRoot && (
         <div className="px-4 pt-5 pb-0">
-          <h1 className="text-[22px] font-bold" style={{ color: '#f9fafb' }}>Библиотека</h1>
+          <h1 className="text-[22px] font-bold" style={{ color: 'var(--color-app-text)' }}>Библиотека</h1>
           <div
             className="flex gap-1 mt-3 p-1 rounded-2xl"
-            style={{ background: '#1a1a2e', border: '1px solid #2d2d4e' }}
+            style={{ background: 'var(--color-app-card)', border: '1px solid var(--color-app-card-border)' }}
           >
             {TABS.map(({ href, label, Icon }) => {
               const active = pathname === href
@@ -30,12 +30,12 @@ export default function LibraryLayout({ children }: { children: React.ReactNode 
                   href={href}
                   className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-[13px] font-semibold transition-all duration-150 no-underline"
                   style={{
-                    background: active ? '#16213e' : 'transparent',
-                    border: active ? '1px solid #2d2d4e' : '1px solid transparent',
-                    color: active ? '#f9fafb' : '#6b7280',
+                    background: active ? 'var(--color-app-card-alt)' : 'transparent',
+                    border: active ? '1px solid var(--color-app-card-border)' : '1px solid transparent',
+                    color: active ? 'var(--color-app-text)' : 'var(--color-app-muted)',
                   }}
                 >
-                  <Icon size={15} color={active ? '#4ade80' : '#6b7280'} />
+                  <Icon size={15} color={active ? 'var(--color-app-accent)' : 'var(--color-app-muted)'} />
                   {label}
                 </Link>
               )

@@ -32,7 +32,7 @@ export function ConfirmAlert({
           exit={{ opacity: 0 }}
           transition={{ duration: 0.18 }}
           className="fixed inset-0 flex items-center justify-center px-5"
-          style={{ zIndex: 110, background: 'rgba(0,0,0,0.72)' }}
+          style={{ zIndex: 110, background: 'var(--color-app-overlay-2)' }}
           onClick={onCancel}
         >
           <motion.div
@@ -42,20 +42,20 @@ export function ConfirmAlert({
             transition={{ type: 'spring', damping: 26, stiffness: 320 }}
             className="w-full max-w-sm rounded-3xl p-6 flex flex-col gap-4"
             style={{
-              background: 'rgba(18,18,30,0.96)',
+              background: 'var(--color-app-modal-bg)',
               backdropFilter: 'blur(24px)',
               WebkitBackdropFilter: 'blur(24px)',
-              border: '1px solid rgba(255,255,255,0.1)',
+              border: '1px solid var(--color-app-surface3)',
               boxShadow: '0 24px 60px rgba(0,0,0,0.6)',
             }}
             onClick={e => e.stopPropagation()}
           >
             <div className="flex flex-col gap-1.5">
-              <p className="text-[18px] font-bold leading-snug" style={{ color: '#f9fafb' }}>
+              <p className="text-[18px] font-bold leading-snug" style={{ color: 'var(--color-app-text)' }}>
                 {title}
               </p>
               {description && (
-                <p className="text-[14px] leading-relaxed" style={{ color: '#9ca3af' }}>
+                <p className="text-[14px] leading-relaxed" style={{ color: 'var(--color-app-muted-2)' }}>
                   {description}
                 </p>
               )}
@@ -67,9 +67,9 @@ export function ConfirmAlert({
                 disabled={loading}
                 className="flex-1 h-13 rounded-2xl font-semibold text-[15px] transition-opacity"
                 style={{
-                  background: 'rgba(255,255,255,0.07)',
-                  color: '#f9fafb',
-                  border: '1px solid rgba(255,255,255,0.1)',
+                  background: 'var(--color-app-surface)',
+                  color: 'var(--color-app-text)',
+                  border: '1px solid var(--color-app-surface3)',
                   cursor: 'pointer',
                   opacity: loading ? 0.5 : 1,
                   height: 52,
@@ -82,7 +82,7 @@ export function ConfirmAlert({
                 disabled={loading}
                 className="flex-1 h-13 rounded-2xl font-bold text-[15px] transition-opacity"
                 style={{
-                  background: loading ? '#7f1d1d' : '#ef4444',
+                  background: loading ? 'var(--color-app-red-dark)' : 'var(--color-app-red)',
                   color: '#fff',
                   border: 'none',
                   cursor: loading ? 'not-allowed' : 'pointer',

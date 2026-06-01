@@ -44,22 +44,22 @@ export default function ExercisesPage() {
       <div className="px-4 pt-4 pb-3 flex gap-2">
         <div
           className="flex-1 flex items-center gap-2 px-3 h-10 rounded-xl"
-          style={{ background: '#1a1a2e', border: '1px solid #2d2d4e' }}
+          style={{ background: 'var(--color-app-card)', border: '1px solid var(--color-app-card-border)' }}
         >
-          <Search size={15} color="#6b7280" />
+          <Search size={15} color="var(--color-app-muted)" />
           <input
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder="Поиск упражнений..."
             className="flex-1 bg-transparent outline-none text-[13px]"
-            style={{ color: '#f9fafb', fontFamily: 'inherit' }}
+            style={{ color: 'var(--color-app-text)', fontFamily: 'inherit' }}
           />
           {search && (
             <button
               onClick={() => setSearch('')}
               style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
             >
-              <X size={13} color="#6b7280" />
+              <X size={13} color="var(--color-app-muted)" />
             </button>
           )}
         </div>
@@ -67,12 +67,12 @@ export default function ExercisesPage() {
           onClick={() => setShowFilter(f => !f)}
           className="w-10 h-10 flex items-center justify-center rounded-xl flex-shrink-0"
           style={{
-            background: filterMg ? 'rgba(74,222,128,0.12)' : '#1a1a2e',
-            border: `1px solid ${filterMg ? '#4ade80' : '#2d2d4e'}`,
+            background: filterMg ? 'var(--color-app-accent-dim)' : 'var(--color-app-card)',
+            border: `1px solid ${filterMg ? 'var(--color-app-accent)' : 'var(--color-app-card-border)'}`,
             cursor: 'pointer',
           }}
         >
-          <SlidersHorizontal size={16} color={filterMg ? '#4ade80' : '#6b7280'} />
+          <SlidersHorizontal size={16} color={filterMg ? 'var(--color-app-accent)' : 'var(--color-app-muted)'} />
         </button>
       </div>
 
@@ -83,9 +83,9 @@ export default function ExercisesPage() {
             onClick={() => setFilterMg(null)}
             className="px-3 py-1 rounded-xl text-[12px] font-medium whitespace-nowrap flex-shrink-0"
             style={{
-              background: !filterMg ? 'rgba(74,222,128,0.15)' : '#1a1a2e',
-              border: `1px solid ${!filterMg ? '#4ade80' : '#2d2d4e'}`,
-              color: !filterMg ? '#4ade80' : '#6b7280',
+              background: !filterMg ? 'var(--color-app-accent-soft)' : 'var(--color-app-card)',
+              border: `1px solid ${!filterMg ? 'var(--color-app-accent)' : 'var(--color-app-card-border)'}`,
+              color: !filterMg ? 'var(--color-app-accent)' : 'var(--color-app-muted)',
               cursor: 'pointer',
             }}
           >
@@ -100,9 +100,9 @@ export default function ExercisesPage() {
                 onClick={() => setFilterMg(active ? null : mg)}
                 className="px-3 py-1 rounded-xl text-[12px] font-medium whitespace-nowrap flex-shrink-0"
                 style={{
-                  background: active ? `${color}20` : '#1a1a2e',
-                  border: `1px solid ${active ? color : '#2d2d4e'}`,
-                  color: active ? color : '#6b7280',
+                  background: active ? `${color}20` : 'var(--color-app-card)',
+                  border: `1px solid ${active ? color : 'var(--color-app-card-border)'}`,
+                  color: active ? color : 'var(--color-app-muted)',
                   cursor: 'pointer',
                 }}
               >
@@ -118,7 +118,7 @@ export default function ExercisesPage() {
         {grouped.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 gap-3">
             <span className="text-[32px]">🔍</span>
-            <p className="text-[14px]" style={{ color: '#6b7280' }}>Ничего не найдено</p>
+            <p className="text-[14px]" style={{ color: 'var(--color-app-muted)' }}>Ничего не найдено</p>
           </div>
         ) : (
           grouped.map(({ mg, list }) => {
@@ -129,19 +129,19 @@ export default function ExercisesPage() {
                   <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: color }} />
                   <span
                     className="text-[11px] font-bold tracking-widest uppercase"
-                    style={{ color: '#6b7280', fontFamily: 'var(--font-mono)' }}
+                    style={{ color: 'var(--color-app-muted)', fontFamily: 'var(--font-mono)' }}
                   >
                     {MUSCLE_GROUP_LABELS[mg]}
                   </span>
-                  <span className="text-[11px]" style={{ color: '#2d2d4e' }}>{list.length}</span>
+                  <span className="text-[11px]" style={{ color: 'var(--color-app-card-border)' }}>{list.length}</span>
                 </div>
                 <div
                   className="mx-4 rounded-2xl overflow-hidden"
-                  style={{ background: '#1a1a2e', border: '1px solid #2d2d4e' }}
+                  style={{ background: 'var(--color-app-card)', border: '1px solid var(--color-app-card-border)' }}
                 >
                   {list.map((ex, idx) => (
                     <div key={ex.id}>
-                      {idx > 0 && <div style={{ height: 1, background: '#2d2d4e', margin: '0 16px' }} />}
+                      {idx > 0 && <div style={{ height: 1, background: 'var(--color-app-card-border)', margin: '0 16px' }} />}
                       <ExerciseCard
                         exercise={ex}
                         onClick={() => router.push(`/library/exercises/${ex.id}`)}
@@ -163,14 +163,14 @@ export default function ExercisesPage() {
         style={{
           bottom: 88, right: 20,
           width: 52, height: 52,
-          background: '#4ade80',
+          background: 'var(--color-app-accent)',
           border: 'none',
           cursor: 'pointer',
           zIndex: 50,
           boxShadow: '0 4px 24px rgba(74,222,128,0.4)',
         }}
       >
-        <Plus size={24} color="#0f172a" strokeWidth={2.5} />
+        <Plus size={24} color="var(--color-app-on-accent)" strokeWidth={2.5} />
       </button>
     </div>
   )

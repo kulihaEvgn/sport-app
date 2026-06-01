@@ -72,7 +72,7 @@ export default function ProgressScreen() {
         initial={{ opacity: 0, y: -8 }}
         animate={{ opacity: 1, y: 0 }}
         className="text-[22px] font-bold"
-        style={{ color: '#f9fafb' }}
+        style={{ color: 'var(--color-app-text)' }}
       >
         Прогресс
       </motion.h1>
@@ -83,16 +83,16 @@ export default function ProgressScreen() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.05 }}
         className="rounded-2xl px-4 py-4 flex flex-col gap-3"
-        style={{ background: '#1a1a2e', border: '1px solid #2d2d4e' }}
+        style={{ background: 'var(--color-app-card)', border: '1px solid var(--color-app-card-border)' }}
       >
         <div className="flex items-center justify-between">
-          <span className="text-[11px] font-bold tracking-widest uppercase" style={{ color: '#6b7280', fontFamily: 'var(--font-mono)' }}>
+          <span className="text-[11px] font-bold tracking-widest uppercase" style={{ color: 'var(--color-app-muted)', fontFamily: 'var(--font-mono)' }}>
             АКТИВНОСТЬ
           </span>
           <div className="flex items-center gap-1.5">
             <Flame size={14} color="#f59e0b" />
-            <span className="text-[13px] font-bold" style={{ color: '#f9fafb' }}>{streak.current}</span>
-            <span className="text-[12px]" style={{ color: '#6b7280' }}>подр.</span>
+            <span className="text-[13px] font-bold" style={{ color: 'var(--color-app-text)' }}>{streak.current}</span>
+            <span className="text-[12px]" style={{ color: 'var(--color-app-muted)' }}>подр.</span>
           </div>
         </div>
 
@@ -105,8 +105,8 @@ export default function ProgressScreen() {
             { value: streak.current,           label: 'текущий streak' },
           ].map(stat => (
             <div key={stat.label}>
-              <div className="text-[18px] font-bold" style={{ color: '#4ade80' }}>{stat.value}</div>
-              <div className="text-[11px]" style={{ color: '#6b7280' }}>{stat.label}</div>
+              <div className="text-[18px] font-bold" style={{ color: 'var(--color-app-accent)' }}>{stat.value}</div>
+              <div className="text-[11px]" style={{ color: 'var(--color-app-muted)' }}>{stat.label}</div>
             </div>
           ))}
         </div>
@@ -120,18 +120,18 @@ export default function ProgressScreen() {
         className="flex gap-3"
       >
         {[
-          { Icon: Calendar,   color: '#22d3ee', value: monthStats.totalWorkouts,                      label: 'тренировок' },
-          { Icon: TrendingUp, color: '#4ade80', value: monthStats.totalSets,                          label: 'подходов'   },
+          { Icon: Calendar,   color: 'var(--color-app-cyan)', value: monthStats.totalWorkouts,                      label: 'тренировок' },
+          { Icon: TrendingUp, color: 'var(--color-app-accent)', value: monthStats.totalSets,                          label: 'подходов'   },
           { Icon: Trophy,     color: '#f59e0b', value: `${Math.round(monthStats.totalVolume / 1000)}к`, label: 'кг объём' },
         ].map(({ Icon, color, value, label }) => (
           <div
             key={label}
             className="flex-1 rounded-2xl px-3 py-3 flex flex-col gap-1"
-            style={{ background: '#1a1a2e', border: '1px solid #2d2d4e' }}
+            style={{ background: 'var(--color-app-card)', border: '1px solid var(--color-app-card-border)' }}
           >
             <Icon size={16} color={color} />
-            <div className="text-[20px] font-bold" style={{ color: '#f9fafb' }}>{value}</div>
-            <div className="text-[11px]" style={{ color: '#6b7280' }}>{label}</div>
+            <div className="text-[20px] font-bold" style={{ color: 'var(--color-app-text)' }}>{value}</div>
+            <div className="text-[11px]" style={{ color: 'var(--color-app-muted)' }}>{label}</div>
           </div>
         ))}
       </motion.div>
@@ -142,11 +142,11 @@ export default function ProgressScreen() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.15 }}
         className="rounded-2xl px-4 py-4 flex flex-col gap-4"
-        style={{ background: '#1a1a2e', border: '1px solid #2d2d4e' }}
+        style={{ background: 'var(--color-app-card)', border: '1px solid var(--color-app-card-border)' }}
       >
         {/* Header + period selector */}
         <div className="flex items-center justify-between">
-          <span className="text-[11px] font-bold tracking-widest uppercase" style={{ color: '#6b7280', fontFamily: 'var(--font-mono)' }}>
+          <span className="text-[11px] font-bold tracking-widest uppercase" style={{ color: 'var(--color-app-muted)', fontFamily: 'var(--font-mono)' }}>
             ПРОГРЕСС ВЕСА
           </span>
           <div className="flex gap-1">
@@ -158,9 +158,9 @@ export default function ProgressScreen() {
                   onClick={() => setParam('period', p.param)}
                   className="w-8 h-6 rounded-lg text-[11px] font-bold"
                   style={{
-                    background: active ? 'rgba(74,222,128,0.2)' : 'transparent',
-                    color: active ? '#4ade80' : '#6b7280',
-                    border: `1px solid ${active ? 'rgba(74,222,128,0.4)' : 'transparent'}`,
+                    background: active ? 'var(--color-app-accent-mid)' : 'transparent',
+                    color: active ? 'var(--color-app-accent)' : 'var(--color-app-muted)',
+                    border: `1px solid ${active ? 'var(--color-app-accent-border-3)' : 'transparent'}`,
                     cursor: 'pointer',
                   }}
                 >
@@ -175,9 +175,9 @@ export default function ProgressScreen() {
         <button
           onClick={() => setShowPicker(true)}
           className="flex items-center justify-between px-3 py-2 rounded-xl"
-          style={{ background: '#16213e', border: '1px solid #2d2d4e', cursor: 'pointer' }}
+          style={{ background: 'var(--color-app-card-alt)', border: '1px solid var(--color-app-card-border)', cursor: 'pointer' }}
         >
-          <span className="text-[13px] font-semibold" style={{ color: '#f9fafb' }}>
+          <span className="text-[13px] font-semibold" style={{ color: 'var(--color-app-text)' }}>
             {selectedEx?.name ?? 'Выбери упражнение'}
           </span>
           <ChevronDown size={16} color="#6b7280" />
@@ -188,13 +188,13 @@ export default function ProgressScreen() {
         {/* Metrics */}
         <div className="flex gap-3">
           {[
-            { label: 'текущий',   value: `${currentWeight} кг`,                              color: '#4ade80' },
-            { label: 'за период', value: `${growthPct >= 0 ? '+' : ''}${growthPct}%`,        color: growthPct >= 0 ? '#4ade80' : '#ef4444' },
-            { label: 'сессий',    value: String(chartData.length),                           color: '#f9fafb' },
+            { label: 'текущий',   value: `${currentWeight} кг`,                              color: 'var(--color-app-accent)' },
+            { label: 'за период', value: `${growthPct >= 0 ? '+' : ''}${growthPct}%`,        color: growthPct >= 0 ? 'var(--color-app-accent)' : 'var(--color-app-red)' },
+            { label: 'сессий',    value: String(chartData.length),                           color: 'var(--color-app-text)' },
           ].map(m => (
             <div key={m.label} className="flex-1 text-center">
               <div className="text-[18px] font-bold" style={{ color: m.color }}>{m.value}</div>
-              <div className="text-[11px]" style={{ color: '#6b7280' }}>{m.label}</div>
+              <div className="text-[11px]" style={{ color: 'var(--color-app-muted)' }}>{m.label}</div>
             </div>
           ))}
         </div>
@@ -211,10 +211,10 @@ export default function ProgressScreen() {
             >
               <Trophy size={18} color="#f59e0b" />
               <div>
-                <div className="text-[13px] font-bold" style={{ color: '#f9fafb' }}>
+                <div className="text-[13px] font-bold" style={{ color: 'var(--color-app-text)' }}>
                   Личный рекорд: {pr.weight} кг
                 </div>
-                <div className="text-[11px]" style={{ color: '#6b7280' }}>
+                <div className="text-[11px]" style={{ color: 'var(--color-app-muted)' }}>
                   {pr.date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' })}
                 </div>
               </div>

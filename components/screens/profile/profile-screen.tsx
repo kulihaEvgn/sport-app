@@ -41,9 +41,9 @@ export default function ProfileScreen() {
       <button
         onClick={() => router.back()}
         className="flex items-center gap-1 text-[14px] font-medium self-start"
-        style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#4ade80' }}
+        style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-app-accent)' }}
       >
-        <ArrowLeft size={18} color="#4ade80" />
+        <ArrowLeft size={18} color="var(--color-app-accent)" />
         Назад
       </button>
 
@@ -51,7 +51,7 @@ export default function ProfileScreen() {
         initial={{ opacity: 0, y: -8 }}
         animate={{ opacity: 1, y: 0 }}
         className="text-[22px] font-bold"
-        style={{ color: '#f9fafb' }}
+        style={{ color: 'var(--color-app-text)' }}
       >
         Профиль
       </motion.h1>
@@ -62,7 +62,7 @@ export default function ProfileScreen() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.05 }}
         className="rounded-2xl px-4 py-5 flex items-center gap-4"
-        style={{ background: '#1a1a2e', border: '1px solid #2d2d4e' }}
+        style={{ background: 'var(--color-app-card)', border: '1px solid var(--color-app-card-border)' }}
       >
         {tgUser?.photo_url ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -74,19 +74,19 @@ export default function ProfileScreen() {
         ) : (
           <div
             className="w-16 h-16 rounded-full flex items-center justify-center flex-shrink-0"
-            style={{ background: 'rgba(74,222,128,0.15)', border: '2px solid rgba(74,222,128,0.3)' }}
+            style={{ background: 'var(--color-app-accent-soft)', border: '2px solid var(--color-app-accent-border-2)' }}
           >
-            <User size={30} color="#4ade80" />
+            <User size={30} color="var(--color-app-accent)" />
           </div>
         )}
         <div className="min-w-0">
-          <div className="text-[19px] font-bold truncate" style={{ color: '#f9fafb' }}>{displayName}</div>
+          <div className="text-[19px] font-bold truncate" style={{ color: 'var(--color-app-text)' }}>{displayName}</div>
           {username && (
-            <div className="text-[13px] mt-0.5" style={{ color: '#6b7280' }}>@{username}</div>
+            <div className="text-[13px] mt-0.5" style={{ color: 'var(--color-app-muted)' }}>@{username}</div>
           )}
           <div
             className="text-[11px] mt-1.5 px-2 py-0.5 rounded-lg inline-block font-semibold"
-            style={{ background: 'rgba(74,222,128,0.1)', color: '#4ade80' }}
+            style={{ background: 'var(--color-app-accent-subtle)', color: 'var(--color-app-accent)' }}
           >
             Telegram
           </div>
@@ -100,13 +100,13 @@ export default function ProfileScreen() {
         transition={{ delay: 0.1 }}
         className="flex gap-3"
       >
-        <StatCard icon={<Trophy size={20} color="#4ade80" />}     value={String(totalWorkouts)} label="тренировок" />
-        <StatCard icon={<Calendar size={20} color="#22d3ee" />}   value={String(weeksActive)}   label="недель в зале" />
+        <StatCard icon={<Trophy size={20} color="var(--color-app-accent)" />}     value={String(totalWorkouts)} label="тренировок" />
+        <StatCard icon={<Calendar size={20} color="var(--color-app-cyan)" />}   value={String(weeksActive)}   label="недель в зале" />
         <StatCard
           icon={<Dumbbell size={20} color={favMuscle ? MUSCLE_GROUP_COLORS[favMuscle] : '#f59e0b'} />}
           value={favMuscle ? MUSCLE_GROUP_LABELS[favMuscle] : '—'}
           label="любимая гр."
-          valueColor={favMuscle ? MUSCLE_GROUP_COLORS[favMuscle] : '#f9fafb'}
+          valueColor={favMuscle ? MUSCLE_GROUP_COLORS[favMuscle] : 'var(--color-app-text)'}
           small={Boolean(favMuscle)}
         />
       </motion.div>
@@ -122,28 +122,28 @@ export default function ProfileScreen() {
             <button
               onClick={() => router.push('/library/programs')}
               className="w-full text-left rounded-2xl px-4 py-3 flex items-center gap-3 transition-all active:opacity-80"
-              style={{ background: 'rgba(74,222,128,0.07)', border: '1px solid rgba(74,222,128,0.25)', cursor: 'pointer' }}
+              style={{ background: 'var(--color-app-accent-glow)', border: '1px solid var(--color-app-accent-border)', cursor: 'pointer' }}
             >
-              <Dumbbell size={18} color="#4ade80" className="flex-shrink-0" />
+              <Dumbbell size={18} color="var(--color-app-accent)" className="flex-shrink-0" />
               <div className="flex-1 min-w-0">
-                <div className="text-[14px] font-semibold truncate" style={{ color: '#f9fafb' }}>
+                <div className="text-[14px] font-semibold truncate" style={{ color: 'var(--color-app-text)' }}>
                   {activeProgram.name}
                 </div>
-                <div className="text-[12px] mt-0.5" style={{ color: '#6b7280' }}>
+                <div className="text-[12px] mt-0.5" style={{ color: 'var(--color-app-muted)' }}>
                   {activeProgram.templates.length} дней в цикле · {activeProgram.daysPerWeek} дн/нед
                 </div>
               </div>
-              <ChevronRight size={16} color="#6b7280" className="flex-shrink-0" />
+              <ChevronRight size={16} color="var(--color-app-muted)" className="flex-shrink-0" />
             </button>
           ) : (
             <button
               onClick={() => router.push('/library/programs')}
               className="w-full text-left rounded-2xl px-4 py-3 flex items-center gap-3"
-              style={{ background: '#1a1a2e', border: '1px solid #2d2d4e', cursor: 'pointer' }}
+              style={{ background: 'var(--color-app-card)', border: '1px solid var(--color-app-card-border)', cursor: 'pointer' }}
             >
-              <Dumbbell size={18} color="#6b7280" />
-              <span className="flex-1 text-[14px]" style={{ color: '#6b7280' }}>Выбрать программу</span>
-              <ChevronRight size={16} color="#6b7280" />
+              <Dumbbell size={18} color="var(--color-app-muted)" />
+              <span className="flex-1 text-[14px]" style={{ color: 'var(--color-app-muted)' }}>Выбрать программу</span>
+              <ChevronRight size={16} color="var(--color-app-muted)" />
             </button>
           )}
         </Section>
@@ -156,16 +156,16 @@ export default function ProfileScreen() {
         transition={{ delay: 0.2 }}
       >
         <Section label="НАСТРОЙКИ">
-          <div className="rounded-2xl overflow-hidden" style={{ border: '1px solid #2d2d4e' }}>
+          <div className="rounded-2xl overflow-hidden" style={{ border: '1px solid var(--color-app-card-border)' }}>
             <div
               className="flex items-center gap-3 px-4 py-3.5"
-              style={{ background: '#1a1a2e' }}
+              style={{ background: 'var(--color-app-card)' }}
             >
               {theme === 'dark'
                 ? <Moon size={16} color="#a78bfa" />
                 : <Sun  size={16} color="#f59e0b" />
               }
-              <span className="flex-1 text-[14px]" style={{ color: '#f9fafb' }}>Тема</span>
+              <span className="flex-1 text-[14px]" style={{ color: 'var(--color-app-text)' }}>Тема</span>
               <button
                 onClick={toggle}
                 className="flex items-center gap-1.5 px-3 py-1 rounded-xl text-[12px] font-semibold"
@@ -192,13 +192,13 @@ export default function ProfileScreen() {
         <Section label="ПРИЛОЖЕНИЕ">
           <div
             className="rounded-2xl px-4 py-3"
-            style={{ background: '#1a1a2e', border: '1px solid #2d2d4e' }}
+            style={{ background: 'var(--color-app-card)', border: '1px solid var(--color-app-card-border)' }}
           >
             <div className="flex items-center justify-between">
-              <span className="text-[14px] font-medium" style={{ color: '#f9fafb' }}>GymApp</span>
-              <span className="text-[12px]" style={{ color: '#6b7280' }}>v0.1.0</span>
+              <span className="text-[14px] font-medium" style={{ color: 'var(--color-app-text)' }}>GymApp</span>
+              <span className="text-[12px]" style={{ color: 'var(--color-app-muted)' }}>v0.1.0</span>
             </div>
-            <div className="text-[12px] mt-1" style={{ color: '#6b7280' }}>Telegram Mini App · Фазы 1–7</div>
+            <div className="text-[12px] mt-1" style={{ color: 'var(--color-app-muted)' }}>Telegram Mini App · Фазы 1–7</div>
           </div>
         </Section>
       </motion.div>
@@ -209,7 +209,7 @@ export default function ProfileScreen() {
 // ── Sub-components ────────────────────────────────────────────────────────
 
 function StatCard({
-  icon, value, label, valueColor = '#f9fafb', small = false,
+  icon, value, label, valueColor = 'var(--color-app-text)', small = false,
 }: {
   icon: React.ReactNode
   value: string
@@ -220,7 +220,7 @@ function StatCard({
   return (
     <div
       className="flex-1 rounded-2xl px-3 py-4 flex flex-col items-center gap-1"
-      style={{ background: '#1a1a2e', border: '1px solid #2d2d4e' }}
+      style={{ background: 'var(--color-app-card)', border: '1px solid var(--color-app-card-border)' }}
     >
       {icon}
       <div
@@ -229,7 +229,7 @@ function StatCard({
       >
         {value}
       </div>
-      <div className="text-[11px] text-center" style={{ color: '#6b7280' }}>{label}</div>
+      <div className="text-[11px] text-center" style={{ color: 'var(--color-app-muted)' }}>{label}</div>
     </div>
   )
 }
@@ -239,7 +239,7 @@ function Section({ label, children }: { label: string; children: React.ReactNode
     <div className="flex flex-col gap-2">
       <span
         className="text-[11px] font-bold tracking-widest uppercase"
-        style={{ color: '#6b7280', fontFamily: 'var(--font-mono)' }}
+        style={{ color: 'var(--color-app-muted)', fontFamily: 'var(--font-mono)' }}
       >
         {label}
       </span>

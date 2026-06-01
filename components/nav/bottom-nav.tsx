@@ -23,17 +23,17 @@ export default function BottomNav({ bottomInset = 0 }: Props) {
       style={{
         paddingBottom: 12 + bottomInset,
         zIndex: 100,
-        background: 'linear-gradient(transparent, #07070e 40%)',
+        background: 'linear-gradient(transparent, var(--color-app-bg) 40%)',
       }}
     >
       <nav
         className="flex items-center h-[60px] px-1 pointer-events-auto"
         style={{
-          background: 'rgba(255,255,255,0.06)',
+          background: 'var(--color-app-surface)',
           backdropFilter: 'blur(14px)',
           WebkitBackdropFilter: 'blur(14px)',
           borderRadius: 28,
-          border: '1px solid rgba(255,255,255,0.09)',
+          border: '1px solid var(--color-app-border)',
           boxShadow: '0 4px 24px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06)',
         }}
       >
@@ -54,22 +54,22 @@ export default function BottomNav({ bottomInset = 0 }: Props) {
                 minWidth: isCenter ? 80 : 0,
                 background: isCenter
                   ? isActive
-                    ? 'rgba(74,222,128,0.2)'
-                    : 'rgba(74,222,128,0.08)'
+                    ? 'var(--color-app-accent-mid)'
+                    : 'var(--color-app-accent-subtle)'
                   : isActive
-                    ? 'rgba(74,222,128,0.12)'
+                    ? 'var(--color-app-accent-dim)'
                     : 'transparent',
-                border: isCenter ? '1px solid rgba(74,222,128,0.3)' : undefined,
+                border: isCenter ? '1px solid var(--color-app-accent-border-2)' : undefined,
                 margin: isCenter ? '0 4px' : 0,
               }}
             >
               <tab.Icon
                 size={isCenter ? 22 : 20}
-                color={isActive || isCenter ? '#4ade80' : '#6b7280'}
+                color={isActive || isCenter ? 'var(--color-app-accent)' : 'var(--color-app-muted)'}
                 strokeWidth={isActive || isCenter ? 2.5 : 1.8}
               />
               {isActive && (
-                <span className="text-[13px] font-semibold whitespace-nowrap" style={{ color: '#4ade80' }}>
+                <span className="text-[13px] font-semibold whitespace-nowrap" style={{ color: 'var(--color-app-accent)' }}>
                   {tab.label}
                 </span>
               )}

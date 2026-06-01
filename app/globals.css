@@ -11,18 +11,49 @@
   --font-mono: var(--font-mono), monospace;
   --font-heading: var(--font-ibm), sans-serif;
 
-  /* App brand */
-  --color-app-bg: #07070e;
-  --color-app-surface: rgba(255,255,255,0.06);
-  --color-app-surface2: rgba(255,255,255,0.05);
-  --color-app-border: rgba(255,255,255,0.09);
-  --color-app-text: #f9fafb;
-  --color-app-muted: #6b7280;
-  --color-app-accent: #4ade80;
-  --color-app-accent-dim: rgba(74, 222, 128, 0.12);
-  --color-app-accent-text: #052e16;
-  --color-app-cyan: #22d3ee;
-  --color-app-red: #ef4444;
+  /* App brand — all point to runtime vars for theme switching */
+  --color-app-bg:       var(--app-bg);
+  --color-app-surface:  var(--app-surface);
+  --color-app-surface2: var(--app-surface2);
+  --color-app-surface3: var(--app-surface3);
+  --color-app-border:   var(--app-border);
+  --color-app-handle:   var(--app-handle);
+
+  --color-app-text:           var(--app-text);
+  --color-app-text-secondary: var(--app-text-secondary);
+  --color-app-muted:          var(--app-muted);
+  --color-app-muted-2:        var(--app-muted-2);
+
+  --color-app-accent:          var(--app-accent);
+  --color-app-accent-text:     var(--app-accent-text);
+  --color-app-on-accent:       var(--app-on-accent);
+  --color-app-accent-glow:     var(--app-accent-glow);
+  --color-app-accent-subtle:   var(--app-accent-subtle);
+  --color-app-accent-dim:      var(--app-accent-dim);
+  --color-app-accent-soft:     var(--app-accent-soft);
+  --color-app-accent-mid:      var(--app-accent-mid);
+  --color-app-accent-border:   var(--app-accent-border);
+  --color-app-accent-border-2: var(--app-accent-border-2);
+  --color-app-accent-border-3: var(--app-accent-border-3);
+  --color-app-accent-strong:   var(--app-accent-strong);
+
+  --color-app-cyan:     var(--app-cyan);
+  --color-app-red:      var(--app-red);
+  --color-app-red-dark: var(--app-red-dark);
+  --color-app-error:    var(--app-error);
+
+  --color-app-card:        var(--app-card);
+  --color-app-card-border: var(--app-card-border);
+  --color-app-card-alt:    var(--app-card-alt);
+
+  --color-app-overlay:      var(--app-overlay);
+  --color-app-overlay-2:    var(--app-overlay-2);
+  --color-app-overlay-dark: var(--app-overlay-dark);
+  --color-app-sheet-bg:     var(--app-sheet-bg);
+  --color-app-modal-bg:     var(--app-modal-bg);
+
+  --color-app-glow-indigo: var(--app-glow-indigo);
+  --color-app-glow-purple: var(--app-glow-purple);
 
   /* Muscle groups */
   --color-mg-chest: #ef4444;
@@ -71,6 +102,60 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+/* ─── App runtime tokens — light mode (default) ─────────────────── */
+:root {
+  /* surfaces */
+  --app-bg:       #ffffff;
+  --app-surface:  rgba(0, 0, 0, 0.04);
+  --app-surface2: rgba(0, 0, 0, 0.03);
+  --app-surface3: rgba(0, 0, 0, 0.07);
+  --app-border:   rgba(0, 0, 0, 0.10);
+  --app-handle:   rgba(0, 0, 0, 0.20);
+
+  /* text */
+  --app-text:           #111827;
+  --app-text-secondary: #4b5563;
+  --app-muted:          #6b7280;
+  --app-muted-2:        #9ca3af;
+
+  /* accent — darker green for readability on white */
+  --app-accent:          #16a34a;
+  --app-accent-text:     #ffffff;
+  --app-on-accent:       #ffffff;
+  --app-accent-glow:     rgba(22, 163, 74, 0.06);
+  --app-accent-subtle:   rgba(22, 163, 74, 0.10);
+  --app-accent-dim:      rgba(22, 163, 74, 0.12);
+  --app-accent-soft:     rgba(22, 163, 74, 0.15);
+  --app-accent-mid:      rgba(22, 163, 74, 0.20);
+  --app-accent-border:   rgba(22, 163, 74, 0.25);
+  --app-accent-border-2: rgba(22, 163, 74, 0.30);
+  --app-accent-border-3: rgba(22, 163, 74, 0.40);
+  --app-accent-strong:   rgba(22, 163, 74, 0.90);
+
+  /* semantic */
+  --app-cyan:     #0891b2;
+  --app-red:      #ef4444;
+  --app-red-dark: #991b1b;
+  --app-error:    #dc2626;
+
+  /* card surfaces */
+  --app-card:        #f3f4f6;
+  --app-card-border: #e5e7eb;
+  --app-card-alt:    #e9ecf0;
+
+  /* overlays */
+  --app-overlay:      rgba(0, 0, 0, 0.50);
+  --app-overlay-2:    rgba(0, 0, 0, 0.60);
+  --app-overlay-dark: rgba(0, 0, 0, 0.80);
+  --app-sheet-bg:     rgba(255, 255, 255, 0.97);
+  --app-modal-bg:     rgba(255, 255, 255, 0.96);
+
+  /* ambient glows */
+  --app-glow-indigo: rgba(99, 102, 241, 0.09);
+  --app-glow-purple: rgba(139, 92, 246, 0.05);
+}
+
+/* ─── shadcn tokens — light ──────────────────────────────────────── */
 :root {
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -106,6 +191,60 @@
   --sidebar-ring: oklch(0.708 0 0);
 }
 
+/* ─── App runtime tokens — dark mode ────────────────────────────── */
+.dark {
+  /* surfaces */
+  --app-bg:       #07070e;
+  --app-surface:  rgba(255, 255, 255, 0.06);
+  --app-surface2: rgba(255, 255, 255, 0.05);
+  --app-surface3: rgba(255, 255, 255, 0.10);
+  --app-border:   rgba(255, 255, 255, 0.09);
+  --app-handle:   rgba(255, 255, 255, 0.18);
+
+  /* text */
+  --app-text:           #f9fafb;
+  --app-text-secondary: #d1d5db;
+  --app-muted:          #6b7280;
+  --app-muted-2:        #9ca3af;
+
+  /* accent — bright green on dark */
+  --app-accent:          #4ade80;
+  --app-accent-text:     #052e16;
+  --app-on-accent:       #0f172a;
+  --app-accent-glow:     rgba(74, 222, 128, 0.06);
+  --app-accent-subtle:   rgba(74, 222, 128, 0.10);
+  --app-accent-dim:      rgba(74, 222, 128, 0.12);
+  --app-accent-soft:     rgba(74, 222, 128, 0.15);
+  --app-accent-mid:      rgba(74, 222, 128, 0.20);
+  --app-accent-border:   rgba(74, 222, 128, 0.25);
+  --app-accent-border-2: rgba(74, 222, 128, 0.30);
+  --app-accent-border-3: rgba(74, 222, 128, 0.40);
+  --app-accent-strong:   rgba(74, 222, 128, 0.90);
+
+  /* semantic */
+  --app-cyan:     #22d3ee;
+  --app-red:      #ef4444;
+  --app-red-dark: #7f1d1d;
+  --app-error:    #f87171;
+
+  /* card surfaces */
+  --app-card:        #1a1a2e;
+  --app-card-border: #2d2d4e;
+  --app-card-alt:    #16213e;
+
+  /* overlays */
+  --app-overlay:      rgba(0, 0, 0, 0.65);
+  --app-overlay-2:    rgba(0, 0, 0, 0.72);
+  --app-overlay-dark: rgba(0, 0, 0, 0.88);
+  --app-sheet-bg:     rgba(12, 12, 22, 0.97);
+  --app-modal-bg:     rgba(18, 18, 30, 0.96);
+
+  /* ambient glows */
+  --app-glow-indigo: rgba(99, 102, 241, 0.09);
+  --app-glow-purple: rgba(139, 92, 246, 0.05);
+}
+
+/* ─── shadcn tokens — dark ───────────────────────────────────────── */
 .dark {
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);

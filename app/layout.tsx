@@ -27,26 +27,26 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ProvidersShell>
           <div
             className="fixed inset-0 flex flex-col overflow-hidden"
-            style={{ background: '#07070e', color: '#f9fafb', fontFamily: 'var(--font-ibm), sans-serif' }}
+            style={{ background: 'var(--color-app-bg)', color: 'var(--color-app-text)', fontFamily: 'var(--font-ibm), sans-serif' }}
           >
             {/* Ambient glow blobs */}
             <div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 0 }}>
               <div style={{
                 position: 'absolute', width: 600, height: 600,
                 top: -200, left: -200,
-                background: 'radial-gradient(circle, rgba(99,102,241,0.09) 0%, transparent 65%)',
+                background: 'radial-gradient(circle, var(--color-app-glow-indigo) 0%, transparent 65%)',
                 borderRadius: '50%',
               }} />
               <div style={{
                 position: 'absolute', width: 400, height: 400,
                 bottom: -80, right: -100,
-                background: 'radial-gradient(circle, rgba(74,222,128,0.07) 0%, transparent 65%)',
+                background: 'radial-gradient(circle, var(--color-app-accent-glow) 0%, transparent 65%)',
                 borderRadius: '50%',
               }} />
               <div style={{
                 position: 'absolute', width: 350, height: 350,
                 top: '45%', left: '55%', transform: 'translate(-50%,-50%)',
-                background: 'radial-gradient(circle, rgba(139,92,246,0.05) 0%, transparent 65%)',
+                background: 'radial-gradient(circle, var(--color-app-glow-purple) 0%, transparent 65%)',
                 borderRadius: '50%',
               }} />
             </div>

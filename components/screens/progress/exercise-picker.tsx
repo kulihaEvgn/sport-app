@@ -14,7 +14,7 @@ interface Props {
 export default function ExercisePicker({ exercises, selectedId, onSelect, onClose }: Props) {
   return (
     <BottomSheet open onClose={onClose} maxHeight="65vh">
-      <p className="text-[15px] font-bold px-4 pt-3 pb-2" style={{ color: '#f9fafb' }}>Выбери упражнение</p>
+      <p className="text-[15px] font-bold px-4 pt-3 pb-2" style={{ color: 'var(--color-app-text)' }}>Выбери упражнение</p>
       <div className="overflow-y-auto pb-6">
         {exercises.map(ex => {
           const active = ex.id === selectedId
@@ -24,7 +24,7 @@ export default function ExercisePicker({ exercises, selectedId, onSelect, onClos
               onClick={() => onSelect(ex)}
               className="w-full text-left px-4 py-3 flex items-center gap-3"
               style={{
-                background: active ? 'rgba(74,222,128,0.08)' : 'transparent',
+                background: active ? 'var(--color-app-accent-subtle)' : 'transparent',
                 border: 'none',
                 cursor: 'pointer',
               }}
@@ -38,7 +38,7 @@ export default function ExercisePicker({ exercises, selectedId, onSelect, onClos
               >
                 {MUSCLE_GROUP_LABELS[ex.muscleGroup]}
               </span>
-              <span className="text-[14px]" style={{ color: active ? '#4ade80' : '#f9fafb' }}>
+              <span className="text-[14px]" style={{ color: active ? 'var(--color-app-accent)' : 'var(--color-app-text)' }}>
                 {ex.name}
               </span>
             </button>

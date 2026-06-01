@@ -46,20 +46,20 @@ export function ExerciseInfoSheet({ te, onClose }: Props) {
               {exercise.name.slice(0, 2).toUpperCase()}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-[18px] font-bold leading-tight" style={{ color: '#f9fafb' }}>{exercise.name}</p>
+              <p className="text-[18px] font-bold leading-tight" style={{ color: 'var(--color-app-text)' }}>{exercise.name}</p>
               <div className="flex items-center gap-2 mt-1">
                 <span className="text-[11px] font-semibold px-2 py-0.5 rounded-lg" style={{ background: `${color}20`, color }}>
                   {MUSCLE_GROUP_LABELS[exercise.muscleGroup]}
                 </span>
-                <span className="text-[12px]" style={{ color: '#6b7280' }}>{exercise.equipment}</span>
+                <span className="text-[12px]" style={{ color: 'var(--color-app-muted)' }}>{exercise.equipment}</span>
               </div>
             </div>
             <button
               onClick={() => { onClose(); router.push(`/library/exercises/${te.exerciseId}`) }}
               className="w-8 h-8 flex items-center justify-center rounded-full shrink-0"
               style={{
-                background: 'rgba(255,255,255,0.07)',
-                border: '1px solid rgba(255,255,255,0.12)',
+                background: 'var(--color-app-surface)',
+                border: '1px solid var(--color-app-surface3)',
                 cursor: 'pointer',
               }}
             >
@@ -70,17 +70,17 @@ export function ExerciseInfoSheet({ te, onClose }: Props) {
           {/* Plan */}
           <div
             className="px-4 py-3 rounded-2xl flex items-center justify-between"
-            style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.09)' }}
+            style={{ background: 'var(--color-app-surface2)', border: '1px solid var(--color-app-border)' }}
           >
-            <span className="text-[12px]" style={{ color: '#6b7280' }}>План</span>
-            <span className="text-[13px] font-bold" style={{ color: '#f9fafb', fontFamily: 'var(--font-mono)' }}>
+            <span className="text-[12px]" style={{ color: 'var(--color-app-muted)' }}>План</span>
+            <span className="text-[13px] font-bold" style={{ color: 'var(--color-app-text)', fontFamily: 'var(--font-mono)' }}>
               {setsLabel(te)}{te.plannedWeight ? ` · ${te.plannedWeight} кг` : ''}
             </span>
           </div>
 
           {/* Description */}
           {exercise.description && (
-            <p className="text-[14px] leading-relaxed" style={{ color: '#9ca3af' }}>
+            <p className="text-[14px] leading-relaxed" style={{ color: 'var(--color-app-muted-2)' }}>
               {exercise.description}
             </p>
           )}

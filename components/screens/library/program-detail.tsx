@@ -46,19 +46,19 @@ export default function ProgramDetail({ program, onBack, onSetActive, onEdit, on
       {/* Header */}
       <div
         className="flex items-center justify-between px-4 pt-4 pb-3"
-        style={{ borderBottom: '1px solid rgba(255,255,255,0.09)' }}
+        style={{ borderBottom: '1px solid var(--color-app-border)' }}
       >
         <button
           onClick={onBack}
           className="flex items-center gap-2 text-[14px] font-medium"
-          style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#4ade80' }}
+          style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-app-accent)' }}
         >
-          <ArrowLeft size={18} color="#4ade80" />
+          <ArrowLeft size={18} color="var(--color-app-accent)" />
           Назад
         </button>
         <div className="flex items-center gap-2">
           {program.isActive ? (
-            <div className="flex items-center gap-1 text-[12px] font-semibold" style={{ color: '#4ade80' }}>
+            <div className="flex items-center gap-1 text-[12px] font-semibold" style={{ color: 'var(--color-app-accent)' }}>
               <CheckCircle2 size={14} />
               Активна
             </div>
@@ -67,22 +67,22 @@ export default function ProgramDetail({ program, onBack, onSetActive, onEdit, on
               onClick={() => onSetActive(program.id)}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[12px] font-semibold"
               style={{
-                background: 'rgba(74,222,128,0.12)',
-                border: '1px solid rgba(74,222,128,0.4)',
-                color: '#4ade80',
+                background: 'var(--color-app-accent-dim)',
+                border: '1px solid var(--color-app-accent-border-3)',
+                color: 'var(--color-app-accent)',
                 cursor: 'pointer',
               }}
             >
-              <Play size={12} fill="#4ade80" />
+              <Play size={12} fill="var(--color-app-accent)" />
               Активировать
             </button>
           )}
           <button
             onClick={onEdit}
             className="w-8 h-8 flex items-center justify-center rounded-full"
-            style={{ background: 'rgba(255,255,255,0.06)', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)', border: '1px solid rgba(255,255,255,0.09)', boxShadow: '0 4px 24px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06)', cursor: 'pointer' }}
+            style={{ background: 'var(--color-app-surface)', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)', border: '1px solid var(--color-app-border)', boxShadow: '0 4px 24px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06)', cursor: 'pointer' }}
           >
-            <Pencil size={14} color="#6b7280" />
+            <Pencil size={14} color="var(--color-app-muted)" />
           </button>
         </div>
       </div>
@@ -90,18 +90,18 @@ export default function ProgramDetail({ program, onBack, onSetActive, onEdit, on
       <div className="px-4 py-5 flex flex-col gap-5">
         {/* Title */}
         <div>
-          <h1 className="text-[22px] font-bold" style={{ color: '#f9fafb' }}>{program.name}</h1>
+          <h1 className="text-[22px] font-bold" style={{ color: 'var(--color-app-text)' }}>{program.name}</h1>
           {program.description && (
-            <p className="text-[13px] mt-1" style={{ color: '#6b7280' }}>{program.description}</p>
+            <p className="text-[13px] mt-1" style={{ color: 'var(--color-app-muted)' }}>{program.description}</p>
           )}
           <div className="flex gap-4 mt-3">
             <div className="flex flex-col">
-              <span className="text-[20px] font-bold" style={{ color: '#4ade80' }}>{program.daysPerWeek}</span>
-              <span className="text-[11px]" style={{ color: '#6b7280' }}>дней/нед</span>
+              <span className="text-[20px] font-bold" style={{ color: 'var(--color-app-accent)' }}>{program.daysPerWeek}</span>
+              <span className="text-[11px]" style={{ color: 'var(--color-app-muted)' }}>дней/нед</span>
             </div>
             <div className="flex flex-col">
-              <span className="text-[20px] font-bold" style={{ color: '#4ade80' }}>{program.templates.length}</span>
-              <span className="text-[11px]" style={{ color: '#6b7280' }}>тренировок</span>
+              <span className="text-[20px] font-bold" style={{ color: 'var(--color-app-accent)' }}>{program.templates.length}</span>
+              <span className="text-[11px]" style={{ color: 'var(--color-app-muted)' }}>тренировок</span>
             </div>
           </div>
         </div>
@@ -111,7 +111,7 @@ export default function ProgramDetail({ program, onBack, onSetActive, onEdit, on
           <div className="flex items-center justify-between">
             <span
               className="text-[11px] font-bold tracking-widest uppercase"
-              style={{ color: '#6b7280', fontFamily: 'var(--font-mono)' }}
+              style={{ color: 'var(--color-app-muted)', fontFamily: 'var(--font-mono)' }}
             >
               ПРОГРАММА
             </span>
@@ -119,9 +119,9 @@ export default function ProgramDetail({ program, onBack, onSetActive, onEdit, on
               onClick={() => setShowAddDay(true)}
               className="flex items-center gap-1 px-2 py-1 rounded-lg text-[11px] font-semibold"
               style={{
-                background: 'rgba(74,222,128,0.1)',
-                border: '1px solid rgba(74,222,128,0.3)',
-                color: '#4ade80',
+                background: 'var(--color-app-accent-subtle)',
+                border: '1px solid var(--color-app-accent-border-2)',
+                color: 'var(--color-app-accent)',
                 cursor: 'pointer',
               }}
             >
@@ -136,11 +136,11 @@ export default function ProgramDetail({ program, onBack, onSetActive, onEdit, on
               <div
                 key={template.id}
                 className="rounded-2xl px-4 py-3 flex items-center gap-3"
-                style={{ background: 'rgba(255,255,255,0.06)', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)', border: '1px solid rgba(255,255,255,0.09)', boxShadow: '0 4px 24px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06)' }}
+                style={{ background: 'var(--color-app-surface)', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)', border: '1px solid var(--color-app-border)', boxShadow: '0 4px 24px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06)' }}
               >
                 <div
                   className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 text-[11px] font-bold"
-                  style={{ background: 'rgba(74,222,128,0.1)', color: '#4ade80', fontFamily: 'var(--font-mono)' }}
+                  style={{ background: 'var(--color-app-accent-subtle)', color: 'var(--color-app-accent)', fontFamily: 'var(--font-mono)' }}
                 >
                   {template.order + 1}
                 </div>
@@ -150,10 +150,10 @@ export default function ProgramDetail({ program, onBack, onSetActive, onEdit, on
                   style={{ background: 'none', border: 'none', cursor: 'pointer' }}
                 >
                   <div className="flex items-center gap-2">
-                    <span className="text-[14px] font-semibold" style={{ color: '#f9fafb' }}>
+                    <span className="text-[14px] font-semibold" style={{ color: 'var(--color-app-text)' }}>
                       {template.name}
                     </span>
-                    <span className="text-[11px]" style={{ color: '#6b7280' }}>
+                    <span className="text-[11px]" style={{ color: 'var(--color-app-muted)' }}>
                       {template.exercises.length} упр.
                     </span>
                   </div>
@@ -168,7 +168,7 @@ export default function ProgramDetail({ program, onBack, onSetActive, onEdit, on
                             {MUSCLE_GROUP_LABELS[mg]}
                           </span>
                         ))
-                      : <span className="text-[11px]" style={{ color: '#6b7280' }}>Нет упражнений</span>
+                      : <span className="text-[11px]" style={{ color: 'var(--color-app-muted)' }}>Нет упражнений</span>
                     }
                   </div>
                 </button>
@@ -176,16 +176,16 @@ export default function ProgramDetail({ program, onBack, onSetActive, onEdit, on
                   <button
                     onClick={() => onEditDay(template.id)}
                     className="w-8 h-8 flex items-center justify-center rounded-lg"
-                    style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.09)', cursor: 'pointer' }}
+                    style={{ background: 'var(--color-app-surface2)', border: '1px solid var(--color-app-border)', cursor: 'pointer' }}
                   >
-                    <ChevronRight size={14} color="#6b7280" />
+                    <ChevronRight size={14} color="var(--color-app-muted)" />
                   </button>
                   <button
                     onClick={() => setConfirmDelete(template.id)}
                     className="w-8 h-8 flex items-center justify-center rounded-lg"
-                    style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.09)', cursor: 'pointer' }}
+                    style={{ background: 'var(--color-app-surface2)', border: '1px solid var(--color-app-border)', cursor: 'pointer' }}
                   >
-                    <Trash2 size={14} color="#f87171" />
+                    <Trash2 size={14} color="var(--color-app-error)" />
                   </button>
                 </div>
               </div>
@@ -195,9 +195,9 @@ export default function ProgramDetail({ program, onBack, onSetActive, onEdit, on
           {program.templates.length === 0 && (
             <div
               className="rounded-2xl py-10 flex flex-col items-center gap-2"
-              style={{ background: 'rgba(255,255,255,0.06)', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)', border: '1px solid rgba(255,255,255,0.09)', boxShadow: '0 4px 24px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06)' }}
+              style={{ background: 'var(--color-app-surface)', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)', border: '1px solid var(--color-app-border)', boxShadow: '0 4px 24px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06)' }}
             >
-              <p className="text-[13px]" style={{ color: '#6b7280' }}>Добавьте дни тренировок</p>
+              <p className="text-[13px]" style={{ color: 'var(--color-app-muted)' }}>Добавьте дни тренировок</p>
             </div>
           )}
         </div>
@@ -206,13 +206,13 @@ export default function ProgramDetail({ program, onBack, onSetActive, onEdit, on
       {/* Add day bottom sheet */}
       <BottomSheet open={showAddDay} onClose={() => setShowAddDay(false)}>
         <div className="px-4 pt-4 pb-8 flex flex-col gap-3">
-            <h3 className="text-[16px] font-bold" style={{ color: '#f9fafb' }}>Новый день</h3>
+            <h3 className="text-[16px] font-bold" style={{ color: 'var(--color-app-text)' }}>Новый день</h3>
             <input
               value={newDayName}
               onChange={e => setNewDayName(e.target.value)}
               placeholder="День А / Верх / Ноги"
               className="px-3 py-3 rounded-xl text-[14px] outline-none"
-              style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.09)', color: '#f9fafb' }}
+              style={{ background: 'var(--color-app-surface2)', border: '1px solid var(--color-app-border)', color: 'var(--color-app-text)' }}
               autoFocus
             />
             <button
@@ -220,8 +220,8 @@ export default function ProgramDetail({ program, onBack, onSetActive, onEdit, on
               disabled={!newDayName.trim() || addingDay}
               className="w-full h-12 rounded-2xl font-bold text-[15px]"
               style={{
-                background: newDayName.trim() ? '#4ade80' : 'rgba(255,255,255,0.09)',
-                color: newDayName.trim() ? '#0f172a' : '#6b7280',
+                background: newDayName.trim() ? 'var(--color-app-accent)' : 'var(--color-app-border)',
+                color: newDayName.trim() ? 'var(--color-app-on-accent)' : 'var(--color-app-muted)',
                 border: 'none',
                 cursor: newDayName.trim() ? 'pointer' : 'not-allowed',
               }}

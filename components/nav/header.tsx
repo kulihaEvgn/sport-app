@@ -12,16 +12,16 @@ export default function Header() {
 
   return (
     <div className="flex items-center justify-between px-4 pt-3 pb-2 flex-shrink-0">
-      <span className="text-[18px] font-bold" style={{ color: '#f9fafb' }}>
+      <span className="text-[18px] font-bold" style={{ color: 'var(--color-app-text)' }}>
         GymApp
       </span>
       <button
         onClick={() => router.push('/profile')}
         className="w-9 h-9 rounded-full flex items-center justify-center text-[14px] font-bold transition-opacity active:opacity-70"
         style={{
-          background: 'rgba(74,222,128,0.15)',
-          border: '1px solid rgba(74,222,128,0.3)',
-          color: '#4ade80',
+          background: 'var(--color-app-accent-soft)',
+          border: '1px solid var(--color-app-accent-border-2)',
+          color: 'var(--color-app-accent)',
           cursor: 'pointer',
         }}
       >

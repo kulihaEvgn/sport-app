@@ -37,13 +37,13 @@ export default function WorkoutSummary({ log, onClose }: Props) {
       >
         <div
           className="w-20 h-20 rounded-3xl flex items-center justify-center"
-          style={{ background: 'rgba(74,222,128,0.15)', border: '1px solid rgba(74,222,128,0.3)' }}
+          style={{ background: 'var(--color-app-accent-soft)', border: '1px solid var(--color-app-accent-border-2)' }}
         >
-          <Trophy size={40} color="#4ade80" />
+          <Trophy size={40} color="var(--color-app-accent)" />
         </div>
         <div className="text-center">
-          <h2 className="text-[24px] font-bold" style={{ color: '#f9fafb' }}>Тренировка завершена!</h2>
-          <p className="text-[14px] mt-1" style={{ color: '#6b7280' }}>Отличная работа 💪</p>
+          <h2 className="text-[24px] font-bold" style={{ color: 'var(--color-app-text)' }}>Тренировка завершена!</h2>
+          <p className="text-[14px] mt-1" style={{ color: 'var(--color-app-muted)' }}>Отличная работа 💪</p>
         </div>
       </motion.div>
 
@@ -62,11 +62,11 @@ export default function WorkoutSummary({ log, onClose }: Props) {
           <div
             key={label}
             className="flex-1 rounded-2xl px-3 py-4 flex flex-col items-center gap-1"
-            style={{ background: '#1a1a2e', border: '1px solid #2d2d4e' }}
+            style={{ background: 'var(--color-app-card)', border: '1px solid var(--color-app-card-border)' }}
           >
-            <Icon size={16} color="#4ade80" />
-            <span className="text-[20px] font-bold" style={{ color: '#4ade80', fontFamily: 'var(--font-mono)' }}>{value}</span>
-            <span className="text-[11px]" style={{ color: '#6b7280' }}>{label}</span>
+            <Icon size={16} color="var(--color-app-accent)" />
+            <span className="text-[20px] font-bold" style={{ color: 'var(--color-app-accent)', fontFamily: 'var(--font-mono)' }}>{value}</span>
+            <span className="text-[11px]" style={{ color: 'var(--color-app-muted)' }}>{label}</span>
           </div>
         ))}
       </motion.div>
@@ -79,7 +79,7 @@ export default function WorkoutSummary({ log, onClose }: Props) {
           transition={{ delay: 0.25 }}
           className="flex flex-col gap-2"
         >
-          <span className="text-[11px] font-bold tracking-widest uppercase" style={{ color: '#6b7280', fontFamily: 'var(--font-mono)' }}>
+          <span className="text-[11px] font-bold tracking-widest uppercase" style={{ color: 'var(--color-app-muted)', fontFamily: 'var(--font-mono)' }}>
             Упражнения
           </span>
           {exerciseIds.map((teId, i) => {
@@ -94,17 +94,17 @@ export default function WorkoutSummary({ log, onClose }: Props) {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.3 + i * 0.05 }}
                 className="rounded-2xl px-4 py-3 flex items-center justify-between"
-                style={{ background: '#1a1a2e', border: '1px solid #2d2d4e' }}
+                style={{ background: 'var(--color-app-card)', border: '1px solid var(--color-app-card-border)' }}
               >
                 <div>
-                  <p className="text-[13px] font-semibold" style={{ color: '#f9fafb' }}>
+                  <p className="text-[13px] font-semibold" style={{ color: 'var(--color-app-text)' }}>
                     Упражнение {i + 1}
                   </p>
-                  <p className="text-[12px] mt-0.5" style={{ color: '#6b7280' }}>
+                  <p className="text-[12px] mt-0.5" style={{ color: 'var(--color-app-muted)' }}>
                     {sets.length} подх. · {totalReps} повт.
                   </p>
                 </div>
-                <span className="text-[16px] font-bold" style={{ color: '#4ade80', fontFamily: 'var(--font-mono)' }}>
+                <span className="text-[16px] font-bold" style={{ color: 'var(--color-app-accent)', fontFamily: 'var(--font-mono)' }}>
                   {maxWeight} кг
                 </span>
               </motion.div>
@@ -119,7 +119,7 @@ export default function WorkoutSummary({ log, onClose }: Props) {
         transition={{ delay: 0.4 }}
         onClick={onClose}
         className="w-full h-14 rounded-2xl text-[16px] font-bold mt-auto"
-        style={{ background: '#4ade80', color: '#0f172a', border: 'none', cursor: 'pointer' }}
+        style={{ background: 'var(--color-app-accent)', color: 'var(--color-app-on-accent)', border: 'none', cursor: 'pointer' }}
       >
         Готово
       </motion.button>

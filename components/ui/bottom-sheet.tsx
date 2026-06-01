@@ -24,7 +24,7 @@ export function BottomSheet({ open, onClose, children, maxHeight = '85vh' }: Bot
           exit={{ opacity: 0 }}
           transition={{ duration: 0.22 }}
           className="fixed inset-0 flex items-end"
-          style={{ zIndex: 110, background: 'rgba(0,0,0,0.65)' }}
+          style={{ zIndex: 110, background: 'var(--color-app-overlay)' }}
           onClick={onClose}
         >
           <motion.div
@@ -39,10 +39,10 @@ export function BottomSheet({ open, onClose, children, maxHeight = '85vh' }: Bot
             className="w-full rounded-t-3xl flex flex-col"
             style={{
               maxHeight,
-              background: 'rgba(12,12,22,0.97)',
+              background: 'var(--color-app-sheet-bg)',
               backdropFilter: 'blur(24px)',
               WebkitBackdropFilter: 'blur(24px)',
-              border: '1px solid rgba(255,255,255,0.09)',
+              border: '1px solid var(--color-app-border)',
               borderBottom: 'none',
               boxShadow: '0 -8px 40px rgba(0,0,0,0.55)',
             }}
@@ -50,7 +50,7 @@ export function BottomSheet({ open, onClose, children, maxHeight = '85vh' }: Bot
           >
             {/* Drag handle */}
             <div className="flex justify-center pt-3 pb-0 flex-shrink-0">
-              <div className="w-10 h-1 rounded-full" style={{ background: 'rgba(255,255,255,0.18)' }} />
+              <div className="w-10 h-1 rounded-full" style={{ background: 'var(--color-app-handle)' }} />
             </div>
             {children}
           </motion.div>

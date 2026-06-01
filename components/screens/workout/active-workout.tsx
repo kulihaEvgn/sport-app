@@ -46,12 +46,12 @@ function PrevResult({ userId, exerciseId }: { userId: string; exerciseId: string
   return (
     <div
       className="rounded-xl px-3 py-2 flex items-center justify-between"
-      style={{ background: 'rgba(74,222,128,0.06)', border: '1px solid rgba(74,222,128,0.2)' }}
+      style={{ background: 'var(--color-app-accent-glow)', border: '1px solid var(--color-app-accent-mid)' }}
     >
-      <span className="text-[10px] font-bold uppercase tracking-widest" style={{ color: '#4ade80', fontFamily: 'var(--font-mono)' }}>
+      <span className="text-[10px] font-bold uppercase tracking-widest" style={{ color: 'var(--color-app-accent)', fontFamily: 'var(--font-mono)' }}>
         Пред.
       </span>
-      <span className="text-[13px] font-bold" style={{ color: '#f9fafb', fontFamily: 'var(--font-mono)' }}>
+      <span className="text-[13px] font-bold" style={{ color: 'var(--color-app-text)', fontFamily: 'var(--font-mono)' }}>
         {maxWeight} кг · {prevSets.length}×{Math.round(totalReps / prevSets.length)} повт.
       </span>
     </div>
@@ -96,8 +96,8 @@ function ExerciseListRow({
       onClick={() => onInfoClick(te)}
       className="rounded-2xl p-4 flex flex-col gap-3"
       style={{
-        background: isDone ? 'rgba(74,222,128,0.04)' : 'rgba(255,255,255,0.05)',
-        border: `1px solid ${isDone ? 'rgba(74,222,128,0.25)' : 'rgba(255,255,255,0.09)'}`,
+        background: isDone ? 'var(--color-app-accent-glow)' : 'var(--color-app-surface2)',
+        border: `1px solid ${isDone ? 'var(--color-app-accent-border)' : 'var(--color-app-border)'}`,
         opacity: isDone ? 0.6 : 1,
         transition: 'opacity 0.3s',
         cursor: 'pointer',
@@ -109,26 +109,26 @@ function ExerciseListRow({
           onClick={e => { e.stopPropagation(); if (isDone) unmarkDone(te.id) }}
           className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 transition-transform active:scale-90"
           style={{
-            background: isDone ? 'rgba(74,222,128,0.15)' : `${color}15`,
-            border: `1px solid ${isDone ? 'rgba(74,222,128,0.4)' : `${color}40`}`,
+            background: isDone ? 'var(--color-app-accent-soft)' : `${color}15`,
+            border: `1px solid ${isDone ? 'var(--color-app-accent-border-3)' : `${color}40`}`,
             cursor: isDone ? 'pointer' : 'default',
           }}
         >
           {isDone
-            ? <Check size={14} color="#4ade80" strokeWidth={2.5} />
+            ? <Check size={14} color="var(--color-app-accent)" strokeWidth={2.5} />
             : <span className="text-[11px] font-bold" style={{ color, fontFamily: 'var(--font-mono)' }}>{idx + 1}</span>
           }
         </button>
 
         <div className="flex-1 min-w-0">
-          <p className="text-[15px] font-semibold" style={{ color: isDone ? '#6b7280' : '#f9fafb' }}>
+          <p className="text-[15px] font-semibold" style={{ color: isDone ? 'var(--color-app-muted)' : 'var(--color-app-text)' }}>
             {te.exercise.name}
           </p>
           <div className="flex items-center gap-2 mt-0.5">
             <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-md" style={{ background: `${color}20`, color }}>
               {MUSCLE_GROUP_LABELS[te.exercise.muscleGroup]}
             </span>
-            <span className="text-[12px]" style={{ color: '#6b7280' }}>{setsLabel(te)}</span>
+            <span className="text-[12px]" style={{ color: 'var(--color-app-muted)' }}>{setsLabel(te)}</span>
           </div>
         </div>
 
@@ -137,9 +137,9 @@ function ExerciseListRow({
             onClick={e => { e.stopPropagation(); unmarkDone(te.id) }}
             className="flex items-center gap-1 px-2 py-1 rounded-xl flex-shrink-0"
             style={{
-              background: 'rgba(255,255,255,0.06)',
-              border: '1px solid rgba(255,255,255,0.1)',
-              color: '#6b7280',
+              background: 'var(--color-app-surface)',
+              border: '1px solid var(--color-app-surface3)',
+              color: 'var(--color-app-muted)',
               cursor: 'pointer',
               fontSize: 11,
             }}
@@ -156,7 +156,7 @@ function ExerciseListRow({
           {userId && <PrevResult userId={userId} exerciseId={te.exerciseId} />}
           <div className="flex items-end gap-3" onClick={e => e.stopPropagation()}>
             <div className="flex flex-col gap-1">
-              <span className="text-[10px] font-medium" style={{ color: '#6b7280' }}>Вес, кг</span>
+              <span className="text-[10px] font-medium" style={{ color: 'var(--color-app-muted)' }}>Вес, кг</span>
               <input
                 value={weight}
                 onChange={e => setWeight(te.id, e.target.value)}
@@ -164,9 +164,9 @@ function ExerciseListRow({
                 inputMode="decimal"
                 className="w-20 text-center rounded-xl py-2 text-[16px] font-bold outline-none"
                 style={{
-                  background: 'rgba(255,255,255,0.06)',
-                  border: '1px solid rgba(255,255,255,0.12)',
-                  color: '#f9fafb',
+                  background: 'var(--color-app-surface)',
+                  border: '1px solid var(--color-app-surface3)',
+                  color: 'var(--color-app-text)',
                   fontFamily: 'var(--font-mono)',
                 }}
               />
@@ -175,9 +175,9 @@ function ExerciseListRow({
               onClick={() => markDone(te)}
               className="flex-1 h-11 rounded-2xl flex items-center justify-center gap-2 font-bold text-[14px]"
               style={{
-                background: 'rgba(74,222,128,0.1)',
-                border: '1px solid rgba(74,222,128,0.3)',
-                color: '#4ade80',
+                background: 'var(--color-app-accent-subtle)',
+                border: '1px solid var(--color-app-accent-border-2)',
+                color: 'var(--color-app-accent)',
                 cursor: 'pointer',
               }}
             >
@@ -217,8 +217,8 @@ function WorkoutListView({
             onClick={onFinish}
             className="w-full h-14 rounded-2xl flex items-center justify-center gap-2 font-bold text-[16px]"
             style={{
-              background: 'linear-gradient(135deg, #22c55e 0%, #4ade80 100%)',
-              color: '#052e16',
+              background: 'linear-gradient(135deg, #22c55e 0%, var(--color-app-accent) 100%)',
+              color: 'var(--color-app-accent-text)',
               border: 'none',
               cursor: 'pointer',
               boxShadow: '0 4px 24px rgba(74,222,128,0.4)',
@@ -273,8 +273,8 @@ function TinderCard({
       style={{
         x, rotate,
         touchAction: 'none',
-        background: isDone ? 'rgba(74,222,128,0.05)' : 'rgba(255,255,255,0.05)',
-        border: `1px solid ${isDone ? 'rgba(74,222,128,0.3)' : 'rgba(255,255,255,0.09)'}`,
+        background: isDone ? 'var(--color-app-accent-glow)' : 'var(--color-app-surface2)',
+        border: `1px solid ${isDone ? 'var(--color-app-accent-border-2)' : 'var(--color-app-border)'}`,
         backdropFilter: 'blur(18px)',
         WebkitBackdropFilter: 'blur(18px)',
         boxShadow: '0 12px 48px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06)',
@@ -290,7 +290,7 @@ function TinderCard({
       >
         <div
           className="absolute inset-0 rounded-3xl"
-          style={{ background: 'rgba(74,222,128,0.18)' }}
+          style={{ background: 'var(--color-app-accent-soft)' }}
         />
         <div
           className="relative flex flex-col items-center gap-2"
@@ -298,11 +298,11 @@ function TinderCard({
         >
           <div
             className="w-16 h-16 rounded-full flex items-center justify-center"
-            style={{ background: 'rgba(74,222,128,0.9)', boxShadow: '0 0 40px rgba(74,222,128,0.6)' }}
+            style={{ background: 'var(--color-app-accent-strong)', boxShadow: '0 0 40px rgba(74,222,128,0.6)' }}
           >
-            <Check size={32} color="#052e16" strokeWidth={3} />
+            <Check size={32} color="var(--color-app-on-accent)" strokeWidth={3} />
           </div>
-          <span className="text-[18px] font-black tracking-wider" style={{ color: '#4ade80', textShadow: '0 0 20px rgba(74,222,128,0.8)' }}>
+          <span className="text-[18px] font-black tracking-wider" style={{ color: 'var(--color-app-accent)', textShadow: '0 0 20px rgba(74,222,128,0.8)' }}>
             ВЫПОЛНЕНО
           </span>
         </div>
@@ -326,9 +326,9 @@ function TinderCard({
             className="w-16 h-16 rounded-full flex items-center justify-center"
             style={{ background: 'rgba(107,114,128,0.7)' }}
           >
-            <ChevronRight size={32} color="#f9fafb" strokeWidth={2.5} />
+            <ChevronRight size={32} color="var(--color-app-text)" strokeWidth={2.5} />
           </div>
-          <span className="text-[18px] font-black tracking-wider" style={{ color: '#9ca3af' }}>
+          <span className="text-[18px] font-black tracking-wider" style={{ color: 'var(--color-app-muted-2)' }}>
             ПРОПУСТИТЬ
           </span>
         </div>
@@ -340,10 +340,10 @@ function TinderCard({
         {isDone && (
           <div
             className="self-start flex items-center gap-1.5 px-3 py-1 rounded-full"
-            style={{ background: 'rgba(74,222,128,0.15)', border: '1px solid rgba(74,222,128,0.4)' }}
+            style={{ background: 'var(--color-app-accent-soft)', border: '1px solid var(--color-app-accent-border-3)' }}
           >
-            <Check size={12} color="#4ade80" strokeWidth={3} />
-            <span className="text-[11px] font-bold" style={{ color: '#4ade80' }}>Выполнено</span>
+            <Check size={12} color="var(--color-app-accent)" strokeWidth={3} />
+            <span className="text-[11px] font-bold" style={{ color: 'var(--color-app-accent)' }}>Выполнено</span>
           </div>
         )}
 
@@ -357,10 +357,10 @@ function TinderCard({
 
         {/* Name + sets info */}
         <div>
-          <h2 className="text-[26px] font-black leading-tight" style={{ color: '#f9fafb' }}>
+          <h2 className="text-[26px] font-black leading-tight" style={{ color: 'var(--color-app-text)' }}>
             {te.exercise.name}
           </h2>
-          <p className="text-[14px] mt-1" style={{ color: '#6b7280' }}>
+          <p className="text-[14px] mt-1" style={{ color: 'var(--color-app-muted)' }}>
             {setsLabel(te)}
             {te.plannedWeight ? ` · план ${te.plannedWeight} кг` : ''}
           </p>
@@ -372,7 +372,7 @@ function TinderCard({
         {/* Weight input */}
         {!isDone && (
           <div className="flex flex-col gap-1.5">
-            <span className="text-[11px] font-medium" style={{ color: '#6b7280' }}>Рабочий вес, кг</span>
+            <span className="text-[11px] font-medium" style={{ color: 'var(--color-app-muted)' }}>Рабочий вес, кг</span>
             <input
               value={weight}
               onChange={e => onWeight(e.target.value)}
@@ -380,9 +380,9 @@ function TinderCard({
               inputMode="decimal"
               className="w-full text-center rounded-2xl py-4 text-[28px] font-black outline-none"
               style={{
-                background: 'rgba(255,255,255,0.06)',
-                border: '1px solid rgba(255,255,255,0.12)',
-                color: '#f9fafb',
+                background: 'var(--color-app-surface)',
+                border: '1px solid var(--color-app-surface3)',
+                color: 'var(--color-app-text)',
                 fontFamily: 'var(--font-mono)',
               }}
               onClick={e => e.stopPropagation()}
@@ -470,7 +470,7 @@ function WorkoutTinderView({
                 width:   current ? 20 : 8,
                 height:  8,
                 background: done
-                  ? '#4ade80'
+                  ? 'var(--color-app-accent)'
                   : current
                     ? 'rgba(255,255,255,0.5)'
                     : 'rgba(255,255,255,0.15)',
@@ -487,23 +487,23 @@ function WorkoutTinderView({
           animate={{ opacity: 1, scale: 1 }}
           className="flex-1 mx-4 rounded-3xl flex flex-col items-center justify-center gap-4"
           style={{
-            background: 'rgba(74,222,128,0.06)',
-            border: '1px solid rgba(74,222,128,0.3)',
+            background: 'var(--color-app-accent-glow)',
+            border: '1px solid var(--color-app-accent-border-2)',
           }}
         >
           <div
             className="w-20 h-20 rounded-full flex items-center justify-center"
-            style={{ background: 'rgba(74,222,128,0.2)', border: '2px solid rgba(74,222,128,0.5)' }}
+            style={{ background: 'var(--color-app-accent-mid)', border: '2px solid var(--color-app-accent-border-3)' }}
           >
-            <Check size={36} color="#4ade80" strokeWidth={2.5} />
+            <Check size={36} color="var(--color-app-accent)" strokeWidth={2.5} />
           </div>
-          <p className="text-[18px] font-bold" style={{ color: '#f9fafb' }}>Все упражнения выполнены</p>
+          <p className="text-[18px] font-bold" style={{ color: 'var(--color-app-text)' }}>Все упражнения выполнены</p>
           <button
             onClick={onFinish}
             className="px-8 h-14 rounded-2xl flex items-center gap-2 font-bold text-[16px]"
             style={{
-              background: 'linear-gradient(135deg, #22c55e 0%, #4ade80 100%)',
-              color: '#052e16',
+              background: 'linear-gradient(135deg, #22c55e 0%, var(--color-app-accent) 100%)',
+              color: 'var(--color-app-accent-text)',
               border: 'none',
               cursor: 'pointer',
               boxShadow: '0 4px 24px rgba(74,222,128,0.4)',
@@ -546,9 +546,9 @@ function WorkoutTinderView({
               onClick={handleSwipeSkip}
               className="flex-1 h-14 rounded-2xl flex items-center justify-center gap-2 font-semibold text-[15px]"
               style={{
-                background: 'rgba(255,255,255,0.06)',
-                border: '1px solid rgba(255,255,255,0.1)',
-                color: '#9ca3af',
+                background: 'var(--color-app-surface)',
+                border: '1px solid var(--color-app-surface3)',
+                color: 'var(--color-app-muted-2)',
                 cursor: 'pointer',
               }}
             >
@@ -562,10 +562,10 @@ function WorkoutTinderView({
               className="flex-1 h-14 rounded-2xl flex items-center justify-center gap-2 font-bold text-[15px]"
               style={{
                 background: actions.completedIds.has(te.id)
-                  ? 'rgba(74,222,128,0.08)'
-                  : 'rgba(74,222,128,0.14)',
-                border: '1px solid rgba(74,222,128,0.35)',
-                color: '#4ade80',
+                  ? 'var(--color-app-accent-subtle)'
+                  : 'var(--color-app-accent-dim)',
+                border: '1px solid var(--color-app-accent-border-2)',
+                color: 'var(--color-app-accent)',
                 cursor: 'pointer',
                 boxShadow: actions.completedIds.has(te.id)
                   ? 'none'
@@ -667,19 +667,19 @@ export default function ActiveWorkout({ onFinish, onDiscard }: Props) {
       {/* Header */}
       <div
         className="flex items-center justify-between px-4 pt-3 pb-3 gap-3 flex-shrink-0"
-        style={{ borderBottom: '1px solid rgba(255,255,255,0.07)' }}
+        style={{ borderBottom: '1px solid var(--color-app-surface)' }}
       >
         <button
           onClick={() => setShowDiscard(true)}
           className="w-8 h-8 flex items-center justify-center rounded-full flex-shrink-0"
-          style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.09)', cursor: 'pointer' }}
+          style={{ background: 'var(--color-app-surface)', border: '1px solid var(--color-app-border)', cursor: 'pointer' }}
         >
-          <X size={16} color="#6b7280" />
+          <X size={16} color="var(--color-app-muted)" />
         </button>
 
         <div className="flex-1 flex flex-col items-center">
-          <span className="text-[13px] font-semibold" style={{ color: '#f9fafb' }}>{template.name}</span>
-          <span className="text-[11px]" style={{ color: '#6b7280' }}>
+          <span className="text-[13px] font-semibold" style={{ color: 'var(--color-app-text)' }}>{template.name}</span>
+          <span className="text-[11px]" style={{ color: 'var(--color-app-muted)' }}>
             {doneCount}/{exercises.length} · {formatTime(elapsed)}
           </span>
         </div>
@@ -687,20 +687,20 @@ export default function ActiveWorkout({ onFinish, onDiscard }: Props) {
         <button
           onClick={() => setViewMode(viewMode === 'cards' ? 'list' : 'cards')}
           className="w-8 h-8 flex items-center justify-center rounded-full flex-shrink-0"
-          style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.09)', cursor: 'pointer' }}
+          style={{ background: 'var(--color-app-surface)', border: '1px solid var(--color-app-border)', cursor: 'pointer' }}
         >
           {viewMode === 'cards'
-            ? <LayoutList size={16} color="#6b7280" />
-            : <CreditCard size={16} color="#6b7280" />
+            ? <LayoutList size={16} color="var(--color-app-muted)" />
+            : <CreditCard size={16} color="var(--color-app-muted)" />
           }
         </button>
       </div>
 
       {/* Progress bar */}
-      <div className="h-0.5 flex-shrink-0" style={{ background: 'rgba(255,255,255,0.06)' }}>
+      <div className="h-0.5 flex-shrink-0" style={{ background: 'var(--color-app-surface)' }}>
         <motion.div
           className="h-full"
-          style={{ background: '#4ade80' }}
+          style={{ background: 'var(--color-app-accent)' }}
           animate={{ width: exercises.length ? `${(doneCount / exercises.length) * 100}%` : '0%' }}
           transition={{ duration: 0.5 }}
         />

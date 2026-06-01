@@ -9,7 +9,7 @@ interface Props {
 export default function ProgressChart({ points }: Props) {
   if (points.length < 2) {
     return (
-      <div className="flex items-center justify-center h-[120px]" style={{ color: '#6b7280', fontSize: 13 }}>
+      <div className="flex items-center justify-center h-[120px]" style={{ color: 'var(--color-app-muted)', fontSize: 13 }}>
         Недостаточно данных
       </div>
     )
@@ -34,14 +34,14 @@ export default function ProgressChart({ points }: Props) {
     <svg viewBox={`0 0 ${W} ${H}`} className="w-full" style={{ height: 120 }}>
       <defs>
         <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%"   stopColor="#4ade80" stopOpacity="0.3" />
-          <stop offset="100%" stopColor="#4ade80" stopOpacity="0"   />
+          <stop offset="0%"   stopColor="var(--color-app-accent)" stopOpacity="0.3" />
+          <stop offset="100%" stopColor="var(--color-app-accent)" stopOpacity="0"   />
         </linearGradient>
       </defs>
       <path d={area} fill="url(#chartGrad)" />
-      <path d={line} fill="none" stroke="#4ade80" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d={line} fill="none" stroke="var(--color-app-accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
       {pts.map((p, i) => (
-        <circle key={i} cx={p.x} cy={p.y} r="3" fill="#4ade80" />
+        <circle key={i} cx={p.x} cy={p.y} r="3" fill="var(--color-app-accent)" />
       ))}
     </svg>
   )
