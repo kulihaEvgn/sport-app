@@ -6,6 +6,7 @@ import { useWorkoutStore } from '@/store/workout-store'
 import { useActiveProgram, useActiveProgramState } from '@/hooks/use-programs'
 import NoProgramView from '@/components/screens/workout/no-program-view'
 import ProgramOverview from '@/components/screens/workout/program-overview'
+import { PageLoader } from '@/components/ui/loader'
 
 export default function WorkoutPage() {
   const router = useRouter()
@@ -21,7 +22,7 @@ export default function WorkoutPage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  if (loadingProgram || loadingState) return null
+  if (loadingProgram || loadingState) return <PageLoader />
 
   if (!program) {
     return <NoProgramView onGoToLibrary={() => router.push('/library/programs')} />

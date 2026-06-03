@@ -6,12 +6,21 @@ import { Plus, CheckCircle2, ChevronRight, Dumbbell } from 'lucide-react'
 import { usePrograms } from '@/hooks/use-programs'
 import AddLibrarySheet from '@/components/screens/library/add-library-sheet'
 import AIProgramSheet from '@/components/screens/library/ai-program-sheet'
+import { SkeletonList } from '@/components/ui/loader'
 
 export default function ProgramsPage() {
   const router = useRouter()
-  const { data: programs = [] } = usePrograms()
+  const { data: programs = [], isLoading } = usePrograms()
   const [showAddSheet, setShowAddSheet]  = React.useState(false)
   const [showAISheet, setShowAISheet]    = React.useState(false)
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col px-4 pt-4 gap-3">
+        <SkeletonList count={3} height={80} />
+      </div>
+    )
+  }
 
   return (
     <div className="flex flex-col px-4 pt-4 gap-3">

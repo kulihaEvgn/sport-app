@@ -6,6 +6,7 @@ import { useWorkoutStore } from '@/store/workout-store'
 import { useTemplate } from '@/hooks/use-programs'
 import { useUser } from '@/hooks/use-user'
 import DayPreview from '@/components/screens/workout/day-preview'
+import { PageLoader } from '@/components/ui/loader'
 
 export default function DayPreviewPage({ params }: { params: Promise<{ templateId: string }> }) {
   const { templateId } = use(params)
@@ -15,7 +16,7 @@ export default function DayPreviewPage({ params }: { params: Promise<{ templateI
 
   const { data: template, isLoading } = useTemplate(templateId)
 
-  if (isLoading) return null
+  if (isLoading) return <PageLoader />
   if (!template) {
     router.replace('/workout')
     return null

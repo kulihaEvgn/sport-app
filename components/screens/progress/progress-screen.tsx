@@ -11,6 +11,7 @@ import { useStreak, useMonthStats, useExerciseProgress } from '@/hooks/use-progr
 import ActivityHeatmap from './activity-heatmap'
 import ProgressChart from './progress-chart'
 import ExercisePicker from './exercise-picker'
+import { PageLoader } from '@/components/ui/loader'
 
 const PERIODS = [
   { label: '1М',  param: '1m',  days: 30  },
@@ -32,7 +33,7 @@ export default function ProgressScreen() {
 
   const [showPicker, setShowPicker] = useState(false)
 
-  const { data: user }              = useUser()
+  const { data: user, isLoading: loadingUser } = useUser()
   const uid                         = user?.id ?? ''
   const { data: exercises = [] }    = useExercises()
   const { data: history   = [] }    = useWorkoutHistory(uid)
@@ -65,6 +66,8 @@ export default function ProgressScreen() {
     params.set(key, value)
     router.push(`${pathname}?${params.toString()}`)
   }
+
+  if (loadingUser) return <PageLoader />
 
   return (
     <div className="flex flex-col px-4 pt-5 gap-5 pb-4">

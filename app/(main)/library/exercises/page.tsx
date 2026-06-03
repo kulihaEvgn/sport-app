@@ -1,25 +1,23 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { Search, SlidersHorizontal, Plus, X } from 'lucide-react'
 import type { Exercise, MuscleGroup } from '@/types'
-import { getExercises } from '@/services/exercises'
+import { useExercises } from '@/hooks/use-exercises'
 import { MUSCLE_GROUP_LABELS, MUSCLE_GROUP_COLORS, ALL_MUSCLE_GROUPS } from '@/lib/muscle-groups'
 import ExerciseCard from '@/components/screens/library/exercise-card'
 import AddLibrarySheet from '@/components/screens/library/add-library-sheet'
+import { SkeletonList } from '@/components/ui/loader'
 
 export default function ExercisesPage() {
   const router = useRouter()
-  const [exercises, setExercises]     = useState<Exercise[]>([])
-  const [search, setSearch]           = useState('')
-  const [filterMg, setFilterMg]       = useState<MuscleGroup | null>(null)
-  const [showFilter, setShowFilter]   = useState(false)
+  const [search, setSearch]             = useState('')
+  const [filterMg, setFilterMg]         = useState<MuscleGroup | null>(null)
+  const [showFilter, setShowFilter]     = useState(false)
   const [showAddSheet, setShowAddSheet] = useState(false)
 
-  useEffect(() => {
-    getExercises().then(setExercises)
-  }, [])
+  const { data: exercises = [], isLoading } = useExercises()
 
   const filtered = useMemo(() => {
     return exercises.filter(e => {
@@ -39,6 +37,14 @@ export default function ExercisesPage() {
       .map(mg => ({ mg, list: map.get(mg) ?? [] }))
       .filter(g => g.list.length > 0)
   }, [filtered])
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col px-4 pt-4 gap-3">
+        <SkeletonList count={6} height={56} />
+      </div>
+    )
+  }
 
   return (
     <div className="flex flex-col">

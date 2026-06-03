@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { ArrowLeft, CheckCircle2, Play, Pencil, Plus, Trash2, ChevronRight } from 'lucide-react'
+import { Spinner } from '@/components/ui/loader'
 import type { Program, WorkoutTemplate } from '@/types'
 import { MUSCLE_GROUP_COLORS, MUSCLE_GROUP_LABELS } from '@/lib/muscle-groups'
 import { useAddTemplate, useRemoveTemplate } from '@/hooks/use-programs'
@@ -226,7 +227,7 @@ export default function ProgramDetail({ program, onBack, onSetActive, onEdit, on
                 cursor: newDayName.trim() ? 'pointer' : 'not-allowed',
               }}
             >
-              Добавить
+              {addingDay ? <Spinner size={18} color="var(--color-app-on-accent)" /> : 'Добавить'}
             </button>
         </div>
       </BottomSheet>

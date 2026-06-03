@@ -11,12 +11,13 @@ import { useFavoriteMuscleGroup } from '@/hooks/use-progress'
 import { useThemeStore } from '@/store/theme-store'
 import { MUSCLE_GROUP_LABELS, MUSCLE_GROUP_COLORS } from '@/lib/muscle-groups'
 import { useUser } from '@/hooks/use-user'
+import { PageLoader } from '@/components/ui/loader'
 
 export default function ProfileScreen() {
   const router  = useRouter()
   const tgUser  = useSignal(initDataUser)
   const { theme, toggle } = useThemeStore()
-  const { data: dbUser }         = useUser()
+  const { data: dbUser, isLoading: loadingUser } = useUser()
   const uid                      = dbUser?.id ?? ''
 
   const { data: activeProgram }  = useActiveProgram()
@@ -31,6 +32,8 @@ export default function ProfileScreen() {
       weeksActive:   oldest ? Math.ceil((Date.now() - oldest.getTime()) / (7 * 24 * 3600 * 1000)) : 0,
     }
   }, [history])
+
+  if (loadingUser) return <PageLoader />
 
   const displayName = tgUser?.first_name ?? dbUser?.firstName ?? 'User'
   const username    = tgUser?.username ?? dbUser?.username
