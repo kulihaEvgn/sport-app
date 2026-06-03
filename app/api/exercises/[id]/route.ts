@@ -2,6 +2,7 @@ import { type NextRequest } from 'next/server'
 import { getUserIdFromRequest, AuthError, authError } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { mapExercise } from '@/lib/mappers'
+import type { MuscleGroup } from '@/types'
 
 type Ctx = { params: Promise<{ id: string }> }
 
@@ -24,7 +25,7 @@ export async function PUT(req: NextRequest, { params }: Ctx) {
     const { id } = await params
     const body = await req.json() as Partial<{
       name: string
-      muscleGroup: string
+      muscleGroup: MuscleGroup
       equipment: string
       videoUrl: string
       description: string
