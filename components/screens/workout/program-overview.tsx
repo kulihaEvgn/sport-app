@@ -12,7 +12,9 @@ interface Props {
 }
 
 export default function ProgramOverview({ program, currentDayIndex, onStartDay, onChangeProgram }: Props) {
-  const nextTemplate = program.templates[currentDayIndex % program.templates.length]
+  const nextTemplate = program.templates.length > 0
+    ? program.templates[currentDayIndex % program.templates.length]
+    : null
 
   return (
     <div className="flex flex-col px-4 pt-5 gap-5">
@@ -28,14 +30,16 @@ export default function ProgramOverview({ program, currentDayIndex, onStartDay, 
         <p className="text-[13px] mt-0.5" style={{ color: 'var(--color-app-muted)' }}>
           {program.daysPerWeek} дн/нед · {program.templates.length} тренировок
         </p>
-        <button
-          onClick={() => onStartDay(nextTemplate)}
-          className="w-full mt-4 h-12 rounded-2xl flex items-center justify-center gap-2 text-[15px] font-bold"
-          style={{ background: 'var(--color-app-accent)', color: 'var(--color-app-on-accent)', border: 'none', cursor: 'pointer' }}
-        >
-          <Zap size={18} fill="var(--color-app-on-accent)" />
-          Следующая: {nextTemplate.name}
-        </button>
+        {nextTemplate && (
+          <button
+            onClick={() => onStartDay(nextTemplate)}
+            className="w-full mt-4 h-12 rounded-2xl flex items-center justify-center gap-2 text-[15px] font-bold"
+            style={{ background: 'var(--color-app-accent)', color: 'var(--color-app-on-accent)', border: 'none', cursor: 'pointer' }}
+          >
+            <Zap size={18} fill="var(--color-app-on-accent)" />
+            Следующая: {nextTemplate.name}
+          </button>
+        )}
       </div>
 
       {/* Days cycle */}
