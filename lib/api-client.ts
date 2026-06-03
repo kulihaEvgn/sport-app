@@ -23,7 +23,7 @@ export async function apiFetch<T>(path: string, options?: RequestInit): Promise<
     throw new Error(`API ${res.status}: ${text}`)
   }
 
-  const text = await res.text()
+  const text = (await res.text()).trim()
   if (!text) return undefined as T
   return JSON.parse(text, dateReviver) as T
 }
