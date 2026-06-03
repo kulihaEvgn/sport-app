@@ -15,6 +15,7 @@ interface Props {
   onSetActive: (id: string) => void
   onEdit: () => void
   onEditDay: (templateId: string) => void
+  onDelete: (id: string) => void
 }
 
 function getMuscleGroups(template: WorkoutTemplate) {
@@ -22,10 +23,11 @@ function getMuscleGroups(template: WorkoutTemplate) {
   return groups.slice(0, 3)
 }
 
-export default function ProgramDetail({ program, onBack, onSetActive, onEdit, onEditDay }: Props) {
-  const [showAddDay, setShowAddDay]     = useState(false)
-  const [newDayName, setNewDayName]     = useState('')
-  const [confirmDelete, setConfirmDelete] = useState<string | null>(null)
+export default function ProgramDetail({ program, onBack, onSetActive, onEdit, onEditDay, onDelete }: Props) {
+  const [showAddDay, setShowAddDay]         = useState(false)
+  const [newDayName, setNewDayName]         = useState('')
+  const [confirmDelete, setConfirmDelete]   = useState<string | null>(null)
+  const [confirmDelProg, setConfirmDelProg] = useState(false)
 
   const { mutateAsync: addTemplate, isPending: addingDay }     = useAddTemplate()
   const { mutateAsync: removeTemplate, isPending: removingDay } = useRemoveTemplate()
@@ -232,6 +234,18 @@ export default function ProgramDetail({ program, onBack, onSetActive, onEdit, on
         </div>
       </BottomSheet>
 
+      {/* Delete program button */}
+      {!program.isActive && (
+        <button
+          onClick={() => setConfirmDelProg(true)}
+          className="mx-4 mb-6 mt-2 flex items-center justify-center gap-2 py-3 rounded-2xl text-[14px] font-medium"
+          style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.25)', color: 'var(--color-app-error)', cursor: 'pointer' }}
+        >
+          <Trash2 size={16} />
+          Удалить программу
+        </button>
+      )}
+
       <ConfirmAlert
         open={Boolean(confirmDelete)}
         title="Удалить день?"
@@ -239,6 +253,14 @@ export default function ProgramDetail({ program, onBack, onSetActive, onEdit, on
         loading={removingDay}
         onConfirm={() => confirmDelete && handleDeleteDay(confirmDelete)}
         onCancel={() => setConfirmDelete(null)}
+      />
+
+      <ConfirmAlert
+        open={confirmDelProg}
+        title="Удалить программу?"
+        description="Программа и все её дни будут удалены безвозвратно."
+        onConfirm={() => onDelete(program.id)}
+        onCancel={() => setConfirmDelProg(false)}
       />
     </div>
   )
