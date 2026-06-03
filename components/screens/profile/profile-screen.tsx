@@ -10,14 +10,14 @@ import { useWorkoutHistory } from '@/hooks/use-history'
 import { useFavoriteMuscleGroup } from '@/hooks/use-progress'
 import { useThemeStore } from '@/store/theme-store'
 import { MUSCLE_GROUP_LABELS, MUSCLE_GROUP_COLORS } from '@/lib/muscle-groups'
-import { MOCK_USER } from '@/data/mock'
-
-const uid = MOCK_USER.id
+import { useUser } from '@/hooks/use-user'
 
 export default function ProfileScreen() {
   const router  = useRouter()
   const tgUser  = useSignal(initDataUser)
   const { theme, toggle } = useThemeStore()
+  const { data: dbUser }         = useUser()
+  const uid                      = dbUser?.id ?? ''
 
   const { data: activeProgram }  = useActiveProgram()
   const { data: history = [] }   = useWorkoutHistory(uid)
@@ -32,8 +32,8 @@ export default function ProfileScreen() {
     }
   }, [history])
 
-  const displayName = tgUser?.first_name ?? MOCK_USER.firstName
-  const username    = tgUser?.username    ?? MOCK_USER.username
+  const displayName = tgUser?.first_name ?? dbUser?.firstName ?? 'User'
+  const username    = tgUser?.username ?? dbUser?.username
 
   return (
     <div className="flex flex-col px-4 pt-5 pb-6 gap-5 overflow-y-auto">

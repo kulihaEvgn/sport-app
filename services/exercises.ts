@@ -1,7 +1,5 @@
 import type { Exercise, MuscleGroup } from '@/types'
-import { MOCK_EXERCISES } from '@/data/mock'
-
-let exercises = [...MOCK_EXERCISES]
+import { apiFetch } from '@/lib/api-client'
 
 export type CreateExerciseInput = {
   name: string
@@ -13,31 +11,25 @@ export type CreateExerciseInput = {
 }
 
 export async function getExercises(): Promise<Exercise[]> {
-  return exercises
+  return apiFetch<Exercise[]>('/api/exercises')
 }
 
 export async function getExercise(id: string): Promise<Exercise | null> {
-  return exercises.find(e => e.id === id) ?? null
+  try {
+    return await apiFetch<Exercise>(`/api/exercises/${id}`)
+  } catch {
+    return null
+  }
 }
 
 export async function createExercise(input: CreateExerciseInput): Promise<Exercise> {
-  const exercise: Exercise = {
-    id: `ex-${Date.now()}`,
-    ...input,
-    createdAt: new Date(),
-  }
-  exercises = [exercise, ...exercises]
-  return exercise
+  return apiFetch<Exercise>('/api/exercises', { method: 'POST', body: JSON.stringify(input) })
 }
 
-export async function updateExercise(
-  id: string,
-  input: Partial<CreateExerciseInput>,
-): Promise<Exercise> {
-  exercises = exercises.map(e => e.id === id ? { ...e, ...input } : e)
-  return exercises.find(e => e.id === id)!
+export async function updateExercise(id: string, input: Partial<CreateExerciseInput>): Promise<Exercise> {
+  return apiFetch<Exercise>(`/api/exercises/${id}`, { method: 'PUT', body: JSON.stringify(input) })
 }
 
 export async function deleteExercise(id: string): Promise<void> {
-  exercises = exercises.filter(e => e.id !== id)
+  await apiFetch<void>(`/api/exercises/${id}`, { method: 'DELETE' })
 }

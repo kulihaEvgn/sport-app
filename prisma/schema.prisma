@@ -1,0 +1,115 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String  @id
+  username  String?
+  firstName String
+  avatarUrl String?
+
+  programs          Program[]
+  workoutLogs       WorkoutLog[]
+  userProgramStates UserProgramState[]
+}
+
+model Exercise {
+  id          String   @id @default(cuid())
+  name        String
+  muscleGroup String
+  equipment   String
+  videoUrl    String?
+  description String?
+  imageUrl    String?
+  createdAt   DateTime @default(now())
+
+  templateExercises WorkoutTemplateExercise[]
+  setLogs           SetLog[]
+}
+
+model Program {
+  id          String   @id @default(cuid())
+  userId      String
+  name        String
+  description String?
+  daysPerWeek Int
+  cycleLength Int      @default(0)
+  isActive    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  user              User               @relation(fields: [userId], references: [id])
+  templates         WorkoutTemplate[]
+  workoutLogs       WorkoutLog[]
+  userProgramStates UserProgramState[]
+}
+
+model WorkoutTemplate {
+  id        String @id @default(cuid())
+  programId String
+  order     Int
+  name      String
+
+  program     Program                   @relation(fields: [programId], references: [id], onDelete: Cascade)
+  exercises   WorkoutTemplateExercise[]
+  workoutLogs WorkoutLog[]
+}
+
+model WorkoutTemplateExercise {
+  id            String  @id @default(cuid())
+  templateId    String
+  exerciseId    String
+  order         Int
+  targetSets    Int
+  targetVolume  Json
+  restSeconds   Int
+  plannedWeight Float?
+
+  template WorkoutTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  exercise Exercise        @relation(fields: [exerciseId], references: [id])
+}
+
+model WorkoutLog {
+  id                String    @id @default(cuid())
+  userId            String
+  programId         String
+  workoutTemplateId String
+  dayIndex          Int
+  startedAt         DateTime
+  finishedAt        DateTime?
+  isCompleted       Boolean   @default(false)
+
+  user     User            @relation(fields: [userId], references: [id])
+  program  Program         @relation(fields: [programId], references: [id])
+  template WorkoutTemplate @relation(fields: [workoutTemplateId], references: [id])
+  sets     SetLog[]
+}
+
+model SetLog {
+  id                 String   @id @default(cuid())
+  workoutLogId       String
+  exerciseId         String
+  templateExerciseId String
+  setNumber          Int
+  weight             Float
+  reps               Int
+  completedAt        DateTime
+
+  workoutLog WorkoutLog @relation(fields: [workoutLogId], references: [id], onDelete: Cascade)
+  exercise   Exercise   @relation(fields: [exerciseId], references: [id])
+}
+
+model UserProgramState {
+  userId          String
+  programId       String
+  currentDayIndex Int    @default(0)
+
+  user    User    @relation(fields: [userId], references: [id])
+  program Program @relation(fields: [programId], references: [id], onDelete: Cascade)
+
+  @@id([userId, programId])
+}

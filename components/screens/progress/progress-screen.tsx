@@ -4,7 +4,7 @@ import { useState, useMemo } from 'react'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Flame, Trophy, Calendar, TrendingUp, ChevronDown } from 'lucide-react'
-import { MOCK_USER } from '@/data/mock'
+import { useUser } from '@/hooks/use-user'
 import { useExercises } from '@/hooks/use-exercises'
 import { useWorkoutHistory } from '@/hooks/use-history'
 import { useStreak, useMonthStats, useExerciseProgress } from '@/hooks/use-progress'
@@ -21,8 +21,6 @@ const PERIODS = [
 
 type PeriodParam = typeof PERIODS[number]['param']
 
-const uid = MOCK_USER.id
-
 export default function ProgressScreen() {
   const router       = useRouter()
   const pathname     = usePathname()
@@ -34,6 +32,8 @@ export default function ProgressScreen() {
 
   const [showPicker, setShowPicker] = useState(false)
 
+  const { data: user }              = useUser()
+  const uid                         = user?.id ?? ''
   const { data: exercises = [] }    = useExercises()
   const { data: history   = [] }    = useWorkoutHistory(uid)
   const { data: streak              = { current: 0, best: 0 } } = useStreak(uid)
