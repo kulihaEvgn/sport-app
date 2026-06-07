@@ -59,6 +59,7 @@ export interface Program {
   daysPerWeek: number
   cycleLength: number
   isActive: boolean
+  shareId?: string
   templates: WorkoutTemplate[]
   createdAt: Date
 }

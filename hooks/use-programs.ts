@@ -17,6 +17,9 @@ import {
   updateDayExercise,
   removeExerciseFromDay,
   reorderExercises,
+  shareProgram,
+  getSharedProgram,
+  importSharedProgram,
   type AddTemplateInput,
   type DayExerciseInput,
   type UpdateDayExerciseInput,
@@ -28,6 +31,7 @@ export const programKeys = {
   active:       () => ['programs', 'active'] as const,
   activeState:  () => ['programs', 'active-state'] as const,
   template:     (id: string) => ['templates', id] as const,
+  shared:       (shareId: string) => ['shared-program', shareId] as const,
 }
 
 export function usePrograms() {
@@ -215,5 +219,32 @@ export function useRemoveExerciseFromDay() {
       qc.invalidateQueries({ queryKey: programKeys.detail(programId) })
       qc.invalidateQueries({ queryKey: programKeys.template(templateId) })
     },
+  })
+}
+
+export function useShareProgram() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (id: string) => shareProgram(id),
+    onSuccess: (_data, id) => {
+      qc.invalidateQueries({ queryKey: programKeys.detail(id) })
+      qc.invalidateQueries({ queryKey: programKeys.all() })
+    },
+  })
+}
+
+export function useSharedProgram(shareId: string) {
+  return useQuery({
+    queryKey: programKeys.shared(shareId),
+    queryFn:  () => getSharedProgram(shareId),
+    enabled:  Boolean(shareId),
+  })
+}
+
+export function useImportSharedProgram() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (shareId: string) => importSharedProgram(shareId),
+    onSuccess: () => qc.invalidateQueries({ queryKey: programKeys.all() }),
   })
 }

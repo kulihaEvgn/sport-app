@@ -166,3 +166,33 @@ export async function removeExerciseFromDay(
     { method: 'DELETE' },
   )
 }
+
+// ─── Share / import ─────────────────────────────────────────────────────
+
+export type SharedProgramPreview = Pick<Program, 'name' | 'description' | 'daysPerWeek' | 'cycleLength' | 'createdAt'> & {
+  shareId: string
+  templates: Array<Pick<WorkoutTemplate, 'name'> & {
+    exercises: Array<{
+      exerciseName: string
+      muscleGroup: string
+      targetSets: number
+      targetVolume: TargetVolume
+    }>
+  }>
+}
+
+export async function shareProgram(id: string): Promise<{ shareId: string; url: string }> {
+  return apiFetch<{ shareId: string; url: string }>(`/api/programs/${id}/share`, { method: 'POST' })
+}
+
+export async function getSharedProgram(shareId: string): Promise<SharedProgramPreview | null> {
+  try {
+    return await apiFetch<SharedProgramPreview>(`/api/programs/shared/${shareId}`, { skipAuth: true })
+  } catch {
+    return null
+  }
+}
+
+export async function importSharedProgram(shareId: string): Promise<Program> {
+  return apiFetch<Program>(`/api/programs/shared/${shareId}/import`, { method: 'POST' })
+}

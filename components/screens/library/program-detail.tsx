@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { CheckCircle2, Play, Pencil, Plus, Trash2, ChevronRight } from 'lucide-react'
+import { CheckCircle2, Play, Pencil, Plus, Trash2, ChevronRight, Share2 } from 'lucide-react'
 import { Spinner } from '@/components/ui/loader'
 import type { Program, WorkoutTemplate } from '@/types'
 import {
@@ -15,6 +15,7 @@ import { BottomSheet } from '@/components/ui/bottom-sheet'
 import { SectionLabel } from '@/components/ui/section-label'
 import { MuscleChip } from '@/components/ui/muscle-chip'
 import { ScreenHeader } from '@/components/ui/screen-header'
+import ShareProgramSheet from '@/components/screens/library/share-program-sheet'
 
 interface Props {
   program: Program
@@ -34,6 +35,7 @@ export default function ProgramDetail({ program, onBack, onEdit, onEditDay, onDe
   const [newDayName, setNewDayName]         = useState('')
   const [confirmDelete, setConfirmDelete]   = useState<string | null>(null)
   const [confirmDelProg, setConfirmDelProg] = useState(false)
+  const [showShare, setShowShare]           = useState(false)
 
   const { mutateAsync: addTemplate,     isPending: addingDay }    = useAddTemplate()
   const { mutateAsync: removeTemplate,  isPending: removingDay }  = useRemoveTemplate()
@@ -92,6 +94,13 @@ export default function ProgramDetail({ program, onBack, onEdit, onEditDay, onDe
                 Активировать
               </button>
             )}
+            <button
+              onClick={() => setShowShare(true)}
+              className="w-8 h-8 flex items-center justify-center rounded-full"
+              style={{ background: 'var(--color-app-surface)', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)', border: '1px solid var(--color-app-border)', boxShadow: '0 4px 24px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06)', cursor: 'pointer' }}
+            >
+              <Share2 size={14} color="var(--color-app-muted)" />
+            </button>
             <button
               onClick={onEdit}
               className="w-8 h-8 flex items-center justify-center rounded-full"
@@ -256,6 +265,12 @@ export default function ProgramDetail({ program, onBack, onEdit, onEditDay, onDe
         loading={removingDay}
         onConfirm={() => confirmDelete && handleDeleteDay(confirmDelete)}
         onCancel={() => setConfirmDelete(null)}
+      />
+
+      <ShareProgramSheet
+        open={showShare}
+        program={program}
+        onClose={() => setShowShare(false)}
       />
 
       <ConfirmAlert

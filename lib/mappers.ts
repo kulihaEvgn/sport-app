@@ -71,6 +71,7 @@ export function mapProgram(p: PProgramFull): Program {
     daysPerWeek: p.daysPerWeek,
     cycleLength: p.cycleLength,
     isActive: p.isActive,
+    shareId: p.shareId ?? undefined,
     createdAt: p.createdAt,
     templates: p.templates
       .sort((a, b) => a.order - b.order)

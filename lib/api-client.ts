@@ -8,13 +8,22 @@ function getInitDataRaw(): string {
   }
 }
 
-export async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
+interface ApiFetchOptions extends RequestInit {
+  skipAuth?: boolean
+}
+
+export async function apiFetch<T>(path: string, options?: ApiFetchOptions): Promise<T> {
+  const { skipAuth, ...fetchOptions } = options ?? {}
+  const authHeaders: Record<string, string> = skipAuth
+    ? {}
+    : { 'X-Telegram-Init-Data': getInitDataRaw() }
+
   const res = await fetch(path, {
-    ...options,
+    ...fetchOptions,
     headers: {
       'Content-Type': 'application/json',
-      'X-Telegram-Init-Data': getInitDataRaw(),
-      ...(options?.headers ?? {}),
+      ...authHeaders,
+      ...(fetchOptions.headers ?? {}),
     },
   })
 
