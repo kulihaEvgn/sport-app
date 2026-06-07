@@ -56,7 +56,9 @@ export function BottomSheet({ open, onClose, children, maxHeight = '85vh' }: Bot
             <div className="flex justify-center pt-3 pb-0 flex-shrink-0">
               <div className="w-10 h-1 rounded-full" style={{ background: 'var(--color-app-handle)' }} />
             </div>
-            {children}
+            <div className="flex-1 min-h-0 overflow-y-auto" style={{ overscrollBehavior: 'contain', WebkitOverflowScrolling: 'touch' }}>
+              {children}
+            </div>
           </motion.div>
         </motion.div>
       )}
