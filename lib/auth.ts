@@ -4,6 +4,11 @@ import { prisma } from './prisma'
 
 export class AuthError extends Error {}
 
+// In-memory cache живёт в пределах одного serverless invocation (warm container).
+// Сохраняет нас от лишнего upsert в БД на каждый запрос — если юзера уже видели,
+// не дёргаем БД повторно. Cold start invocation начнёт с пустого кеша — это норм.
+const seenUsers = new Set<string>()
+
 export async function getUserIdFromRequest(req: NextRequest): Promise<string> {
   const initDataRaw = req.headers.get('x-telegram-init-data') ?? ''
 
@@ -30,18 +35,21 @@ export async function getUserIdFromRequest(req: NextRequest): Promise<string> {
     }
   }
 
-  await prisma.user.upsert({
-    where: { id: userId },
-    create: {
-      id: userId,
-      firstName: tgUser.first_name ?? 'User',
-      username: tgUser.username ?? null,
-    },
-    update: {
-      firstName: tgUser.first_name ?? 'User',
-      username: tgUser.username ?? null,
-    },
-  })
+  if (!seenUsers.has(userId)) {
+    await prisma.user.upsert({
+      where: { id: userId },
+      create: {
+        id: userId,
+        firstName: tgUser.first_name ?? 'User',
+        username: tgUser.username ?? null,
+      },
+      update: {
+        firstName: tgUser.first_name ?? 'User',
+        username: tgUser.username ?? null,
+      },
+    })
+    seenUsers.add(userId)
+  }
 
   return userId
 }

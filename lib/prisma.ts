@@ -1,8 +1,8 @@
 import { PrismaClient } from '@prisma/client'
 
-const globalForPrisma = globalThis as unknown as { prisma: PrismaClient }
+// Singleton — переиспользуется между warm serverless invocations и в dev hot-reload.
+// В проде Vercel сохраняет global между warm invocations, что экономит cold-start init Prisma.
+const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient }
 
-export const prisma =
-  globalForPrisma.prisma ?? new PrismaClient()
-
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
+export const prisma = globalForPrisma.prisma ?? new PrismaClient()
+globalForPrisma.prisma = prisma
