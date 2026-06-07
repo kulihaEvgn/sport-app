@@ -12,6 +12,7 @@ import { useThemeStore } from '@/store/theme-store'
 import { MUSCLE_GROUP_LABELS, MUSCLE_GROUP_COLORS } from '@/lib/muscle-groups'
 import { useUser } from '@/hooks/use-user'
 import { PageLoader } from '@/components/ui/loader'
+import { SectionLabel } from '@/components/ui/section-label'
 
 export default function ProfileScreen() {
   const router  = useRouter()
@@ -240,12 +241,7 @@ function StatCard({
 function Section({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="flex flex-col gap-2">
-      <span
-        className="text-[11px] font-bold tracking-widest uppercase"
-        style={{ color: 'var(--color-app-muted)', fontFamily: 'var(--font-mono)' }}
-      >
-        {label}
-      </span>
+      <SectionLabel>{label}</SectionLabel>
       {children}
     </div>
   )

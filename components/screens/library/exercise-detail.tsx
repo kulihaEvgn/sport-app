@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { ArrowLeft, Edit2, Trash2, Play } from 'lucide-react'
 import type { Exercise } from '@/types'
 import { MUSCLE_GROUP_COLORS, MUSCLE_GROUP_LABELS, MUSCLE_GROUP_ABBR } from '@/lib/muscle-groups'
-import { deleteExercise } from '@/services/exercises'
+import { useDeleteExercise } from '@/hooks/use-exercises'
 import { ConfirmAlert } from '@/components/ui/confirm-alert'
 import { VideoModal } from '@/components/ui/video-modal'
 
@@ -18,6 +18,7 @@ interface Props {
 export default function ExerciseDetail({ exercise, onBack, onEdit, onDeleted }: Props) {
   const [confirmDelete, setConfirmDelete] = useState(false)
   const [showVideo, setShowVideo] = useState(false)
+  const { mutateAsync: deleteExercise, isPending: deleting } = useDeleteExercise()
   const color = MUSCLE_GROUP_COLORS[exercise.muscleGroup]
   const abbr = MUSCLE_GROUP_ABBR[exercise.muscleGroup]
 
@@ -143,6 +144,7 @@ export default function ExerciseDetail({ exercise, onBack, onEdit, onDeleted }: 
         open={confirmDelete}
         title={`Удалить «${exercise.name}»?`}
         description="Упражнение будет удалено из базы безвозвратно."
+        loading={deleting}
         onConfirm={handleDelete}
         onCancel={() => setConfirmDelete(false)}
       />

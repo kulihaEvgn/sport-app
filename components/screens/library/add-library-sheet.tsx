@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { Plus, Download, ChevronRight, ArrowLeft, Sparkles } from 'lucide-react'
 import { BottomSheet } from '@/components/ui/bottom-sheet'
 
@@ -64,11 +65,17 @@ interface Props {
 
 export default function AddLibrarySheet({ open, context, onClose, onCreate, onGenerate }: Props) {
   const [view, setView] = useState<View>('options')
+  const router = useRouter()
 
   function handleClose() {
     onClose()
     // reset view after sheet closes
     setTimeout(() => setView('options'), 300)
+  }
+
+  function handleSourcePick(sourceId: string) {
+    handleClose()
+    router.push(`/library/import?context=${context}&source=${sourceId}`)
   }
 
   const isExercises = context === 'exercises'
@@ -130,9 +137,7 @@ export default function AddLibrarySheet({ open, context, onClose, onCreate, onGe
               iconBg={source.iconBg}
               title={source.title}
               subtitle={source.subtitle}
-              onClick={() => {
-                // TODO Phase 8: open importer for this source
-              }}
+              onClick={() => handleSourcePick(source.id)}
             />
           ))}
         </div>

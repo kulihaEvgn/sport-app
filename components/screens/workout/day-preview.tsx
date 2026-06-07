@@ -3,8 +3,9 @@
 import { useState } from 'react'
 import { ChevronLeft, Zap } from 'lucide-react'
 import type { WorkoutTemplate, WorkoutTemplateExercise } from '@/types'
-import { MUSCLE_GROUP_COLORS, MUSCLE_GROUP_LABELS } from '@/lib/muscle-groups'
 import { ExerciseInfoSheet } from '@/components/ui/exercise-info-sheet'
+import { SectionLabel } from '@/components/ui/section-label'
+import { MuscleChip } from '@/components/ui/muscle-chip'
 
 interface Props {
   template: WorkoutTemplate
@@ -41,23 +42,13 @@ export default function DayPreview({ template, onStart, onBack }: Props) {
             <div className="text-[11px]" style={{ color: 'var(--color-app-muted)' }}>подходов</div>
           </div>
           <div className="flex flex-wrap gap-1 flex-1 content-center">
-            {muscleGroups.map(mg => (
-              <span
-                key={mg}
-                className="text-[11px] font-medium px-2 py-0.5 rounded-lg"
-                style={{ background: `${MUSCLE_GROUP_COLORS[mg]}20`, color: MUSCLE_GROUP_COLORS[mg] }}
-              >
-                {MUSCLE_GROUP_LABELS[mg]}
-              </span>
-            ))}
+            {muscleGroups.map(mg => <MuscleChip key={mg} muscleGroup={mg} />)}
           </div>
         </div>
 
         {/* Exercise list */}
         <div className="flex flex-col gap-2">
-          <span className="text-[11px] font-bold tracking-widest uppercase" style={{ color: 'var(--color-app-muted)', fontFamily: 'var(--font-mono)' }}>
-            УПРАЖНЕНИЯ
-          </span>
+          <SectionLabel>УПРАЖНЕНИЯ</SectionLabel>
           {template.exercises.map((te, idx) => (
             <button
               key={te.id}
@@ -80,14 +71,8 @@ export default function DayPreview({ template, onStart, onBack }: Props) {
                   {te.plannedWeight ? ` · ${te.plannedWeight} кг` : ''}
                 </div>
               </div>
-              <span
-                className="text-[11px] font-medium px-2 py-0.5 rounded-lg shrink-0"
-                style={{
-                  background: `${MUSCLE_GROUP_COLORS[te.exercise.muscleGroup]}15`,
-                  color: MUSCLE_GROUP_COLORS[te.exercise.muscleGroup],
-                }}
-              >
-                {MUSCLE_GROUP_LABELS[te.exercise.muscleGroup]}
+              <span className="shrink-0">
+                <MuscleChip muscleGroup={te.exercise.muscleGroup} />
               </span>
             </button>
           ))}

@@ -1,21 +1,27 @@
 'use client'
 
 import { useState } from 'react'
-import { ArrowLeft, CheckCircle2, Play, Pencil, Plus, Trash2, ChevronRight } from 'lucide-react'
+import { CheckCircle2, Play, Pencil, Plus, Trash2, ChevronRight } from 'lucide-react'
 import { Spinner } from '@/components/ui/loader'
 import type { Program, WorkoutTemplate } from '@/types'
-import { MUSCLE_GROUP_COLORS, MUSCLE_GROUP_LABELS } from '@/lib/muscle-groups'
-import { useAddTemplate, useRemoveTemplate } from '@/hooks/use-programs'
+import {
+  useAddTemplate,
+  useRemoveTemplate,
+  useSetActiveProgram,
+  useDeleteProgram,
+} from '@/hooks/use-programs'
 import { ConfirmAlert } from '@/components/ui/confirm-alert'
 import { BottomSheet } from '@/components/ui/bottom-sheet'
+import { SectionLabel } from '@/components/ui/section-label'
+import { MuscleChip } from '@/components/ui/muscle-chip'
+import { ScreenHeader } from '@/components/ui/screen-header'
 
 interface Props {
   program: Program
   onBack: () => void
-  onSetActive: (id: string) => void
   onEdit: () => void
   onEditDay: (templateId: string) => void
-  onDelete: (id: string) => void
+  onDeleted: () => void
 }
 
 function getMuscleGroups(template: WorkoutTemplate) {
@@ -23,14 +29,16 @@ function getMuscleGroups(template: WorkoutTemplate) {
   return groups.slice(0, 3)
 }
 
-export default function ProgramDetail({ program, onBack, onSetActive, onEdit, onEditDay, onDelete }: Props) {
+export default function ProgramDetail({ program, onBack, onEdit, onEditDay, onDeleted }: Props) {
   const [showAddDay, setShowAddDay]         = useState(false)
   const [newDayName, setNewDayName]         = useState('')
   const [confirmDelete, setConfirmDelete]   = useState<string | null>(null)
   const [confirmDelProg, setConfirmDelProg] = useState(false)
 
-  const { mutateAsync: addTemplate, isPending: addingDay }     = useAddTemplate()
-  const { mutateAsync: removeTemplate, isPending: removingDay } = useRemoveTemplate()
+  const { mutateAsync: addTemplate,     isPending: addingDay }    = useAddTemplate()
+  const { mutateAsync: removeTemplate,  isPending: removingDay }  = useRemoveTemplate()
+  const { mutateAsync: setActiveProgram, isPending: activating }  = useSetActiveProgram()
+  const { mutateAsync: deleteProgram,    isPending: deleting }    = useDeleteProgram()
 
   async function handleAddDay() {
     if (!newDayName.trim()) return
@@ -44,51 +52,56 @@ export default function ProgramDetail({ program, onBack, onSetActive, onEdit, on
     setConfirmDelete(null)
   }
 
+  async function handleSetActive() {
+    await setActiveProgram(program.id)
+  }
+
+  async function handleDeleteProgram() {
+    await deleteProgram(program.id)
+    onDeleted()
+  }
+
   return (
     <div className="flex flex-col min-h-full">
-      {/* Header */}
-      <div
-        className="flex items-center justify-between px-4 pt-4 pb-3"
-        style={{ borderBottom: '1px solid var(--color-app-border)' }}
-      >
-        <button
-          onClick={onBack}
-          className="flex items-center gap-2 text-[14px] font-medium"
-          style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-app-accent)' }}
-        >
-          <ArrowLeft size={18} color="var(--color-app-accent)" />
-          Назад
-        </button>
-        <div className="flex items-center gap-2">
-          {program.isActive ? (
-            <div className="flex items-center gap-1 text-[12px] font-semibold" style={{ color: 'var(--color-app-accent)' }}>
-              <CheckCircle2 size={14} />
-              Активна
-            </div>
-          ) : (
+      <ScreenHeader
+        onBack={onBack}
+        rightSlot={
+          <>
+            {program.isActive ? (
+              <div className="flex items-center gap-1 text-[12px] font-semibold" style={{ color: 'var(--color-app-accent)' }}>
+                <CheckCircle2 size={14} />
+                Активна
+              </div>
+            ) : (
+              <button
+                onClick={handleSetActive}
+                disabled={activating}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[12px] font-semibold"
+                style={{
+                  background: 'var(--color-app-accent-dim)',
+                  border: '1px solid var(--color-app-accent-border-3)',
+                  color: 'var(--color-app-accent)',
+                  cursor: activating ? 'not-allowed' : 'pointer',
+                  opacity: activating ? 0.7 : 1,
+                }}
+              >
+                {activating
+                  ? <Spinner size={12} color="var(--color-app-accent)" />
+                  : <Play size={12} fill="var(--color-app-accent)" />
+                }
+                Активировать
+              </button>
+            )}
             <button
-              onClick={() => onSetActive(program.id)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[12px] font-semibold"
-              style={{
-                background: 'var(--color-app-accent-dim)',
-                border: '1px solid var(--color-app-accent-border-3)',
-                color: 'var(--color-app-accent)',
-                cursor: 'pointer',
-              }}
+              onClick={onEdit}
+              className="w-8 h-8 flex items-center justify-center rounded-full"
+              style={{ background: 'var(--color-app-surface)', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)', border: '1px solid var(--color-app-border)', boxShadow: '0 4px 24px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06)', cursor: 'pointer' }}
             >
-              <Play size={12} fill="var(--color-app-accent)" />
-              Активировать
+              <Pencil size={14} color="var(--color-app-muted)" />
             </button>
-          )}
-          <button
-            onClick={onEdit}
-            className="w-8 h-8 flex items-center justify-center rounded-full"
-            style={{ background: 'var(--color-app-surface)', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)', border: '1px solid var(--color-app-border)', boxShadow: '0 4px 24px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06)', cursor: 'pointer' }}
-          >
-            <Pencil size={14} color="var(--color-app-muted)" />
-          </button>
-        </div>
-      </div>
+          </>
+        }
+      />
 
       <div className="px-4 py-5 flex flex-col gap-5">
         {/* Title */}
@@ -111,27 +124,25 @@ export default function ProgramDetail({ program, onBack, onSetActive, onEdit, on
 
         {/* Days list */}
         <div className="flex flex-col gap-2">
-          <div className="flex items-center justify-between">
-            <span
-              className="text-[11px] font-bold tracking-widest uppercase"
-              style={{ color: 'var(--color-app-muted)', fontFamily: 'var(--font-mono)' }}
-            >
-              ПРОГРАММА
-            </span>
-            <button
-              onClick={() => setShowAddDay(true)}
-              className="flex items-center gap-1 px-2 py-1 rounded-lg text-[11px] font-semibold"
-              style={{
-                background: 'var(--color-app-accent-subtle)',
-                border: '1px solid var(--color-app-accent-border-2)',
-                color: 'var(--color-app-accent)',
-                cursor: 'pointer',
-              }}
-            >
-              <Plus size={12} />
-              Добавить день
-            </button>
-          </div>
+          <SectionLabel
+            rightSlot={
+              <button
+                onClick={() => setShowAddDay(true)}
+                className="flex items-center gap-1 px-2 py-1 rounded-lg text-[11px] font-semibold"
+                style={{
+                  background: 'var(--color-app-accent-subtle)',
+                  border: '1px solid var(--color-app-accent-border-2)',
+                  color: 'var(--color-app-accent)',
+                  cursor: 'pointer',
+                }}
+              >
+                <Plus size={12} />
+                Добавить день
+              </button>
+            }
+          >
+            ПРОГРАММА
+          </SectionLabel>
 
           {program.templates.map(template => {
             const muscleGroups = getMuscleGroups(template)
@@ -162,15 +173,7 @@ export default function ProgramDetail({ program, onBack, onSetActive, onEdit, on
                   </div>
                   <div className="flex gap-1 mt-1">
                     {muscleGroups.length > 0
-                      ? muscleGroups.map(mg => (
-                          <span
-                            key={mg}
-                            className="text-[10px] font-medium px-1.5 py-0.5 rounded-md"
-                            style={{ background: `${MUSCLE_GROUP_COLORS[mg]}20`, color: MUSCLE_GROUP_COLORS[mg] }}
-                          >
-                            {MUSCLE_GROUP_LABELS[mg]}
-                          </span>
-                        ))
+                      ? muscleGroups.map(mg => <MuscleChip key={mg} muscleGroup={mg} size="sm" />)
                       : <span className="text-[11px]" style={{ color: 'var(--color-app-muted)' }}>Нет упражнений</span>
                     }
                   </div>
@@ -259,7 +262,8 @@ export default function ProgramDetail({ program, onBack, onSetActive, onEdit, on
         open={confirmDelProg}
         title="Удалить программу?"
         description="Программа и все её дни будут удалены безвозвратно."
-        onConfirm={() => onDelete(program.id)}
+        loading={deleting}
+        onConfirm={handleDeleteProgram}
         onCancel={() => setConfirmDelProg(false)}
       />
     </div>

@@ -5,6 +5,7 @@ import { X, Search } from 'lucide-react'
 import type { Exercise, MuscleGroup } from '@/types'
 import { useExercises } from '@/hooks/use-exercises'
 import { MUSCLE_GROUP_COLORS, MUSCLE_GROUP_LABELS, ALL_MUSCLE_GROUPS } from '@/lib/muscle-groups'
+import { useSafeAreaInsets } from '@/hooks/use-safe-area'
 
 interface Props {
   onSelect: (exercise: Exercise) => void
@@ -15,6 +16,7 @@ export default function ExercisePicker({ onSelect, onClose }: Props) {
   const { data: exercises = [] } = useExercises()
   const [query, setQuery]         = useState('')
   const [filter, setFilter]       = useState<MuscleGroup | null>(null)
+  const { top, bottom } = useSafeAreaInsets()
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
@@ -26,7 +28,7 @@ export default function ExercisePicker({ onSelect, onClose }: Props) {
   }, [exercises, query, filter])
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col" style={{ background: 'var(--color-app-bg)' }}>
+    <div className="fixed inset-0 z-50 flex flex-col" style={{ background: 'var(--color-app-bg)', paddingTop: top, paddingBottom: bottom }}>
       {/* Header */}
       <div
         className="flex items-center justify-between px-4 pt-4 pb-3 flex-shrink-0"

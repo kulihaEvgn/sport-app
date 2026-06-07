@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { X } from 'lucide-react'
 import { programSchema, type ProgramInput } from '@/schemas/program'
 import type { Program } from '@/types'
+import { useSafeAreaInsets } from '@/hooks/use-safe-area'
 
 interface Props {
   initial?: Program
@@ -15,6 +16,7 @@ interface Props {
 const DAYS_OPTIONS = [1, 2, 3, 4, 5, 6, 7]
 
 export default function ProgramForm({ initial, onSave, onClose }: Props) {
+  const { top, bottom } = useSafeAreaInsets()
   const {
     register,
     handleSubmit,
@@ -36,7 +38,7 @@ export default function ProgramForm({ initial, onSave, onClose }: Props) {
     <form
       onSubmit={handleSubmit(onSave)}
       className="fixed inset-0 z-50 flex flex-col"
-      style={{ background: 'var(--color-app-bg)' }}
+      style={{ background: 'var(--color-app-bg)', paddingTop: top, paddingBottom: bottom }}
     >
       {/* Header */}
       <div

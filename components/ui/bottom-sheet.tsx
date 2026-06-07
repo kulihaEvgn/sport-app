@@ -2,6 +2,7 @@
 
 import { AnimatePresence, motion, type PanInfo } from 'framer-motion'
 import type { ReactNode } from 'react'
+import { useSafeAreaInsets } from '@/hooks/use-safe-area'
 
 interface BottomSheetProps {
   open: boolean
@@ -11,6 +12,8 @@ interface BottomSheetProps {
 }
 
 export function BottomSheet({ open, onClose, children, maxHeight = '85vh' }: BottomSheetProps) {
+  const { bottom } = useSafeAreaInsets()
+
   function handleDragEnd(_: unknown, info: PanInfo) {
     if (info.offset.y > 80 || info.velocity.y > 500) onClose()
   }
@@ -39,6 +42,7 @@ export function BottomSheet({ open, onClose, children, maxHeight = '85vh' }: Bot
             className="w-full rounded-t-3xl flex flex-col"
             style={{
               maxHeight,
+              paddingBottom: bottom,
               background: 'var(--color-app-sheet-bg)',
               backdropFilter: 'blur(24px)',
               WebkitBackdropFilter: 'blur(24px)',

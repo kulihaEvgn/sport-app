@@ -8,6 +8,7 @@ import { exerciseSchema, type ExerciseInput } from '@/schemas/exercise'
 import type { Exercise } from '@/types'
 import { MUSCLE_GROUP_LABELS, ALL_MUSCLE_GROUPS, MUSCLE_GROUP_COLORS } from '@/lib/muscle-groups'
 import { generateExerciseDescription, generateExerciseImage } from '@/services/ai'
+import { useSafeAreaInsets } from '@/hooks/use-safe-area'
 
 const EQUIPMENT_OPTIONS = ['Штанга', 'Гантели', 'Блок', 'Тренажёр', 'Без инвентаря'] as const
 
@@ -20,6 +21,7 @@ interface Props {
 export default function ExerciseForm({ initial, onSave, onClose }: Props) {
   const [generatingDesc,  setGeneratingDesc]  = useState(false)
   const [generatingImage, setGeneratingImage] = useState(false)
+  const { top, bottom } = useSafeAreaInsets()
 
   const {
     register,
@@ -71,7 +73,7 @@ export default function ExerciseForm({ initial, onSave, onClose }: Props) {
     <form
       onSubmit={handleSubmit(onSave)}
       className="fixed inset-0 z-50 flex flex-col"
-      style={{ background: 'var(--color-app-bg)' }}
+      style={{ background: 'var(--color-app-bg)', paddingTop: top, paddingBottom: bottom }}
     >
       {/* Header */}
       <div className="flex items-center justify-between px-4 pt-4 pb-3 flex-shrink-0"

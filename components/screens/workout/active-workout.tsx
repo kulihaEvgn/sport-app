@@ -15,6 +15,7 @@ import { shouldSuggestProgression } from '@/lib/progression'
 import { ConfirmAlert } from '@/components/ui/confirm-alert'
 import { ExerciseInfoSheet } from '@/components/ui/exercise-info-sheet'
 import { VideoModal } from '@/components/ui/video-modal'
+import { Spinner } from '@/components/ui/loader'
 import type { WorkoutTemplateExercise } from '@/types'
 
 // ─────────────────────────────────────────────────────────────────
@@ -90,6 +91,7 @@ interface WorkoutActions {
   markDone: (te: WorkoutTemplateExercise) => void
   unmarkDone: (teId: string) => void
   userId: string
+  finishing: boolean
 }
 
 // ─────────────────────────────────────────────────────────────────
@@ -242,16 +244,21 @@ function WorkoutListView({
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, scale: 0.96 }}
               onClick={onFinish}
+              disabled={actions.finishing}
               className="w-full h-14 rounded-2xl flex items-center justify-center gap-2 font-bold text-[16px]"
               style={{
                 background: 'linear-gradient(135deg, #22c55e 0%, var(--color-app-accent) 100%)',
                 color: 'var(--color-app-accent-text)',
                 border: 'none',
-                cursor: 'pointer',
+                cursor: actions.finishing ? 'not-allowed' : 'pointer',
+                opacity: actions.finishing ? 0.7 : 1,
                 boxShadow: '0 4px 24px rgba(74,222,128,0.4)',
               }}
             >
-              <Check size={20} strokeWidth={3} />
+              {actions.finishing
+                ? <Spinner size={20} color="var(--color-app-accent-text)" />
+                : <Check size={20} strokeWidth={3} />
+              }
               Завершить тренировку
             </motion.button>
           )}
@@ -260,12 +267,14 @@ function WorkoutListView({
         {!allDone && (
           <button
             onClick={() => setConfirmFinish(true)}
+            disabled={actions.finishing}
             className="w-full h-11 rounded-2xl flex items-center justify-center font-semibold text-[14px]"
             style={{
               background: 'transparent',
               border: '1px solid var(--color-app-surface3)',
               color: 'var(--color-app-muted)',
-              cursor: 'pointer',
+              cursor: actions.finishing ? 'not-allowed' : 'pointer',
+              opacity: actions.finishing ? 0.6 : 1,
             }}
           >
             Завершить тренировку
@@ -553,16 +562,21 @@ function WorkoutTinderView({
           <p className="text-[18px] font-bold" style={{ color: 'var(--color-app-text)' }}>Все упражнения выполнены</p>
           <button
             onClick={onFinish}
+            disabled={actions.finishing}
             className="px-8 h-14 rounded-2xl flex items-center gap-2 font-bold text-[16px]"
             style={{
               background: 'linear-gradient(135deg, #22c55e 0%, var(--color-app-accent) 100%)',
               color: 'var(--color-app-accent-text)',
               border: 'none',
-              cursor: 'pointer',
+              cursor: actions.finishing ? 'not-allowed' : 'pointer',
+              opacity: actions.finishing ? 0.7 : 1,
               boxShadow: '0 4px 24px rgba(74,222,128,0.4)',
             }}
           >
-            <Check size={20} strokeWidth={3} />
+            {actions.finishing
+              ? <Spinner size={20} color="var(--color-app-accent-text)" />
+              : <Check size={20} strokeWidth={3} />
+            }
             Завершить
           </button>
         </motion.div>
@@ -634,12 +648,14 @@ function WorkoutTinderView({
           <div className="px-4 pb-2 flex-shrink-0">
             <button
               onClick={() => setConfirmFinish(true)}
+              disabled={actions.finishing}
               className="w-full h-11 rounded-2xl flex items-center justify-center font-semibold text-[14px]"
               style={{
                 background: 'transparent',
                 border: '1px solid var(--color-app-surface3)',
                 color: 'var(--color-app-muted)',
-                cursor: 'pointer',
+                cursor: actions.finishing ? 'not-allowed' : 'pointer',
+                opacity: actions.finishing ? 0.6 : 1,
               }}
             >
               Завершить тренировку
@@ -692,6 +708,7 @@ export default function ActiveWorkout({ onFinish, onDiscard }: Props) {
   const [tinderIdx, setTinderIdx]       = useState(0)
   const [showDiscard, setShowDiscard]   = useState(false)
   const [elapsed, setElapsed]           = useState(0)
+  const [finishing, setFinishing]       = useState(false)
 
   const userId    = activeWorkout?.userId ?? ''
   const exercises = template?.exercises ?? []
@@ -732,12 +749,18 @@ export default function ActiveWorkout({ onFinish, onDiscard }: Props) {
   }
 
   async function handleFinish() {
-    await finishWorkout()
-    const { lastLogId } = useWorkoutStore.getState()
-    onFinish(lastLogId ?? '')
+    if (finishing) return
+    setFinishing(true)
+    try {
+      await finishWorkout()
+      const { lastLogId } = useWorkoutStore.getState()
+      onFinish(lastLogId ?? '')
+    } finally {
+      setFinishing(false)
+    }
   }
 
-  const actions: WorkoutActions = { weights, setWeight, completedIds, markDone, unmarkDone, userId }
+  const actions: WorkoutActions = { weights, setWeight, completedIds, markDone, unmarkDone, userId, finishing }
   const doneCount = completedIds.size
 
   return (

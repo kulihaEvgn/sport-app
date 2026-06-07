@@ -2,11 +2,13 @@
 
 import React from 'react'
 import { useRouter } from 'next/navigation'
-import { Plus, CheckCircle2, ChevronRight, Dumbbell } from 'lucide-react'
+import { CheckCircle2, ChevronRight, Dumbbell } from 'lucide-react'
 import { usePrograms } from '@/hooks/use-programs'
 import AddLibrarySheet from '@/components/screens/library/add-library-sheet'
 import AIProgramSheet from '@/components/screens/library/ai-program-sheet'
 import { SkeletonList } from '@/components/ui/loader'
+import { FAB } from '@/components/ui/fab'
+import { EmptyState } from '@/components/ui/empty-state'
 
 export default function ProgramsPage() {
   const router = useRouter()
@@ -25,10 +27,11 @@ export default function ProgramsPage() {
   return (
     <div className="flex flex-col px-4 pt-4 gap-3">
       {programs.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-20 gap-3">
-          <Dumbbell size={48} color="var(--color-app-card-border)" />
-          <p className="text-[14px]" style={{ color: 'var(--color-app-muted)' }}>Нет программ</p>
-        </div>
+        <EmptyState
+          icon={<Dumbbell size={48} color="var(--color-app-card-border)" />}
+          title="Нет программ"
+          description="Создай свою или сгенерируй через ИИ"
+        />
       ) : (
         programs.map(program => (
           <button
@@ -69,22 +72,7 @@ export default function ProgramsPage() {
         ))
       )}
 
-      {/* FAB */}
-      <button
-        onClick={() => setShowAddSheet(true)}
-        className="fixed flex items-center justify-center rounded-full"
-        style={{
-          bottom: 88, right: 20,
-          width: 52, height: 52,
-          background: 'var(--color-app-accent)',
-          border: 'none',
-          cursor: 'pointer',
-          zIndex: 50,
-          boxShadow: '0 4px 24px rgba(74,222,128,0.4)',
-        }}
-      >
-        <Plus size={24} color="var(--color-app-on-accent)" strokeWidth={2.5} />
-      </button>
+      <FAB onClick={() => setShowAddSheet(true)} ariaLabel="Добавить программу" />
 
       <AddLibrarySheet
         open={showAddSheet}

@@ -5,7 +5,7 @@
 
 ---
 
-## Текущее состояние: Фазы 1–9 завершены, Фаза 10 следующая
+## Текущее состояние: Фазы 1–10 завершены, проект задеплоен на Vercel
 
 ---
 
@@ -176,16 +176,26 @@ app/api/
 
 ---
 
+### Фаза 10 — Деплой ✅
+- Приложение задеплоено на Vercel
+- `package.json` → `vercel-build` запускает `prisma generate && next build --turbopack`
+- Прод-env на Vercel: `DATABASE_URL` (Neon pooled), `BOT_TOKEN`, `ANTHROPIC_API_KEY`, `TOGETHER_API_KEY`, `OPENAI_API_KEY`
+- В проде `lib/auth.ts` валидирует initData через HMAC (`@telegram-apps/init-data-node`); в dev HMAC пропускается
+
+### Post-Phase polish ✅
+- **Safe Area везде:** `BottomSheet`, `ExerciseForm`, `ProgramForm`, `ExercisePicker` теперь читают `useSafeAreaInsets`. FAB вынесен в `components/ui/fab.tsx` и учитывает bottom inset.
+- **Лоадеры на всех мутациях:** `useDeleteExercise`/`useSetActiveProgram`/`useDeleteProgram` теперь подключены прямо в `ExerciseDetail`/`ProgramDetail` (isPending → Spinner/disabled). `ActiveWorkout.handleFinish` блокирует кнопки на время сохранения. Детальные страницы рендерят `PageLoader` пока идёт `isLoading`.
+- **Import Hub:** реализован `components/screens/import/import-hub.tsx`. Источники: CSV (papaparse), Excel (xlsx/SheetJS), Obsidian (.md table parser в `lib/import-mapping.ts`), Notion (через `/api/import/notion`). Импорт упражнений реален; импорт программ — заглушка с пометкой "в разработке". `AddLibrarySheet` навигирует в `/library/import?context=...&source=...`.
+- **Общие UI-компоненты:** `FAB`, `ScreenHeader`, `SectionLabel`, `EmptyState`, `MuscleChip` в `components/ui/`. Применены в `day-preview`, `program-detail`, `profile-screen`, `import-hub`, library pages.
+
+---
+
 ## Что НЕ сделано
 
-### Фаза 10 — Деплой ⏳ СЛЕДУЮЩАЯ
-- Vercel: подключить репо, добавить env переменные
-- Telegram Bot: BotFather → создать бота → настроить Mini App URL
-- Env переменные для прода:
-  - `DATABASE_URL` — Neon pooled connection string
-  - `BOT_TOKEN` — токен бота
-  - `ANTHROPIC_API_KEY` — для генерации текста
-  - `TOGETHER_API_KEY` — для генерации картинок
+Все фазы из SPEC.md завершены. Из бэклога остались только сравнительно маленькие задачи:
+- Импорт программ (сейчас экран показывает "в разработке")
+- Серверная агрегация прогресса (см. долги ниже)
+- Восстановление прерванной сессии — есть автоматически через persist, отдельный `restoreSession()` всё ещё stub
 
 ---
 

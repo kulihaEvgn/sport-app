@@ -2,13 +2,15 @@
 
 import { useState, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
-import { Search, SlidersHorizontal, Plus, X } from 'lucide-react'
+import { Search, SlidersHorizontal, X } from 'lucide-react'
 import type { Exercise, MuscleGroup } from '@/types'
 import { useExercises } from '@/hooks/use-exercises'
 import { MUSCLE_GROUP_LABELS, MUSCLE_GROUP_COLORS, ALL_MUSCLE_GROUPS } from '@/lib/muscle-groups'
 import ExerciseCard from '@/components/screens/library/exercise-card'
 import AddLibrarySheet from '@/components/screens/library/add-library-sheet'
 import { SkeletonList } from '@/components/ui/loader'
+import { FAB } from '@/components/ui/fab'
+import { EmptyState } from '@/components/ui/empty-state'
 
 export default function ExercisesPage() {
   const router = useRouter()
@@ -124,10 +126,7 @@ export default function ExercisesPage() {
       {/* Exercise list grouped */}
       <div className="flex flex-col">
         {grouped.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 gap-3">
-            <span className="text-[32px]">🔍</span>
-            <p className="text-[14px]" style={{ color: 'var(--color-app-muted)' }}>Ничего не найдено</p>
-          </div>
+          <EmptyState emoji="🔍" title="Ничего не найдено" />
         ) : (
           grouped.map(({ mg, list }) => {
             const color = MUSCLE_GROUP_COLORS[mg]
@@ -164,22 +163,7 @@ export default function ExercisesPage() {
         )}
       </div>
 
-      {/* FAB */}
-      <button
-        onClick={() => setShowAddSheet(true)}
-        className="fixed flex items-center justify-center rounded-full shadow-lg"
-        style={{
-          bottom: 88, right: 20,
-          width: 52, height: 52,
-          background: 'var(--color-app-accent)',
-          border: 'none',
-          cursor: 'pointer',
-          zIndex: 50,
-          boxShadow: '0 4px 24px rgba(74,222,128,0.4)',
-        }}
-      >
-        <Plus size={24} color="var(--color-app-on-accent)" strokeWidth={2.5} />
-      </button>
+      <FAB onClick={() => setShowAddSheet(true)} ariaLabel="Добавить упражнение" />
 
       <AddLibrarySheet
         open={showAddSheet}

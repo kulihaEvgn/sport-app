@@ -16,6 +16,7 @@ import ExercisePicker from '@/components/screens/library/exercise-picker'
 import { ConfirmAlert } from '@/components/ui/confirm-alert'
 import { BottomSheet } from '@/components/ui/bottom-sheet'
 import { ExerciseInfoSheet } from '@/components/ui/exercise-info-sheet'
+import { PageLoader } from '@/components/ui/loader'
 import { MUSCLE_GROUP_COLORS, MUSCLE_GROUP_LABELS } from '@/lib/muscle-groups'
 
 interface ConfigState {
@@ -53,7 +54,7 @@ export default function DayEditorPage({
   const { id: programId, dayId: templateId } = use(params)
   const router = useRouter()
 
-  const { data: template } = useTemplate(templateId)
+  const { data: template, isLoading: loadingTemplate } = useTemplate(templateId)
   const { mutateAsync: addExercise,    isPending: adding }    = useAddExerciseToDay()
   const { mutateAsync: updateExercise, isPending: updating }  = useUpdateDayExercise()
   const { mutateAsync: removeExercise, isPending: removing }  = useRemoveExerciseFromDay()
@@ -152,6 +153,7 @@ export default function DayEditorPage({
     })
   }
 
+  if (loadingTemplate) return <PageLoader />
   if (!template) return null
 
   return (
