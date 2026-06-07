@@ -1,7 +1,8 @@
 'use client'
 
 import { AnimatePresence, motion, type PanInfo } from 'framer-motion'
-import type { ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
+import { createPortal } from 'react-dom'
 import { useSafeAreaInsets } from '@/hooks/use-safe-area'
 
 interface BottomSheetProps {
@@ -13,12 +14,17 @@ interface BottomSheetProps {
 
 export function BottomSheet({ open, onClose, children, maxHeight = '85vh' }: BottomSheetProps) {
   const { bottom } = useSafeAreaInsets()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => setMounted(true), [])
 
   function handleDragEnd(_: unknown, info: PanInfo) {
     if (info.offset.y > 80 || info.velocity.y > 500) onClose()
   }
 
-  return (
+  if (!mounted) return null
+
+  return createPortal(
     <AnimatePresence>
       {open && (
         <motion.div
@@ -62,6 +68,7 @@ export function BottomSheet({ open, onClose, children, maxHeight = '85vh' }: Bot
           </motion.div>
         </motion.div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body,
   )
 }

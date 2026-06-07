@@ -1,6 +1,8 @@
 'use client'
 
 import { AnimatePresence, motion } from 'framer-motion'
+import { useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { X } from 'lucide-react'
 
 interface VideoModalProps {
@@ -12,7 +14,11 @@ interface VideoModalProps {
 }
 
 export function VideoModal({ open, youtubeId, isShorts = false, title, onClose }: VideoModalProps) {
-  return (
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
+  if (!mounted) return null
+
+  return createPortal(
     <AnimatePresence>
       {open && (
         <motion.div
@@ -75,6 +81,7 @@ export function VideoModal({ open, youtubeId, isShorts = false, title, onClose }
           </motion.div>
         </motion.div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body,
   )
 }
