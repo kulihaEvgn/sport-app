@@ -122,7 +122,9 @@ export const useWorkoutStore = create<WorkoutStore>()(
 
         try {
           await saveWorkoutLog(finished)
-          await advanceProgramDay(finished.userId)
+          // Двигаем указатель от фактически завершённого дня (finished.dayIndex),
+          // а не «слепым» +1 от текущего указателя.
+          await advanceProgramDay(finished.dayIndex)
           set({ ...EMPTY_STATE, lastLogId: finished.id })
           return true
         } catch {

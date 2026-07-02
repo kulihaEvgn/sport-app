@@ -68,11 +68,13 @@ export async function getActiveProgramState(): Promise<UserProgramState | null> 
   return apiFetch<UserProgramState>(`/api/programs/${active.id}/state`)
 }
 
-export async function advanceProgramDay(userId: string): Promise<void> {
+export async function advanceProgramDay(completedDayIndex: number): Promise<void> {
   const active = await getActiveProgram()
   if (!active) return
-  void userId
-  await apiFetch<void>(`/api/programs/${active.id}/advance`, { method: 'POST' })
+  await apiFetch<void>(`/api/programs/${active.id}/advance`, {
+    method: 'POST',
+    body: JSON.stringify({ completedDayIndex }),
+  })
 }
 
 export async function updateProgram(

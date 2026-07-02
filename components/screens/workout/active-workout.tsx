@@ -6,8 +6,11 @@ import {
   useMotionValue, useTransform,
   type PanInfo,
 } from 'framer-motion'
+import { useQueryClient } from '@tanstack/react-query'
 import { X, LayoutList, CreditCard, Check, ChevronRight, ChevronLeft, RotateCcw, Play, TrendingUp } from 'lucide-react'
 import { useWorkoutStore } from '@/store/workout-store'
+import { programKeys } from '@/hooks/use-programs'
+import { historyKeys } from '@/hooks/use-history'
 import { useLastExerciseSets, useLastNExerciseSessions } from '@/hooks/use-history'
 import { useExercise } from '@/hooks/use-exercises'
 import { MUSCLE_GROUP_COLORS, MUSCLE_GROUP_LABELS } from '@/lib/muscle-groups'
@@ -764,6 +767,7 @@ export default function ActiveWorkout({ onFinish, onDiscard }: Props) {
   const [elapsed, setElapsed]           = useState(0)
   const [finishing, setFinishing]       = useState(false)
   const [finishError, setFinishError]   = useState(false)
+  const queryClient = useQueryClient()
 
   const userId    = activeWorkout?.userId ?? ''
   const exercises = template?.exercises ?? []
@@ -820,6 +824,10 @@ export default function ActiveWorkout({ onFinish, onDiscard }: Props) {
       const ok = await finishWorkout()
       const { lastLogId } = useWorkoutStore.getState()
       if (ok && lastLogId) {
+        // Стор сохраняет лог и двигает день напрямую (мимо мутаций react-query),
+        // поэтому вручную инвалидируем кэш «следующего дня» и истории.
+        queryClient.invalidateQueries({ queryKey: programKeys.activeState() })
+        if (userId) queryClient.invalidateQueries({ queryKey: historyKeys.all(userId) })
         onFinish(lastLogId)
       } else {
         // Сохранение упало — остаёмся на экране, показываем ошибку и даём повторить.
