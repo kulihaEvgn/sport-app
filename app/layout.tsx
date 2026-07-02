@@ -1,6 +1,7 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { IBM_Plex_Sans, JetBrains_Mono } from 'next/font/google'
 import { ProvidersShell } from '@/components/providers-shell'
+import { KeyboardViewportFix } from '@/components/tma/keyboard-viewport-fix'
 import './globals.css'
 
 const ibmPlexSans = IBM_Plex_Sans({
@@ -20,11 +21,23 @@ export const metadata: Metadata = {
   description: 'Telegram Mini App для трекинга тренировок',
 }
 
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  // Запрещаем зум при фокусе инпута (iOS иначе приближает поле, ломая вёрстку).
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: 'cover',
+  // На поддерживающих браузерах клавиатура ужимает layout, а не наезжает поверх.
+  interactiveWidget: 'resizes-content',
+}
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ru" className={`${ibmPlexSans.variable} ${jetBrainsMono.variable} dark`}>
       <body>
         <ProvidersShell>
+          <KeyboardViewportFix />
           <div
             className="fixed inset-0 flex flex-col overflow-hidden"
             style={{ background: 'var(--color-app-bg)', color: 'var(--color-app-text)', fontFamily: 'var(--font-ibm), sans-serif' }}
