@@ -87,11 +87,18 @@ function ProgressionHint({ userId, te }: { userId: string; te: WorkoutTemplateEx
 interface WorkoutActions {
   weights: Record<string, string>
   setWeight: (teId: string, v: string) => void
+  reps: Record<string, string>
+  setRep: (teId: string, v: string) => void
   completedIds: Set<string>
   markDone: (te: WorkoutTemplateExercise) => void
   unmarkDone: (teId: string) => void
   userId: string
   finishing: boolean
+}
+
+// Дефолтное значение поля reps для упражнения (минимум цели по повторениям).
+function defaultRepsValue(te: WorkoutTemplateExercise): string {
+  return te.targetVolume.type === 'reps' ? String(te.targetVolume.min) : ''
 }
 
 // ─────────────────────────────────────────────────────────────────
@@ -106,10 +113,12 @@ function ExerciseListRow({
   actions: WorkoutActions
   onInfoClick: (te: WorkoutTemplateExercise) => void
 }) {
-  const { weights, setWeight, completedIds, markDone, unmarkDone, userId } = actions
+  const { weights, setWeight, reps, setRep, completedIds, markDone, unmarkDone, userId } = actions
   const color  = MUSCLE_GROUP_COLORS[te.exercise.muscleGroup]
   const isDone = completedIds.has(te.id)
   const weight = weights[te.id] ?? (te.plannedWeight ? String(te.plannedWeight) : '')
+  const repVal = reps[te.id] ?? defaultRepsValue(te)
+  const showReps = te.targetVolume.type === 'reps'
 
   return (
     <motion.div
@@ -195,6 +204,24 @@ function ExerciseListRow({
                 }}
               />
             </div>
+            {showReps && (
+              <div className="flex flex-col gap-1">
+                <span className="text-[10px] font-medium" style={{ color: 'var(--color-app-muted)' }}>Повт.</span>
+                <input
+                  value={repVal}
+                  onChange={e => setRep(te.id, e.target.value)}
+                  placeholder="0"
+                  inputMode="numeric"
+                  className="w-16 text-center rounded-xl py-2 text-[16px] font-bold outline-none"
+                  style={{
+                    background: 'var(--color-app-surface)',
+                    border: '1px solid var(--color-app-surface3)',
+                    color: 'var(--color-app-text)',
+                    fontFamily: 'var(--font-mono)',
+                  }}
+                />
+              </div>
+            )}
             <button
               onClick={() => markDone(te)}
               className="flex-1 h-11 rounded-2xl flex items-center justify-center gap-2 font-bold text-[14px]"
@@ -301,18 +328,21 @@ function WorkoutListView({
 // ─────────────────────────────────────────────────────────────────
 
 function TinderCard({
-  te, isDone, weight, userId, youtubeId, onWeight, onSwipeDone, onSwipeSkip, onVideoClick,
+  te, isDone, weight, repVal, userId, youtubeId, onWeight, onReps, onSwipeDone, onSwipeSkip, onVideoClick,
 }: {
   te: WorkoutTemplateExercise
   isDone: boolean
   weight: string
+  repVal: string
   userId: string
   youtubeId: string | null
   onWeight: (v: string) => void
+  onReps: (v: string) => void
   onSwipeDone: () => void
   onSwipeSkip: () => void
   onVideoClick: () => void
 }) {
+  const showReps = te.targetVolume.type === 'reps'
   const color = MUSCLE_GROUP_COLORS[te.exercise.muscleGroup]
   const x = useMotionValue(0)
   const rotate       = useTransform(x, [-180, 0, 180], [-14, 0, 14])
@@ -430,24 +460,45 @@ function TinderCard({
         {userId && <PrevResult userId={userId} exerciseId={te.exerciseId} />}
         {userId && <ProgressionHint userId={userId} te={te} />}
 
-        {/* Weight input */}
+        {/* Weight + reps input */}
         {!isDone && (
-          <div className="flex flex-col gap-1.5">
-            <span className="text-[11px] font-medium" style={{ color: 'var(--color-app-muted)' }}>Рабочий вес, кг</span>
-            <input
-              value={weight}
-              onChange={e => onWeight(e.target.value)}
-              placeholder="0"
-              inputMode="decimal"
-              className="w-full text-center rounded-2xl py-4 text-[28px] font-black outline-none"
-              style={{
-                background: 'var(--color-app-surface)',
-                border: '1px solid var(--color-app-surface3)',
-                color: 'var(--color-app-text)',
-                fontFamily: 'var(--font-mono)',
-              }}
-              onClick={e => e.stopPropagation()}
-            />
+          <div className="flex items-end gap-3">
+            <div className="flex flex-col gap-1.5 flex-1">
+              <span className="text-[11px] font-medium" style={{ color: 'var(--color-app-muted)' }}>Рабочий вес, кг</span>
+              <input
+                value={weight}
+                onChange={e => onWeight(e.target.value)}
+                placeholder="0"
+                inputMode="decimal"
+                className="w-full text-center rounded-2xl py-4 text-[28px] font-black outline-none"
+                style={{
+                  background: 'var(--color-app-surface)',
+                  border: '1px solid var(--color-app-surface3)',
+                  color: 'var(--color-app-text)',
+                  fontFamily: 'var(--font-mono)',
+                }}
+                onClick={e => e.stopPropagation()}
+              />
+            </div>
+            {showReps && (
+              <div className="flex flex-col gap-1.5" style={{ width: 110 }}>
+                <span className="text-[11px] font-medium" style={{ color: 'var(--color-app-muted)' }}>Повторения</span>
+                <input
+                  value={repVal}
+                  onChange={e => onReps(e.target.value)}
+                  placeholder="0"
+                  inputMode="numeric"
+                  className="w-full text-center rounded-2xl py-4 text-[28px] font-black outline-none"
+                  style={{
+                    background: 'var(--color-app-surface)',
+                    border: '1px solid var(--color-app-surface3)',
+                    color: 'var(--color-app-text)',
+                    fontFamily: 'var(--font-mono)',
+                  }}
+                  onClick={e => e.stopPropagation()}
+                />
+              </div>
+            )}
           </div>
         )}
 
@@ -596,9 +647,11 @@ function WorkoutTinderView({
                 te={te}
                 isDone={actions.completedIds.has(te.id)}
                 weight={actions.weights[te.id] ?? (te.plannedWeight ? String(te.plannedWeight) : '')}
+                repVal={actions.reps[te.id] ?? defaultRepsValue(te)}
                 userId={actions.userId}
                 youtubeId={youtubeId}
                 onWeight={v => actions.setWeight(te.id, v)}
+                onReps={v => actions.setRep(te.id, v)}
                 onSwipeDone={handleSwipeDone}
                 onSwipeSkip={handleSwipeSkip}
                 onVideoClick={() => setShowVideo(true)}
@@ -705,10 +758,12 @@ export default function ActiveWorkout({ onFinish, onDiscard }: Props) {
 
   const [completedIds, setCompletedIds] = useState<Set<string>>(new Set())
   const [weights, setWeights]           = useState<Record<string, string>>({})
+  const [reps, setReps]                 = useState<Record<string, string>>({})
   const [tinderIdx, setTinderIdx]       = useState(0)
   const [showDiscard, setShowDiscard]   = useState(false)
   const [elapsed, setElapsed]           = useState(0)
   const [finishing, setFinishing]       = useState(false)
+  const [finishError, setFinishError]   = useState(false)
 
   const userId    = activeWorkout?.userId ?? ''
   const exercises = template?.exercises ?? []
@@ -727,17 +782,26 @@ export default function ActiveWorkout({ onFinish, onDiscard }: Props) {
     setWeights(prev => ({ ...prev, [teId]: v }))
   }
 
+  function setRep(teId: string, v: string) {
+    setReps(prev => ({ ...prev, [teId]: v }))
+  }
+
   function markDone(te: WorkoutTemplateExercise) {
     if (completedIds.has(te.id)) return
     const weight = parseFloat(weights[te.id] ?? '') || 0
+    // Для 'reps' берём фактически введённое значение (по умолчанию — минимум цели).
+    // Для 'time' поле reps не показываем — записываем 0.
     const defaultReps = te.targetVolume.type === 'reps' ? te.targetVolume.min : 0
+    const actualReps = te.targetVolume.type === 'reps'
+      ? (parseInt(reps[te.id] ?? '', 10) || defaultReps)
+      : 0
     for (let i = 0; i < te.targetSets; i++) {
       logSet({
         exerciseId:         te.exerciseId,
         templateExerciseId: te.id,
         setNumber:          i + 1,
         weight,
-        reps:               defaultReps,
+        reps:               actualReps,
         completedAt:        new Date(),
       })
     }
@@ -751,16 +815,24 @@ export default function ActiveWorkout({ onFinish, onDiscard }: Props) {
   async function handleFinish() {
     if (finishing) return
     setFinishing(true)
+    setFinishError(false)
     try {
-      await finishWorkout()
+      const ok = await finishWorkout()
       const { lastLogId } = useWorkoutStore.getState()
-      onFinish(lastLogId ?? '')
+      if (ok && lastLogId) {
+        onFinish(lastLogId)
+      } else {
+        // Сохранение упало — остаёмся на экране, показываем ошибку и даём повторить.
+        setFinishError(true)
+      }
     } finally {
       setFinishing(false)
     }
   }
 
-  const actions: WorkoutActions = { weights, setWeight, completedIds, markDone, unmarkDone, userId, finishing }
+  const actions: WorkoutActions = {
+    weights, setWeight, reps, setRep, completedIds, markDone, unmarkDone, userId, finishing,
+  }
   const doneCount = completedIds.size
 
   return (
@@ -806,6 +878,53 @@ export default function ActiveWorkout({ onFinish, onDiscard }: Props) {
           transition={{ duration: 0.5 }}
         />
       </div>
+
+      {/* Save error banner */}
+      <AnimatePresence>
+        {finishError && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="flex-shrink-0 mx-4 mt-3"
+          >
+            <div
+              className="rounded-2xl px-4 py-3 flex items-center gap-3"
+              style={{
+                background: 'rgba(239,68,68,0.10)',
+                border: '1px solid rgba(239,68,68,0.35)',
+              }}
+            >
+              <div className="flex-1 min-w-0">
+                <p className="text-[13px] font-semibold" style={{ color: '#f87171' }}>
+                  Не удалось сохранить тренировку
+                </p>
+                <p className="text-[11px] mt-0.5" style={{ color: 'var(--color-app-muted)' }}>
+                  Проверь соединение и попробуй ещё раз. Прогресс не потерян.
+                </p>
+              </div>
+              <button
+                onClick={handleFinish}
+                disabled={finishing}
+                className="flex items-center gap-1.5 px-3 py-2 rounded-xl font-semibold text-[13px] flex-shrink-0"
+                style={{
+                  background: 'rgba(239,68,68,0.16)',
+                  border: '1px solid rgba(239,68,68,0.4)',
+                  color: '#f87171',
+                  cursor: finishing ? 'not-allowed' : 'pointer',
+                  opacity: finishing ? 0.6 : 1,
+                }}
+              >
+                {finishing
+                  ? <Spinner size={14} color="#f87171" />
+                  : <RotateCcw size={14} />
+                }
+                Повторить
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Views */}
       <AnimatePresence mode="wait" initial={false}>

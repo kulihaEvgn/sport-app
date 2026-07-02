@@ -2,7 +2,7 @@ import { type NextRequest } from 'next/server'
 import { getUserIdFromRequest, AuthError, authError } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { mapWorkoutLog } from '@/lib/mappers'
-import type { WorkoutLog } from '@/types'
+import { workoutLogInputSchema } from '@/schemas/workout-log'
 
 export async function GET(req: NextRequest) {
   try {
@@ -22,7 +22,25 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const userId = await getUserIdFromRequest(req)
-    const body = await req.json() as WorkoutLog
+
+    const parsed = workoutLogInputSchema.safeParse(await req.json())
+    if (!parsed.success) {
+      return Response.json(
+        { error: 'Invalid request body', issues: parsed.error.issues },
+        { status: 400 },
+      )
+    }
+    const body = parsed.data
+
+    // IDOR guard: если лог с таким id уже существует и принадлежит другому
+    // юзеру — запрещаем перезапись. userId берётся только из initData, не из тела.
+    const existing = await prisma.workoutLog.findUnique({
+      where: { id: body.id },
+      select: { userId: true },
+    })
+    if (existing && existing.userId !== userId) {
+      return Response.json({ error: 'Forbidden' }, { status: 403 })
+    }
 
     // Upsert: save or update the log (supports in-progress and completed)
     const log = await prisma.workoutLog.upsert({
@@ -33,8 +51,8 @@ export async function POST(req: NextRequest) {
         programId: body.programId,
         workoutTemplateId: body.workoutTemplateId,
         dayIndex: body.dayIndex,
-        startedAt: new Date(body.startedAt),
-        finishedAt: body.finishedAt ? new Date(body.finishedAt) : null,
+        startedAt: body.startedAt,
+        finishedAt: body.finishedAt ?? null,
         isCompleted: body.isCompleted,
         sets: {
           createMany: {
@@ -45,14 +63,14 @@ export async function POST(req: NextRequest) {
               setNumber: s.setNumber,
               weight: s.weight,
               reps: s.reps,
-              completedAt: new Date(s.completedAt),
+              completedAt: s.completedAt,
             })),
             skipDuplicates: true,
           },
         },
       },
       update: {
-        finishedAt: body.finishedAt ? new Date(body.finishedAt) : null,
+        finishedAt: body.finishedAt ?? null,
         isCompleted: body.isCompleted,
         sets: {
           upsert: body.sets.map(s => ({
@@ -64,12 +82,12 @@ export async function POST(req: NextRequest) {
               setNumber: s.setNumber,
               weight: s.weight,
               reps: s.reps,
-              completedAt: new Date(s.completedAt),
+              completedAt: s.completedAt,
             },
             update: {
               weight: s.weight,
               reps: s.reps,
-              completedAt: new Date(s.completedAt),
+              completedAt: s.completedAt,
             },
           })),
         },

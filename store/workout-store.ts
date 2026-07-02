@@ -25,7 +25,7 @@ interface WorkoutStore {
   skipExercise: () => void
   startRest: (seconds: number) => void
   stopRest: () => void
-  finishWorkout: () => Promise<void>
+  finishWorkout: () => Promise<boolean>
   discardWorkout: () => void
   setViewMode: (mode: 'list' | 'cards') => void
   clearLastLogId: () => void
@@ -111,7 +111,7 @@ export const useWorkoutStore = create<WorkoutStore>()(
 
       finishWorkout: async () => {
         const { activeWorkout } = get()
-        if (!activeWorkout) return
+        if (!activeWorkout) return false
 
         set({ logStatus: 'saving' })
         const finished: WorkoutLog = {
@@ -124,8 +124,10 @@ export const useWorkoutStore = create<WorkoutStore>()(
           await saveWorkoutLog(finished)
           await advanceProgramDay(finished.userId)
           set({ ...EMPTY_STATE, lastLogId: finished.id })
+          return true
         } catch {
           set({ logStatus: 'error' })
+          return false
         }
       },
 

@@ -1,4 +1,4 @@
-import type { WorkoutLog } from '@/types'
+import type { SetLog, WorkoutLog } from '@/types'
 import { apiFetch } from '@/lib/api-client'
 
 export async function getWorkoutHistory(userId: string): Promise<WorkoutLog[]> {
@@ -18,27 +18,32 @@ export async function saveWorkoutLog(log: WorkoutLog): Promise<WorkoutLog> {
   return apiFetch<WorkoutLog>('/api/history', { method: 'POST', body: JSON.stringify(log) })
 }
 
-export async function getLastNExerciseSessions(
-  userId: string,
+// ─────────────────────────────────────────────────────────────────
+// Pure selectors over already-loaded history (no network).
+// The full history is fetched once via getWorkoutHistory (cached in
+// TanStack Query); these derive per-exercise data on the client so we
+// never re-download the whole history per exercise.
+// History is expected ordered by startedAt desc (freshest first).
+// ─────────────────────────────────────────────────────────────────
+
+export function selectLastNExerciseSessions(
+  logs: WorkoutLog[],
   exerciseId: string,
   n: number,
-): Promise<import('@/types').SetLog[][]> {
-  const logs = await getWorkoutHistory(userId)
-  const completed = logs.filter(l => l.isCompleted)
-
-  const sessions: import('@/types').SetLog[][] = []
-  for (const log of completed) {
+): SetLog[][] {
+  const sessions: SetLog[][] = []
+  for (const log of logs) {
     if (sessions.length >= n) break
+    if (!log.isCompleted) continue
     const sets = log.sets.filter(s => s.exerciseId === exerciseId)
     if (sets.length > 0) sessions.push(sets)
   }
   return sessions
 }
 
-export async function getLastExerciseSets(userId: string, exerciseId: string): Promise<import('@/types').SetLog[]> {
-  const logs = await getWorkoutHistory(userId)
-  const completed = logs.filter(l => l.isCompleted)
-  for (const log of completed) {
+export function selectLastExerciseSets(logs: WorkoutLog[], exerciseId: string): SetLog[] {
+  for (const log of logs) {
+    if (!log.isCompleted) continue
     const sets = log.sets.filter(s => s.exerciseId === exerciseId)
     if (sets.length > 0) return sets
   }

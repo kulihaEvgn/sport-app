@@ -5,6 +5,7 @@ import { Send, Copy, Check, Link as LinkIcon } from 'lucide-react'
 import { BottomSheet } from '@/components/ui/bottom-sheet'
 import { Spinner } from '@/components/ui/loader'
 import { useShareProgram } from '@/hooks/use-programs'
+import { buildShareLink } from '@/lib/share-link'
 import type { Program } from '@/types'
 
 interface Props {
@@ -24,12 +25,12 @@ export default function ShareProgramSheet({ open, program, onClose }: Props) {
     setError(null)
     setCopied(false)
     if (program.shareId) {
-      setShareUrl(`${window.location.origin}/share/${program.shareId}`)
+      setShareUrl(buildShareLink(program.shareId, window.location.origin))
       return
     }
     setShareUrl(null)
     share(program.id)
-      .then(({ url }) => setShareUrl(url))
+      .then(({ shareId }) => setShareUrl(buildShareLink(shareId, window.location.origin)))
       .catch(e => setError(e instanceof Error ? e.message : 'Ошибка создания ссылки'))
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, program.id, program.shareId])

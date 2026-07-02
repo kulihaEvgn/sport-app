@@ -1,5 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { getWorkoutHistory, getWorkoutLog, saveWorkoutLog, getLastExerciseSets, getLastNExerciseSessions } from '@/services/history'
+import {
+  getWorkoutHistory,
+  getWorkoutLog,
+  saveWorkoutLog,
+  selectLastExerciseSets,
+  selectLastNExerciseSessions,
+} from '@/services/history'
 import type { WorkoutLog } from '@/types'
 
 export const historyKeys = {
@@ -23,19 +29,26 @@ export function useWorkoutLog(id: string) {
   })
 }
 
+// Both per-exercise hooks subscribe to the SAME cached history query
+// (historyKeys.all(userId)) and derive their slice via `select`. React
+// Query dedups by queryKey, so the whole history is fetched once and
+// reused for every exercise instead of one full download per exercise.
+
 export function useLastExerciseSets(userId: string, exerciseId: string) {
   return useQuery({
-    queryKey: ['history', userId, 'exercise', exerciseId],
-    queryFn:  () => getLastExerciseSets(userId, exerciseId),
+    queryKey: historyKeys.all(userId),
+    queryFn:  () => getWorkoutHistory(userId),
     enabled:  Boolean(userId) && Boolean(exerciseId),
+    select:   (logs: WorkoutLog[]) => selectLastExerciseSets(logs, exerciseId),
   })
 }
 
 export function useLastNExerciseSessions(userId: string, exerciseId: string, n: number) {
   return useQuery({
-    queryKey: ['history', userId, 'exercise', exerciseId, 'sessions', n],
-    queryFn:  () => getLastNExerciseSessions(userId, exerciseId, n),
+    queryKey: historyKeys.all(userId),
+    queryFn:  () => getWorkoutHistory(userId),
     enabled:  Boolean(userId) && Boolean(exerciseId),
+    select:   (logs: WorkoutLog[]) => selectLastNExerciseSessions(logs, exerciseId, n),
   })
 }
 
