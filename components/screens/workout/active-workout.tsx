@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import {
   motion, AnimatePresence,
   useMotionValue, useTransform,
@@ -11,7 +11,8 @@ import { X, LayoutList, CreditCard, Check, ChevronRight, ChevronLeft, RotateCcw,
 import { useWorkoutStore } from '@/store/workout-store'
 import { programKeys } from '@/hooks/use-programs'
 import { historyKeys } from '@/hooks/use-history'
-import { useLastExerciseSets, useLastNExerciseSessions } from '@/hooks/use-history'
+import { useWorkoutHistory, useLastExerciseSets, useLastNExerciseSessions } from '@/hooks/use-history'
+import { selectLastExerciseSets } from '@/services/history'
 import { useExercise } from '@/hooks/use-exercises'
 import { MUSCLE_GROUP_COLORS, MUSCLE_GROUP_LABELS } from '@/lib/muscle-groups'
 import { shouldSuggestProgression } from '@/lib/progression'
@@ -95,6 +96,8 @@ interface WorkoutActions {
   completedIds: Set<string>
   markDone: (te: WorkoutTemplateExercise) => void
   unmarkDone: (teId: string) => void
+  // Дефолт поля веса: вес прошлой сессии по упражнению → plannedWeight → пусто.
+  defaultWeight: (te: WorkoutTemplateExercise) => string
   userId: string
   finishing: boolean
 }
@@ -119,7 +122,7 @@ function ExerciseListRow({
   const { weights, setWeight, reps, setRep, completedIds, markDone, unmarkDone, userId } = actions
   const color  = MUSCLE_GROUP_COLORS[te.exercise.muscleGroup]
   const isDone = completedIds.has(te.id)
-  const weight = weights[te.id] ?? (te.plannedWeight ? String(te.plannedWeight) : '')
+  const weight = weights[te.id] ?? actions.defaultWeight(te)
   const repVal = reps[te.id] ?? defaultRepsValue(te)
   const showReps = te.targetVolume.type === 'reps'
 
@@ -649,7 +652,7 @@ function WorkoutTinderView({
               <TinderCard
                 te={te}
                 isDone={actions.completedIds.has(te.id)}
-                weight={actions.weights[te.id] ?? (te.plannedWeight ? String(te.plannedWeight) : '')}
+                weight={actions.weights[te.id] ?? actions.defaultWeight(te)}
                 repVal={actions.reps[te.id] ?? defaultRepsValue(te)}
                 userId={actions.userId}
                 youtubeId={youtubeId}
@@ -770,7 +773,30 @@ export default function ActiveWorkout({ onFinish, onDiscard }: Props) {
   const queryClient = useQueryClient()
 
   const userId    = activeWorkout?.userId ?? ''
-  const exercises = template?.exercises ?? []
+  const exercises = useMemo(() => template?.exercises ?? [], [template])
+
+  // История уже в кэше (её тянет чип «Пред.»), переиспользуем для дефолта веса.
+  const { data: history = [] } = useWorkoutHistory(userId)
+
+  // Максимальный вес последней завершённой сессии по каждому упражнению.
+  const lastWeightByExercise = useMemo(() => {
+    const map: Record<string, number> = {}
+    for (const te of exercises) {
+      const sets = selectLastExerciseSets(history, te.exerciseId)
+      if (sets.length) {
+        const max = Math.max(...sets.map(s => s.weight))
+        if (max > 0) map[te.exerciseId] = max
+      }
+    }
+    return map
+  }, [history, exercises])
+
+  // Дефолт поля веса: вес прошлой сессии → plannedWeight → пусто.
+  const defaultWeight = useCallback((te: WorkoutTemplateExercise): string => {
+    const last = lastWeightByExercise[te.exerciseId]
+    if (last != null) return String(last)
+    return te.plannedWeight != null ? String(te.plannedWeight) : ''
+  }, [lastWeightByExercise])
 
   // Workout elapsed timer
   useEffect(() => {
@@ -793,9 +819,9 @@ export default function ActiveWorkout({ onFinish, onDiscard }: Props) {
   function markDone(te: WorkoutTemplateExercise) {
     if (completedIds.has(te.id)) return
     // Дефолт должен совпадать с тем, что показывает поле ввода: нетронутый вес —
-    // это плановый вес упражнения, а не 0. Иначе завершённая тренировка пишет
-    // нули, хотя пользователь видел план.
-    const rawWeight = weights[te.id] ?? (te.plannedWeight != null ? String(te.plannedWeight) : '')
+    // это вес прошлой сессии (→ plannedWeight → пусто), а не 0. Иначе завершённая
+    // тренировка пишет нули, хотя пользователь видел подставленное значение.
+    const rawWeight = weights[te.id] ?? defaultWeight(te)
     const weight = parseFloat(rawWeight) || 0
     // Для 'reps' берём фактически введённое значение (по умолчанию — минимум цели).
     // Для 'time' поле reps не показываем — записываем 0.
@@ -843,7 +869,7 @@ export default function ActiveWorkout({ onFinish, onDiscard }: Props) {
   }
 
   const actions: WorkoutActions = {
-    weights, setWeight, reps, setRep, completedIds, markDone, unmarkDone, userId, finishing,
+    weights, setWeight, reps, setRep, completedIds, markDone, unmarkDone, defaultWeight, userId, finishing,
   }
   const doneCount = completedIds.size
 
