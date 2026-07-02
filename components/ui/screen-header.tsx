@@ -15,8 +15,11 @@ interface Props {
 export function ScreenHeader({ title, onBack, backLabel = 'Назад', rightSlot, withBorder = true }: Props) {
   return (
     <div
-      className="flex items-center justify-between px-4 pt-4 pb-3 flex-shrink-0"
-      style={withBorder ? { borderBottom: '1px solid var(--color-app-border)' } : undefined}
+      className="flex items-center justify-between px-4 pt-4 pb-3 flex-shrink-0 sticky top-0 z-20"
+      style={{
+        background: 'var(--color-app-bg)',
+        ...(withBorder ? { borderBottom: '1px solid var(--color-app-border)' } : {}),
+      }}
     >
       {onBack ? (
         <button

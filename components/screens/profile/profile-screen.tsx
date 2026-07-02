@@ -41,15 +41,17 @@ export default function ProfileScreen() {
 
   return (
     <div className="flex flex-col px-4 pt-5 pb-6 gap-5 overflow-y-auto">
-      {/* Back */}
-      <button
-        onClick={() => router.back()}
-        className="flex items-center gap-1 text-[14px] font-medium self-start"
-        style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-app-accent)' }}
-      >
-        <ArrowLeft size={18} color="var(--color-app-accent)" />
-        Назад
-      </button>
+      {/* Back — липкая полоса во всю ширину, чтобы «Назад» не уезжал при скролле */}
+      <div className="sticky top-0 z-20 -mx-4 -mt-5 px-4 pt-5 pb-2" style={{ background: 'var(--color-app-bg)' }}>
+        <button
+          onClick={() => router.back()}
+          className="flex items-center gap-1 text-[14px] font-medium self-start"
+          style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-app-accent)' }}
+        >
+          <ArrowLeft size={18} color="var(--color-app-accent)" />
+          Назад
+        </button>
+      </div>
 
       <motion.h1
         initial={{ opacity: 0, y: -8 }}
