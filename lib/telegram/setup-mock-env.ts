@@ -17,8 +17,8 @@ function isMockAlreadyApplied(): boolean {
   );
 }
 
-const mockLaunchParams = () =>
-  new URLSearchParams({
+const mockLaunchParams = () => {
+  const params = new URLSearchParams({
     tgWebAppPlatform: "tdesktop",
     tgWebAppVersion: "8.0",
     tgWebAppData: buildDevInitDataRaw(),
@@ -32,6 +32,14 @@ const mockLaunchParams = () =>
       secondary_bg_color: "#232e3c",
     }),
   });
+
+  // Локальный тест deep link: /?startapp=share_<id> → прокидываем параметр
+  // как tgWebAppStartParam, ровно как это делает Telegram для startapp-ссылок.
+  const startapp = new URLSearchParams(window.location.search).get("startapp");
+  if (startapp) params.set("tgWebAppStartParam", startapp);
+
+  return params;
+};
 
 /** Имитирует Telegram Mini App в обычном браузере (dev). */
 export function setupTelegramMockEnv(force = false): void {
