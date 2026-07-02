@@ -792,7 +792,11 @@ export default function ActiveWorkout({ onFinish, onDiscard }: Props) {
 
   function markDone(te: WorkoutTemplateExercise) {
     if (completedIds.has(te.id)) return
-    const weight = parseFloat(weights[te.id] ?? '') || 0
+    // Дефолт должен совпадать с тем, что показывает поле ввода: нетронутый вес —
+    // это плановый вес упражнения, а не 0. Иначе завершённая тренировка пишет
+    // нули, хотя пользователь видел план.
+    const rawWeight = weights[te.id] ?? (te.plannedWeight != null ? String(te.plannedWeight) : '')
+    const weight = parseFloat(rawWeight) || 0
     // Для 'reps' берём фактически введённое значение (по умолчанию — минимум цели).
     // Для 'time' поле reps не показываем — записываем 0.
     const defaultReps = te.targetVolume.type === 'reps' ? te.targetVolume.min : 0
