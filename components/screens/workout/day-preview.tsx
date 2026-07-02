@@ -19,15 +19,15 @@ export default function DayPreview({ template, onStart, onBack }: Props) {
   const totalSets = template.exercises.reduce((s, te) => s + te.targetSets, 0)
 
   return (
-    <div className="flex flex-col min-h-full">
-      <div className="flex items-center px-4 pt-4 pb-3" style={{ borderBottom: '1px solid var(--color-app-border)' }}>
+    <div className="flex flex-col h-full">
+      <div className="flex items-center px-4 pt-4 pb-3 flex-shrink-0" style={{ background: 'var(--color-app-bg)', borderBottom: '1px solid var(--color-app-border)' }}>
         <button onClick={onBack} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
           <ChevronLeft size={24} color="var(--color-app-accent)" />
         </button>
         <span className="text-[16px] font-semibold ml-2" style={{ color: 'var(--color-app-text)' }}>{template.name}</span>
       </div>
 
-      <div className="px-4 py-5 flex flex-col gap-5 flex-1">
+      <div className="flex-1 overflow-y-auto px-4 py-5 flex flex-col gap-5">
         {/* Stats banner */}
         <div
           className="rounded-2xl px-4 py-4 flex gap-6"
@@ -79,7 +79,10 @@ export default function DayPreview({ template, onStart, onBack }: Props) {
         </div>
       </div>
 
-      <div className="px-4 pb-8 pt-2">
+      <div
+        className="flex-shrink-0 px-4 pb-4 pt-3"
+        style={{ borderTop: '1px solid var(--color-app-border)', background: 'var(--color-app-bg)' }}
+      >
         <button
           onClick={onStart}
           className="w-full h-14 rounded-2xl flex items-center justify-center gap-2 text-[16px] font-bold"
