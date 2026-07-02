@@ -4,7 +4,6 @@ import { use, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Download, Dumbbell, Calendar, ArrowLeft } from 'lucide-react'
 import { useSharedProgram, useImportSharedProgram } from '@/hooks/use-programs'
-import { useSafeAreaInsets } from '@/hooks/use-safe-area'
 import { PageLoader, Spinner } from '@/components/ui/loader'
 import { EmptyState } from '@/components/ui/empty-state'
 import { SectionLabel } from '@/components/ui/section-label'
@@ -14,7 +13,6 @@ import type { MuscleGroup } from '@/types'
 export default function SharedProgramPage({ params }: { params: Promise<{ shareId: string }> }) {
   const { shareId } = use(params)
   const router      = useRouter()
-  const { top, bottom } = useSafeAreaInsets()
   const { data: program, isLoading } = useSharedProgram(shareId)
   const { mutateAsync: importProgram, isPending: importing } = useImportSharedProgram()
   const [error, setError] = useState<string | null>(null)
@@ -32,7 +30,7 @@ export default function SharedProgramPage({ params }: { params: Promise<{ shareI
   if (isLoading) return <PageLoader />
   if (!program) {
     return (
-      <div className="flex flex-col flex-1" style={{ paddingTop: top, paddingBottom: bottom }}>
+      <div className="flex flex-col h-full">
         <EmptyState
           title="Программа не найдена"
           description="Ссылка устарела или была удалена автором."
@@ -53,7 +51,7 @@ export default function SharedProgramPage({ params }: { params: Promise<{ shareI
   const totalExercises = program.templates.reduce((s, t) => s + t.exercises.length, 0)
 
   return (
-    <div className="flex flex-col flex-1" style={{ paddingTop: top, paddingBottom: bottom }}>
+    <div className="flex flex-col h-full">
       {/* Header */}
       <div className="flex items-center px-4 pt-4 pb-3 flex-shrink-0"
         style={{ borderBottom: '1px solid var(--color-app-border)' }}>
@@ -67,7 +65,7 @@ export default function SharedProgramPage({ params }: { params: Promise<{ shareI
         </button>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-4 py-5 flex flex-col gap-5 pb-32">
+      <div className="flex-1 min-h-0 overflow-y-auto px-4 py-5 flex flex-col gap-5 pb-32">
         {/* Hero */}
         <div className="flex items-center gap-3">
           <div className="w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0"
