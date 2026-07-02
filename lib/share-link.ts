@@ -17,9 +17,13 @@ export function buildShareStartParam(shareId: string): string {
   return `${SHARE_START_PREFIX}${shareId}`
 }
 
+// Username бота по умолчанию. Не секрет — он и так виден в самой ссылке.
+// Можно переопределить через NEXT_PUBLIC_BOT_USERNAME (напр. для staging-бота).
+const DEFAULT_BOT_USERNAME = 'envhSportAppBot'
+
 /** Deep link на Mini App, если задан username бота; иначе null. */
 export function buildShareDeepLink(shareId: string): string | null {
-  const bot = process.env.NEXT_PUBLIC_BOT_USERNAME
+  const bot = process.env.NEXT_PUBLIC_BOT_USERNAME || DEFAULT_BOT_USERNAME
   if (!bot) return null
   // Без short name открываем основной Mini App бота: t.me/<bot>?startapp=...
   // С short name — named Direct Link: t.me/<bot>/<app>?startapp=...
