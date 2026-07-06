@@ -15,6 +15,7 @@ import {
 import { useEffect, useState, type ReactNode } from "react";
 
 import { setupTelegramMockEnv } from "@/lib/telegram/setup-mock-env";
+import { persistInitData } from "@/lib/telegram/init-data";
 
 type TelegramProviderProps = {
   children: ReactNode;
@@ -71,6 +72,9 @@ export function TelegramProvider({ children }: TelegramProviderProps) {
 
     try {
       cleanup = initializeSdk();
+      // Кешируем свежий initData, пока Telegram его отдаёт — чтобы пережить
+      // перезагрузку webview после паузы в несколько дней.
+      persistInitData();
     } catch (error) {
       console.error("Telegram SDK init failed:", error);
     } finally {

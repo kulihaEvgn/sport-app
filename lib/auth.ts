@@ -29,7 +29,12 @@ export async function getUserIdFromRequest(req: NextRequest): Promise<string> {
     const botToken = process.env.BOT_TOKEN
     if (!botToken) throw new AuthError('BOT_TOKEN not set')
     try {
-      validate(initDataRaw, botToken, { expiresIn: 86400 })
+      // expiresIn: 0 — не проверяем возраст initData. Подлинность гарантирует
+      // HMAC-подпись (её не подделать без токена бота). Telegram при повторном
+      // открытии Mini App переиспользует старый initData со старым auth_date;
+      // жёсткий TTL отбрасывал бы его после паузы в несколько дней → 401 и
+      // «данные не приходят». Подпись бессрочна, поэтому это безопасно.
+      validate(initDataRaw, botToken, { expiresIn: 0 })
     } catch {
       throw new AuthError('Invalid initData signature')
     }

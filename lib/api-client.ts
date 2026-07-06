@@ -1,12 +1,4 @@
-import { retrieveRawInitData } from '@telegram-apps/sdk'
-
-function getInitDataRaw(): string {
-  try {
-    return retrieveRawInitData() ?? ''
-  } catch {
-    return ''
-  }
-}
+import { resolveInitDataRaw } from '@/lib/telegram/init-data'
 
 interface ApiFetchOptions extends RequestInit {
   skipAuth?: boolean
@@ -16,7 +8,7 @@ export async function apiFetch<T>(path: string, options?: ApiFetchOptions): Prom
   const { skipAuth, ...fetchOptions } = options ?? {}
   const authHeaders: Record<string, string> = skipAuth
     ? {}
-    : { 'X-Telegram-Init-Data': getInitDataRaw() }
+    : { 'X-Telegram-Init-Data': resolveInitDataRaw() }
 
   const res = await fetch(path, {
     ...fetchOptions,

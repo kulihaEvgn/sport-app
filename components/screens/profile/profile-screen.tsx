@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { User, Dumbbell, Calendar, Trophy, ChevronRight, Moon, Sun, ArrowLeft } from 'lucide-react'
 import { useSignal, initDataUser } from '@telegram-apps/sdk-react'
+import { resolveInitDataUser } from '@/lib/telegram/init-data'
 import { useActiveProgram } from '@/hooks/use-programs'
 import { useWorkoutHistory } from '@/hooks/use-history'
 import { useFavoriteMuscleGroup } from '@/hooks/use-progress'
@@ -16,7 +17,10 @@ import { SectionLabel } from '@/components/ui/section-label'
 
 export default function ProfileScreen() {
   const router  = useRouter()
-  const tgUser  = useSignal(initDataUser)
+  const tgUserLive = useSignal(initDataUser)
+  // Если живого сигнала нет (webview перезагрузился после паузы) — берём
+  // пользователя из закешированного initData, чтобы не показывать «User».
+  const tgUser  = useMemo(() => tgUserLive ?? resolveInitDataUser() ?? undefined, [tgUserLive])
   const { theme, toggle } = useThemeStore()
   const { data: dbUser, isLoading: loadingUser } = useUser()
   const uid                      = dbUser?.id ?? ''
